@@ -85,7 +85,7 @@ void IntegrationData::cudaCopy(const IntegrationData &source, cudaMemcpyKind kin
 }
 
 
-void IntegrationData::print()
+void IntegrationData::print(Network *n)
 {
 	printf("species: %d\n", species);
 	
@@ -96,6 +96,7 @@ void IntegrationData::print()
 	printf("rho: %e\n", rho);
 	
 	printf("Y: ");
-	for (unsigned short i = 0; i < species; i++)
-		printf("%d: %e\n", i, Y[i]);
+    for (unsigned short i = 0; i < species; i++) {
+        printf("Species %d: %s, Z = %d, Y = %e\n", i, n->isotopeLabel[i], n->Z[i], Y[i]);
+    }
 }

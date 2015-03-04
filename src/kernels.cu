@@ -56,6 +56,8 @@ __global__ void integrateNetwork(
 	const fern_real massTol = network.massTol;
 	const fern_real fluxFrac = network.fluxFrac;
 
+	/* Declare pointer variables for Partial Equilibrium arrays */
+    int *ReacParent = new int [numberReactions];
 	/* Declare pointer variables for IntegrationData arrays.  */
 
 	fern_real *Y;
@@ -83,6 +85,8 @@ __global__ void integrateNetwork(
 	MapFminus = network.MapFminus;
 	FplusMax = network.FplusMax;
 	FminusMax = network.FminusMax;
+
+	/* Assign Partial Equilibrium pointers. */
 
 	/* Assign IntegrationData pointers. */
 	
@@ -185,6 +189,208 @@ __global__ void integrateNetwork(
 
 		}
 	}
+
+	/* Author: Daniel Shyles */
+	/* Begin Partial Equilibrium calculation */
+    int RGParent;
+	const bool displayRGdata = true;
+    fern_real y_a;
+    fern_real y_b;
+    fern_real y_c;
+    fern_real y_d;
+    fern_real y_e;
+	//constants for coefficient and relative abundance calculations
+	fern_real c1;
+	fern_real c2;
+	fern_real c3;
+	//TODO: Add this back in -->	fern_real c4 = y_a+y_e; 
+	//coefficients for q and theoretical equilibrium abundance calculation
+	fern_real a;
+	fern_real b;
+	fern_real c;
+	fern_real q;
+	fern_real y_eq; 
+	//set tolerance for determining partial equilibrium
+	fern_real tolerance = .01;
+	//result of PE determination... if PE_val < tolerance, we're in equilibrium
+	fern_real PE_val;
+	//if in equilibrium I'll set this to 1
+	int eq;
+
+	// Population at time t (unnecessary for PE calculation as we have current populations):
+	//fern_real y_0;
+    //fern_real phi = ((2*a*y_0)+b+sqrt(-q))/((2*a*y_0)+b-sqrt(-q));
+	//fern_real y_it = (-.5/a)*(b+(sqrt(-q)*((1+phi*expf(-sqrt(-q)*t))/(1-phi*expf(-sqrt(-q)*t)))));
+
+	if (tid == 0) {
+		//first loop through reactions to set up RG parents
+		int numRG = 0;
+		for(int i = 0; i < network.reactions; i++) {
+		    if(network.ReacGroups[i] != 0) {
+				numRG++;
+			    //This indicates a new reaction group
+				RGParent = i;
+		    }
+	        ReacParent[i] = RGParent;
+		}
+	    fern_real kf;
+		fern_real kr;
+	    fern_real *final_k[2];
+		//set up array of final reaction rates for each RG
+		//doing it this way saves memory, as we don't need two arrays with size numberReactions, only numRG
+		for(int m = 0; m < 2; m++)
+			final_k[m] = new fern_real [numRG];
+		if(displayRGdata)
+			printf("Start Reaction Group Data\nNumber Reaction Groups: %d\n\n",numRG);
+		//second to calculate final reaciton rates for each RG
+		for(int i = 0; i < network.reactions; i++) {
+
+			if(displayRGdata && network.ReacGroups[i] != 0) {
+				printf("RG Class: %d\nRG ID (Parent): %d\n", network.ReacGroups[i], i);
+				//output numReactingSpecies and numProducts for Parent of RG
+                printf("numReacting: %d, numProducts: %d\n", network.numReactingSpecies[i], network.PEnumProducts[i]);			
+				if(network.ReacGroups[i] == 1) {		
+					printf("Reactant SID: %d; Product SID: %d\n",network.reactant[0][i], network.product[0][i]);
+				} 
+				else if(network.ReacGroups[i] == 2) {
+                    printf("Reactant SID: %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i]);
+                }
+                else if(network.ReacGroups[i] == 3) {
+                    printf("Reactant SID: %d, %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.reactant[2][i], network.product[0][i]);
+                }
+                else if(network.ReacGroups[i] == 4) {
+                    printf("Reactant SID: %d, %d; Product SID: %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i]);
+                }
+                else if(network.ReacGroups[i] == 5) {
+                    printf("Reactant SID: %d, %d; Product SID: %d, %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i], network.product[2][i]);
+                }
+				printf("-----\n|\n");
+			}				
+			if(displayRGdata)
+				printf("Reaction ID: %d\nRG Member ID: %d\nForward Reaction (+-Q): %d\nRate: %f\n|\n", i, network.RGmemberIndex[i], network.pnQ[i], Rate[i]);
+
+            //if RGmemberindex is greater (or equal for RGmemberindex[i] = RGmemberindex[i+1] = 0 than next one, then end of Reaction Group
+            if(network.RGmemberIndex[i] >= network.RGmemberIndex[i+1]) {
+                //get forward and reverse rates for all reactions within group, starting with i-network.RGmemberIndex[i], and ending with i.
+                kf = 0; //forward rate
+                kr = 0; //reverse rate
+                //iterate through each RGmember and calculate the total rate from forward and reverse reactions
+                for(int n = network.RGmemberIndex[i]; n >= 0; n--) {
+                    //add the rate to forward reaction
+                    /****************************************************************************************************************************
+                     *TODO rework this such that reactions with multiple sets of parameters (n > 1, three or more reactions per reaction group) *
+                     *have their final rates (kf, kr) calculated properly. Currently being summed, but some other operation is necessary here...*
+                     ****************************************************************************************************************************/
+                    if(network.pnQ[i-n] == 1) {
+                        kf += Rate[i-n];
+                    } else {
+                    //add the rate to reverse reaction
+                        kr += Rate[i-n];
+                    }
+                    //printf("current forward Rate for RG with Parent %d = %f and kf = %f \n ", ReacParent[i], Rate[i-n], kf);
+                    //printf("current reverse Rate for RG with Parent %d = %f and kr = %f \n ", ReacParent[i], Rate[i-n], kr);
+                }
+                final_k[0][ReacParent[i]] = kf;
+                final_k[1][ReacParent[i]] = kr;
+                if(displayRGdata) {
+                    printf("-----\n");
+                    printf("Final Forward Rate: kf = %f \n", final_k[0][ReacParent[i]]);
+                    printf("Final Reverse Rate: kr = %f \n", final_k[1][ReacParent[i]]);
+                    printf("\n\n\n");
+                }
+            }
+		}
+
+		//final partial equilibrium loop for calculating equilibrium
+		const bool displayPEdata = true;
+		if(displayPEdata)
+			printf("Start Partial Equilibrium Data\n");		
+		for(int i = 0; i < numberReactions; i++) {
+	        //reset RG reactant and product populations
+            y_a = 0;
+            y_b = 0;
+            y_c = 0;
+            y_d = 0;
+            y_e = 0;
+			if(network.ReacGroups[i] !=0) {
+				//Get current population for each reactant and product of this RG
+				//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
+				//TODO: Something to watch out for: if a reaction has, for example, three reactants and two products such as in RGclass 5,
+				// will it be presented first (RGParent) as a+b+c --> d+e, or might the RGParent have the reverse set up, a+b --> c+d+e
+				// if the latter occurs, we'll need to add some logic to account for that. Right now, assuming that all RGParents are set up
+				// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null 
+				// in the reactant and product arrays.
+				if(network.ReacGroups[i] == 1) {
+					y_a = Y[network.reactant[0][i]];
+					y_b = Y[network.product[0][i]];
+				} 
+				else if(network.ReacGroups[i] == 2) {
+                    y_a = Y[network.reactant[0][i]];
+                    y_b = Y[network.reactant[1][i]];
+                    y_c = Y[network.product[0][i]];
+                }
+                else if(network.ReacGroups[i] == 3) {
+                    y_a = Y[network.reactant[0][i]];
+                    y_b = Y[network.reactant[1][i]];
+                    y_c = Y[network.reactant[2][i]];
+                    y_d = Y[network.product[0][i]];
+                }
+                else if(network.ReacGroups[i] == 4) {
+                    y_a = Y[network.reactant[0][i]];
+                    y_b = Y[network.reactant[1][i]];
+                    y_c = Y[network.product[0][i]];
+                    y_d = Y[network.product[1][i]];
+
+                    //set specific constraints and coefficients for RGclass 3
+                    c1 = y_a-y_b;
+                    c2 = y_a+y_c;
+                    c3 = y_a+y_d;
+                    a = final_k[1][i]-final_k[0][i];
+                    b = -(final_k[1][i]*(c2+c3))+(final_k[0][i]*c1);
+                    c = final_k[1][i]*c2*c3;
+					q = (4*a*c)-(b*b);
+					//theoretical equilibrium population of given species which is the same for RG classes 2-5, 
+					//there is a different equations for RG class 1 which I'll add soon TODO
+
+					//TODO: What is the y_eq equation for y_b, y_c, and y_d? Can I use the same value? I doubt it...
+					y_eq = ((-.5/a)*(b+sqrt(-q)));	
+				
+					//is y_a in equilibrium?	
+					PE_val = abs(y_a-y_eq)/(y_eq);
+					if(PE_val < tolerance) {
+						eq = 1;
+					} else {
+						eq = 0;
+					}
+
+					if(displayPEdata && !isnan(PE_val)) {
+                        //only print if there are populations with which to calculate
+						printf("Reaction Group ID: %d, RG Class: %d\n",i, network.ReacGroups[i]);
+						for (int n = 0; n < 2; n++)
+							printf("Reactant[%d]: %d\n",n, network.reactant[n][i]);
+						for (int n = 0; n < 2; n++)
+							printf("Product[%d]: %d\n",n, network.product[n][i]);
+
+						printf("PE_val for y_a (Species: %d): %f\nIs y_a in equilibrium?: %d\n",network.reactant[0][i],PE_val,eq);
+						printf("\n\n");
+					}
+				}
+				else if(network.ReacGroups[i] == 5) {
+                    y_a = Y[network.reactant[0][i]];
+                    y_b = Y[network.reactant[1][i]];
+                    y_c = Y[network.product[0][i]];
+                    y_d = Y[network.product[1][i]];
+					y_e = Y[network.product[2][i]];
+				}
+				//reactions between 146 and 155 have carbon 12 and oxygen 16, and have non-zero starting populations
+				//if (i > 146 && i < 155) 
+				//if(displayPEdata)
+					//printf("\nReactant/Product populations:\ny_a: %e\ny_b: %e\ny_c: %e\ny_d: %e\ny_e: %e\n\n", y_a, y_b, y_c, y_d, y_e);
+			}
+		}
+	}
+
+	/***End Partial Equilibrium***/
 
 	/*
 	   Begin the time integration from t=0 to tmax. Rather than t=0 we

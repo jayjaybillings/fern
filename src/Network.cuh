@@ -16,6 +16,7 @@ struct Network
 	
 	unsigned char *Z; // [species]
 	unsigned char *N; // [species]
+	char **isotopeLabel;
 	
 	fern_real *FplusFac; // [totalFplus]
 	fern_real *FminusFac; // [totalFminus]
@@ -37,7 +38,14 @@ struct Network
 	fern_real *statFac; // [reactions]
 	fern_real *Q; // [reactions]
 	unsigned short *reactant[3]; // [reactions]
-	
+	unsigned short *product[3]; // [reactions]
+
+	//Partial Equilibrium
+	unsigned char *ReacGroups; //[reactions]
+	unsigned char *pnQ; //[reactions]
+	unsigned char *RGmemberIndex; // [reactions]
+	unsigned char *PEnumProducts; // [reactions]
+
 	
 	Network();
 	

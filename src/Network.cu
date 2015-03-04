@@ -13,7 +13,7 @@ Network::Network()
 void Network::loadNetwork(const char *filename)
 {
 	// Unused variables
-	char isotopeLabel[10];
+	//char isotopeLabel[10];
 	unsigned short A;
 	fern_real massExcess;
 	fern_real pf;
@@ -31,19 +31,20 @@ void Network::loadNetwork(const char *filename)
 	}
 	
 	// Read 4 lines at a time
-	
+	isotopeLabel = (char **) malloc(sizeof(char *) * species);
 	for (int n = 0; n < species; n++)
 	{
+		isotopeLabel[n] = (char *) malloc(sizeof(char) * 10);
 		int status;
 		
 		// Line #1
 		
 		#ifdef FERN_SINGLE
 			status = fscanf(file, "%s %hu %hhu %hhu %f %f\n",
-				isotopeLabel, &A, &Z[n], &N[n], &Y, &massExcess);
+				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#else
 			status = fscanf(file, "%s %hu %hhu %hhu %lf %lf\n",
-				isotopeLabel, &A, &Z[n], &N[n], &Y, &massExcess);
+				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
 		
 		if (status == EOF)
@@ -69,12 +70,12 @@ void Network::loadReactions(const char *filename)
 	
 	// Unused variables
 	char reactionLabel[100];
-	int RGclass;
-	int RGmemberIndex;
+//	int RGclass;
+//	int RGmemberIndex;
 	int reaclibClass;
 	int isEC;
 	int isReverseR;
-	int ProductIndex[4];
+//	int tProductIndex[4];
 	
 	// Allocate the host-only memory to be used by parseFlux()
 	int *numProducts = new int [reactions];
@@ -84,7 +85,10 @@ void Network::loadReactions(const char *filename)
 	vec_4i *reactantN = new vec_4i [reactions]; // [reactions]
 	vec_4i *productZ = new vec_4i [reactions]; // [reactions]
 	vec_4i *productN = new vec_4i [reactions]; // [reactions]
-	
+	vec_4i *RGclass = new vec_4i [reactions]; //DS partialeq
+	//DS reduce to reaction groups by reaction group class
+//    vec_4i *ReacGroups = new vec_4i [reactions]; 
+//	vec_4i *pnQ = new vec_4i [reactions];
 	
 	FILE *file = fopen(filename, "r");
 	
@@ -106,12 +110,12 @@ void Network::loadReactions(const char *filename)
 
 		#ifdef FERN_SINGLE		
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %f %f",
-				reactionLabel, &RGclass, &RGmemberIndex, &reaclibClass,
+				reactionLabel, &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
 				&statFac[n], &Q[n]);
 		#else
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %lf %lf",
-				reactionLabel, &RGclass, &RGmemberIndex, &reaclibClass,
+				reactionLabel, &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
 				&statFac[n], &Q[n]);
 		#endif
@@ -122,13 +126,32 @@ void Network::loadReactions(const char *filename)
 		if (displayInput)
 		{
 			printf("Reaction Index = %d\n", n);
-			printf("isReverseR = %d reaclibIndex = %d\n",
-				isReverseR, reaclibClass);
+			printf("isReverseR = %d reaclibIndex = %d\n RGclass = %d\n",
+				isReverseR, reaclibClass, *RGclass[n]);
 			printf("%s %d %d %d %d %d %d %d %f %f\n",
-				reactionLabel, RGclass, RGmemberIndex, reaclibClass,
+				reactionLabel, &RGclass[n], RGmemberIndex[n], reaclibClass,
 				numReactingSpecies[n], numProducts[n], isEC,
 				isReverseR, statFac[n], Q[n]);
 		}
+
+		//Partial Equil: if RGclass = 0, this RG has already been accounted
+		//When checking if in equilibrium, don't check for RGclass = 0
+		//Reactions in same group will not be counted
+		//ReacGroups[reactionIndex] = Reaction Group Class)
+		if(RGmemberIndex[n] == 0) {
+			ReacGroups[n] = *RGclass[n];
+		}
+			PEnumProducts[n] = numProducts[n];
+			if (displayInput)
+				printf("RG Reaction Index: %d, RGclass: %d\n", n, ReacGroups[n]);
+			if(Q[n] > 0) {
+				pnQ[n] = 1;
+			} else {
+				pnQ[n] = 0;
+			}
+
+			if (displayInput)
+				printf("Q+-: %d\n", pnQ[n]);
 		
 		// Line #2
 		
@@ -197,17 +220,17 @@ void Network::loadReactions(const char *filename)
 			status = fscanf(file, "%hu", &reactant[mm][n]);
 			
 			if (displayInput)
-				printf("\treactant[%d]: N=%d\n", mm, reactant[mm][n]);
+				printf("\treactantIndex[%d]: N=%d\n", mm, reactant[mm][n]);
 		}
 		
 		// Line #8
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
-			status = fscanf(file, "%d", &ProductIndex[mm]);
+			status = fscanf(file, "%hu", &product[mm][n]);
 			
 			if (displayInput)
-				printf("\tProductIndex[%d]: N=%d\n", mm, ProductIndex[mm]);
+				printf("\tproductIndex[%d]: N=%d\n", mm, product[mm][n]);
 		}
 		
 		if (displayInput)
@@ -494,9 +517,16 @@ void Network::allocate()
 	for (int i = 0; i < 7; i++)
 		P[i] = new fern_real[reactions];
 	
-	numReactingSpecies = new unsigned char[reactions];
+	numReactingSpecies = new unsigned char[reactions];	
+	PEnumProducts = new unsigned char[reactions];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
+	ReacGroups = new unsigned char[reactions];
+	pnQ = new unsigned char[reactions];
+	RGmemberIndex = new unsigned char[reactions];
+
+	for (int i = 0; i < 3; i++)
+		product[i] = new unsigned short[reactions];
 	
 	for (int i = 0; i < 3; i++)
 		reactant[i] = new unsigned short[reactions];
@@ -526,8 +556,15 @@ void Network::cudaAllocate()
 	}
 	
 	cudaMalloc(&numReactingSpecies, sizeof(unsigned char) * reactions);
+	cudaMalloc(&PEnumProducts, sizeof(unsigned char) * reactions);
+	cudaMalloc(&ReacGroups, sizeof(unsigned char) * reactions);
+	cudaMalloc(&pnQ, sizeof(unsigned char) * reactions);
+	cudaMalloc(&RGmemberIndex, sizeof(unsigned char) * reactions);
 	cudaMalloc(&statFac, sizeof(fern_real) * reactions);
 	cudaMalloc(&Q, sizeof(fern_real) * reactions);
+
+	for (int i = 0; i < 3; i++)
+		cudaMalloc(&product[i], sizeof(unsigned short) * reactions);
 	
 	for (int i = 0; i < 3; i++)
 		cudaMalloc(&reactant[i], sizeof(unsigned short) * reactions);
@@ -576,8 +613,22 @@ void Network::cudaCopy(const Network &source, cudaMemcpyKind kind)
 	
 	cudaMemcpy(numReactingSpecies, source.numReactingSpecies,
 		sizeof(unsigned char) * reactions, kind);
+	cudaMemcpy(PEnumProducts, source.PEnumProducts,
+		sizeof(unsigned char) * reactions, kind);
+    cudaMemcpy(ReacGroups, source.ReacGroups,
+        sizeof(unsigned char) * reactions, kind);
+    cudaMemcpy(pnQ, source.pnQ,
+        sizeof(unsigned char) * reactions, kind);
+	cudaMemcpy(RGmemberIndex, source.RGmemberIndex,
+		sizeof(unsigned char) * reactions, kind);
 	cudaMemcpy(statFac, source.statFac, sizeof(fern_real) * reactions, kind);
 	cudaMemcpy(Q, source.Q, sizeof(fern_real) * reactions, kind);
+//TODO: remove all unnecessary instances if possible, as there's already "reactant[i]" below... may only need to add product[i]
+    for (int i = 0; i < 3; i++)
+    {
+        cudaMemcpy(product[i], source.product[i],
+            sizeof(unsigned short) * reactions, kind);
+    }
 	
 	for (int i = 0; i < 3; i++)
 	{

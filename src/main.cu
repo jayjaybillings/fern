@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
 		
 		integrator.integrate(integrationData);
 		
-		integrationData.print();
+		integrationData.print(&integrator.network);
 	}
 	
 	return EXIT_SUCCESS;

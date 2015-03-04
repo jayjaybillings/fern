@@ -33,7 +33,7 @@ struct IntegrationData
 		vector will be printed.
 		Otherwise, the pointer to Y is printed.
 	*/
-	void print();
+	void print(Network *n);
 };
 
 #endif
