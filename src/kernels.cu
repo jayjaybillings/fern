@@ -203,17 +203,30 @@ __global__ void integrateNetwork(
 	fern_real c1;
 	fern_real c2;
 	fern_real c3;
+	fern_real c4;
 	//TODO: Add this back in -->	fern_real c4 = y_a+y_e; 
 	//coefficients for q and theoretical equilibrium abundance calculation
 	fern_real a;
 	fern_real b;
 	fern_real c;
+	//to be used in RG Class 5 PE calculation;
+	fern_real alpha;
+	fern_real beta;
+	fern_real gamma;
 	fern_real q;
-	fern_real y_eq; 
+	fern_real y_eq_a; 
+	fern_real y_eq_b; 
+	fern_real y_eq_c; 
+	fern_real y_eq_d; 
+	fern_real y_eq_e; 
 	//set tolerance for determining partial equilibrium
 	fern_real tolerance = .01;
 	//result of PE determination... if PE_val < tolerance, we're in equilibrium
-	fern_real PE_val;
+	fern_real PE_val_a;
+	fern_real PE_val_b;
+	fern_real PE_val_c;
+	fern_real PE_val_d;
+	fern_real PE_val_e;
 	//if in equilibrium I'll set this to 1
 	int eq;
 
@@ -323,17 +336,131 @@ __global__ void integrateNetwork(
 				if(network.ReacGroups[i] == 1) {
 					y_a = Y[network.reactant[0][i]];
 					y_b = Y[network.product[0][i]];
+                   //set specific constraints and coefficients for RGclass 2
+                    c1 = y_a+y_b;
+                    a = 0;
+                    b = -final_k[0][i];
+                    c = final_k[1][i];
+                    q = 0;
+
+                    //theoretical equilibrium population of given species
+                    y_eq_a = -c/b;
+                    y_eq_b = c1-y_eq_a;
+
+                    //is each reactant and product in equilibrium?
+                    PE_val_a = abs(y_a-y_eq_a)/(y_eq_a);
+                    PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
+                    if(PE_val_a < tolerance && PE_val_b < tolerance) {
+                        eq = 1;
+                    } else {
+                        eq = 0;
+                    }
+
+                    if(displayPEdata && !isnan(PE_val_a) && !isnan(PE_val_b)) {
+                        //only print if there are populations with which to calculate
+                        printf("Reaction Group ID: %d, RG Class: %d\n",i, network.ReacGroups[i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Reactant[%d]: %d\n",n, network.reactant[n][i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Product[%d]: %d\n",n, network.product[n][i]);
+
+                        printf("PE_val for y_a (Species: %d): %f\nPE_val for y_b (Species: %d): %f\nIs this RG in equilibrium?: %d\n",network.reactant[0][i],PE_val_a,network.product[0][i],PE_val_b,eq);
+                        printf("\n\n");
+                    }
 				} 
 				else if(network.ReacGroups[i] == 2) {
                     y_a = Y[network.reactant[0][i]];
                     y_b = Y[network.reactant[1][i]];
                     y_c = Y[network.product[0][i]];
+                    //set specific constraints and coefficients for RGclass 2
+                    c1 = y_b-y_a;
+                    c2 = y_b+y_c;
+                    a = -final_k[0][i];
+                    b = -(c1*final_k[0][i]+final_k[1][i]);
+                    c = final_k[1][i]*(c2-c1);
+                    q = (4*a*c)-(b*b);
+
+                    //theoretical equilibrium population of given species
+                    y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+                    y_eq_b = y_eq_a+c1;
+                    y_eq_c = c2-y_eq_b;
+
+                    //is each reactant and product in equilibrium?
+                    PE_val_a = abs(y_a-y_eq_a)/(y_eq_a);
+                    PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
+                    PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
+                    if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
+                        eq = 1;
+                    } else {
+                        eq = 0;
+                    }
+
+                    if(displayPEdata && !isnan(PE_val_a) && !isnan(PE_val_b) && !isnan(PE_val_c)) {
+                        //only print if there are populations with which to calculate
+                        printf("Reaction Group ID: %d, RG Class: %d\n",i, network.ReacGroups[i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Reactant[%d]: %d\n",n, network.reactant[n][i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Product[%d]: %d\n",n, network.product[n][i]);
+
+						printf("PE_val for y_a (Species: %d): %f\nPE_val for y_b (Species: %d): %f\nPE_val for y_c (Species: %d): %f\nIs this RG in equilibrium?: %d\n",
+							network.reactant[0][i],PE_val_a,
+							network.reactant[1][i],PE_val_b,
+							network.product[1][i],PE_val_c,
+							eq
+						);
+                        printf("\n\n");
+                    }
                 }
                 else if(network.ReacGroups[i] == 3) {
                     y_a = Y[network.reactant[0][i]];
                     y_b = Y[network.reactant[1][i]];
                     y_c = Y[network.reactant[2][i]];
                     y_d = Y[network.product[0][i]];
+                    //set specific constraints and coefficients for RGclass 3
+                    c1 = y_a-y_b;
+                    c2 = y_a-y_c;
+                    c3 = ((1/3)*(y_a+y_b+y_c))+y_d;
+                    a = final_k[0][i]*(c1+c2)-final_k[0][i]*y_a;
+                    b = -((final_k[0][i]*c1*c2)+final_k[1][i]);
+                    c = final_k[1][i]*(c3+(c1/3)+(c2/3));
+                    q = (4*a*c)-(b*b);
+
+                    //theoretical equilibrium population
+                    y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+                    y_eq_b = y_eq_a-c1;
+                    y_eq_c = y_eq_a-c2;
+                    y_eq_d = c3-y_eq_a+((1/3)*(c1+c2));
+
+                    //is each reactant and product in equilibrium?
+                    PE_val_a = abs(y_a-y_eq_a)/(y_eq_a);
+                    PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
+                    PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
+                    PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
+                    if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+                        eq = 1;
+                    } else {
+                        eq = 0;
+                    }
+
+                    if(displayPEdata && !isnan(PE_val_a) && !isnan(PE_val_b) && !isnan(PE_val_c) && !isnan(PE_val_d)) {
+                        //only print if there are populations with which to calculate
+                        printf("Reaction Group ID: %d, RG Class: %d\n",i, network.ReacGroups[i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Reactant[%d]: %d\n",n, network.reactant[n][i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Product[%d]: %d\n",n, network.product[n][i]);
+
+                        printf("PE_val for y_a (Species: %d): %f\nPE_val for y_b (Species: %d): %f\nPE_val for y_c (Species: %d): %f\nPE_val for y_d (Species: %d): %f\nIs this RG in equilibrium?: %d\n",
+                            network.reactant[0][i],PE_val_a,
+                            network.reactant[1][i],PE_val_b,
+                            network.reactant[2][i],PE_val_c,
+                            network.product[0][i],PE_val_d,
+                            eq
+                        );
+                        printf("\n\n");
+                    }
+
                 }
                 else if(network.ReacGroups[i] == 4) {
                     y_a = Y[network.reactant[0][i]];
@@ -341,7 +468,7 @@ __global__ void integrateNetwork(
                     y_c = Y[network.product[0][i]];
                     y_d = Y[network.product[1][i]];
 
-                    //set specific constraints and coefficients for RGclass 3
+                    //set specific constraints and coefficients for RGclass 4
                     c1 = y_a-y_b;
                     c2 = y_a+y_c;
                     c3 = y_a+y_d;
@@ -349,21 +476,25 @@ __global__ void integrateNetwork(
                     b = -(final_k[1][i]*(c2+c3))+(final_k[0][i]*c1);
                     c = final_k[1][i]*c2*c3;
 					q = (4*a*c)-(b*b);
-					//theoretical equilibrium population of given species which is the same for RG classes 2-5, 
-					//there is a different equations for RG class 1 which I'll add soon TODO
 
-					//TODO: What is the y_eq equation for y_b, y_c, and y_d? Can I use the same value? I doubt it...
-					y_eq = ((-.5/a)*(b+sqrt(-q)));	
+					//calculate theoretical equilibrium value
+					y_eq_a = ((-.5/a)*(b+sqrt(-q)));	
+					y_eq_b = y_eq_a-c1;
+					y_eq_c = c2-y_eq_a;
+					y_eq_d = c3-y_eq_a;
 				
-					//is y_a in equilibrium?	
-					PE_val = abs(y_a-y_eq)/(y_eq);
-					if(PE_val < tolerance) {
+					//is each reactant and product in equilibrium?	
+					PE_val_a = abs(y_a-y_eq_a)/(y_eq_a);
+					PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
+					PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
+					PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
+					if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
 						eq = 1;
 					} else {
 						eq = 0;
 					}
 
-					if(displayPEdata && !isnan(PE_val)) {
+					if(displayPEdata && !isnan(PE_val_a) && !isnan(PE_val_b) && !isnan(PE_val_c) && !isnan(PE_val_d)) {
                         //only print if there are populations with which to calculate
 						printf("Reaction Group ID: %d, RG Class: %d\n",i, network.ReacGroups[i]);
 						for (int n = 0; n < 2; n++)
@@ -371,7 +502,13 @@ __global__ void integrateNetwork(
 						for (int n = 0; n < 2; n++)
 							printf("Product[%d]: %d\n",n, network.product[n][i]);
 
-						printf("PE_val for y_a (Species: %d): %f\nIs y_a in equilibrium?: %d\n",network.reactant[0][i],PE_val,eq);
+                        printf("PE_val for y_a (Species: %d): %f\nPE_val for y_b (Species: %d): %f\nPE_val for y_c (Species: %d): %f\nPE_val for y_d (Species: %d): %f\nIs this RG in equilibrium?: %d\n",
+                            network.reactant[0][i],PE_val_a,
+                            network.reactant[1][i],PE_val_b,
+                            network.product[0][i],PE_val_c,
+                            network.product[1][i],PE_val_d,
+                            eq
+                        );
 						printf("\n\n");
 					}
 				}
@@ -381,6 +518,58 @@ __global__ void integrateNetwork(
                     y_c = Y[network.product[0][i]];
                     y_d = Y[network.product[1][i]];
 					y_e = Y[network.product[2][i]];
+
+                    //set specific constraints and coefficients for RGclass 5
+                    c1 = y_a+(1/3)*(y_c+y_d+y_e);
+                    c2 = y_a-y_b;
+                    c3 = y_c-y_d;
+                    c4 = y_c-y_e;
+                    a = (((3*c1)-y_a)*final_k[1][i])-final_k[0][i];
+					alpha = c1+((1/3)*(c3+c4));	
+					beta = c1-(2*c3/3)+(c4/3);	
+					gamma = c1+(c3/3)-(2*c4/3);	
+                    b = -(c2*final_k[0][i])-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*final_k[1][i]);
+                    c = final_k[1][i]*alpha*beta*gamma;
+                    q = (4*a*c)-(b*b);
+
+					//calculate theoretical equilibrium values
+                    y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+                    y_eq_b = y_eq_a-c2;
+                    y_eq_c = alpha-y_eq_a;
+                    y_eq_d = beta-y_eq_a;
+                    y_eq_e = gamma-y_eq_a;
+
+                    //is each reactant and product in equilibrium?
+                    PE_val_a = abs(y_a-y_eq_a)/(y_eq_a);
+                    PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
+                    PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
+                    PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
+                    PE_val_e = abs(y_e-y_eq_e)/(y_eq_e);
+                    if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
+                        eq = 1;
+                    } else {
+                        eq = 0;
+                    }
+
+                    if(displayPEdata && !isnan(PE_val_a) && !isnan(PE_val_b) && !isnan(PE_val_c) && !isnan(PE_val_d) && !isnan(PE_val_e)) {
+                        //only print if there are populations with which to calculate
+                        printf("Reaction Group ID: %d, RG Class: %d\n",i, network.ReacGroups[i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Reactant[%d]: %d\n",n, network.reactant[n][i]);
+                        for (int n = 0; n < 2; n++)
+                            printf("Product[%d]: %d\n",n, network.product[n][i]);
+
+                        printf("PE_val for y_a (Species: %d): %f\nPE_val for y_b (Species: %d): %f\nPE_val for y_c (Species: %d): %f\nPE_val for y_d (Species: %d): %f\nPE_val for y_e (Species: %d): %f\nIs this RG in equilibrium?: %d\n",
+                            network.reactant[0][i],PE_val_a,
+                            network.reactant[1][i],PE_val_b,
+                            network.product[0][i],PE_val_c,
+                            network.product[1][i],PE_val_d,
+                            network.product[2][i],PE_val_e,
+                            eq
+                        );
+                        printf("\n\n");
+                    }
+			
 				}
 				//reactions between 146 and 155 have carbon 12 and oxygen 16, and have non-zero starting populations
 				//if (i > 146 && i < 155) 
