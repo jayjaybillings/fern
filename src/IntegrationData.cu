@@ -59,6 +59,7 @@ void IntegrationData::allocate(unsigned short species)
 {
 	this->species = species;
 	Y = new fern_real[species];
+	eq = new int;
 }
 
 
@@ -66,6 +67,7 @@ void IntegrationData::cudaAllocate(unsigned short species)
 {
 	this->species = species;
 	cudaMalloc(&Y, sizeof(fern_real) * species);
+	cudaMalloc(&eq, sizeof(int));
 }
 
 
@@ -82,6 +84,7 @@ void IntegrationData::cudaCopy(const IntegrationData &source, cudaMemcpyKind kin
 	// Copy vectors
 	
 	cudaMemcpy(Y, source.Y, sizeof(fern_real) * species, kind);
+	cudaMemcpy(eq, source.eq, sizeof(int), kind);
 }
 
 
@@ -98,5 +101,6 @@ void IntegrationData::print(Network *n)
 	printf("Y: ");
     for (unsigned short i = 0; i < species; i++) {
         printf("Species %d: %s, Z = %d, Y = %e\n", i, n->isotopeLabel[i], n->Z[i], Y[i]);
+        printf("eq: %d\n", eq);
     }
 }

@@ -16,7 +16,7 @@ struct IntegrationData
 	fern_real rho;
 	
 	fern_real *Y;
-	
+	int *eq;	
 	
 	void loadAbundances(const char *filename);
 	
