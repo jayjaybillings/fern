@@ -194,7 +194,7 @@ __global__ void integrateNetwork(
 	/* Author: Daniel Shyles */
 	/* Begin Partial Equilibrium calculation */
     int RGParent;
-	const bool displayRGdata = true;
+	const bool displayRGdata = false;
     fern_real kf;
     fern_real kr;
     fern_real *final_k[2];
@@ -320,7 +320,6 @@ __global__ void integrateNetwork(
 		{
 			Yzero[i] = Y[i];
 		}
-
 		partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, 0.01, eq);
 		
 		__syncthreads();
@@ -771,6 +770,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
             y_c = 0;
             y_d = 0;
             y_e = 0;
+			eq = 0;
 			if(ReacGroups[i] !=0) {
 				//Get current population for each reactant and product of this RG
 				//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
@@ -780,6 +780,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 				// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null 
 				// in the reactant and product arrays.
 				if(ReacGroups[i] == 1) {
+					eq = 0;
 					y_a = Y[reactant[0][i]];
 					y_b = Y[product[0][i]];
                    //set specific constraints and coefficients for RGclass 1
@@ -803,6 +804,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     }
 				} 
 				else if(ReacGroups[i] == 2) {
+					eq = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[product[0][i]];
@@ -827,6 +829,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     }
                 }
                 else if(ReacGroups[i] == 3) {
+					eq = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[reactant[2][i]];
@@ -855,6 +858,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     }
                 }
                 else if(ReacGroups[i] == 4) {
+					eq = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[product[0][i]];
@@ -877,11 +881,13 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 					PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
 					PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
 					PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
-					if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+					if(PE_val_a < tolerance) {
 						eq = 1;
-					} else {
-						eq = 0;
 					}
+
+        if(threadIdx.x == 0){
+				printf("Reactant 1: %f\n", PE_val_a);
+        }
 				}
 				else if(ReacGroups[i] == 5) {
                     y_a = Y[reactant[0][i]];
@@ -922,10 +928,6 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 			}
 		}
 
-			if(threadIdx.x == 0) {
-				//for(int i = 0; i < 100; i++) 
-				//printf("eq: %f\n", product[0][i]);
-			}
 }
 
 __device__ void network_print(const Network &network)
