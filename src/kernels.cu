@@ -195,7 +195,6 @@ __global__ void integrateNetwork(
     fern_real kf;
     fern_real kr;
     fern_real *final_k[2];
-
 	if (tid == 0) {
 		//first set up array of final reaction rates for each RG based on Rate[i] calculated above
 		for(int m = 0; m < 2; m++)
@@ -303,7 +302,7 @@ __global__ void integrateNetwork(
 		{
 			Yzero[i] = Y[i];
 		}
-		//partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, network.RGid, network.numRG, 0.01, eq);
+		partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, network.pEquil, network.RGid, network.numRG, 0.01, eq);
 		
 		__syncthreads();
 		
@@ -716,7 +715,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 }
 
 /* Checks for partial equilibrium between reaction groups */
-/*__device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *RGid, int numRG, fern_real tolerance, int eq)
+__device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq)
 {
 	fern_real y_a;
 	fern_real y_b;
@@ -841,6 +840,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
                 }
                 else if(ReacGroups[RGid[i]] == 4) {
 					eq = 0;
+                    pEquil[i] = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[product[0][i]];
@@ -863,9 +863,19 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 					PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
 					PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
 					PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
-					if(PE_val_a < tolerance) {
+                if(threadIdx.x == 0) {
+                    if(PE_val_a > tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+                        pEquil[i] = 1;
+					}
+                    printf("a is in equilibrium for RG[%d]: %d\n",i, pEquil[i]);
+				}
+
+                    /*if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
 						eq = 1;
 					}
+				if(threadIdx.x == 0)
+					printf("TestingRGidoutput: %d\n", eq);
+*/
 				}
 				else if(ReacGroups[RGid[i]] == 5) {
                     y_a = Y[reactant[0][i]];
@@ -905,7 +915,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 				}
 		}
 
-}*/
+}
 
 __device__ void network_print(const Network &network)
 {

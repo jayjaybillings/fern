@@ -9,6 +9,7 @@ int main(int argc, char const *argv[])
 	FERNIntegrator integrator;
 	integrator.network.species = 16;
 	integrator.network.reactions = 48;
+	integrator.network.numRG = 19;
 	integrator.network.massTol = 1.0e-7;
 	integrator.network.fluxFrac = 0.01;
 

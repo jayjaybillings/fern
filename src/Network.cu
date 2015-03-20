@@ -95,7 +95,7 @@ void Network::loadReactions(const char *filename)
 	}
 	
 	// Read eight lines at a time
-	
+	numRG = 0;	
 	for (int n = 0; n < reactions; n++)
 	{
 		int status;
@@ -151,9 +151,10 @@ void Network::loadReactions(const char *filename)
         //loop through reactions to set up RG parents
 		int RGParent;
         if(ReacGroups[n] != 0) {
-            numRG++;
             //This indicates a new reaction group
             RGParent = n;
+			RGid[numRG] = n;
+            numRG++;
         }
         ReacParent[n] = RGParent;
 		
@@ -240,10 +241,10 @@ void Network::loadReactions(const char *filename)
 		if (displayInput)
 			printf("\n");
 	}
-		printf("numRG: %d\n", numRG);
 	
 	fclose(file);
 	
+		printf("numRG: %d\n", numRG);
 	
 	// We're not done yet.
 	// Finally parse the flux
@@ -525,11 +526,12 @@ void Network::allocate()
 	numReactingSpecies = new unsigned char[reactions];	
 	PEnumProducts = new unsigned char[reactions];
 	ReacParent = new int [reactions];
+	RGid = new int [numRG];
+	pEquil = new int [numRG];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
 	ReacGroups = new unsigned char[reactions];
 	pnQ = new unsigned char[reactions];
-	pEquil = new int [numRG];
 	RGmemberIndex = new unsigned char[reactions];
 
 	for (int i = 0; i < 3; i++)
@@ -565,8 +567,9 @@ void Network::cudaAllocate()
 	cudaMalloc(&numReactingSpecies, sizeof(unsigned char) * reactions);
 	cudaMalloc(&PEnumProducts, sizeof(unsigned char) * reactions);
 	cudaMalloc(&ReacParent, sizeof(int) * reactions);
-	cudaMalloc(&ReacGroups, sizeof(unsigned char) * reactions);
+	cudaMalloc(&RGid, sizeof(int) * numRG);
 	cudaMalloc(&pEquil, sizeof(int) * numRG);
+	cudaMalloc(&ReacGroups, sizeof(unsigned char) * reactions);
 	cudaMalloc(&pnQ, sizeof(unsigned char) * reactions);
 	cudaMalloc(&RGmemberIndex, sizeof(unsigned char) * reactions);
 	cudaMalloc(&statFac, sizeof(fern_real) * reactions);
@@ -586,6 +589,7 @@ void Network::setSizes(const Network &source)
 	reactions = source.reactions;
 	totalFplus = source.totalFplus;
 	totalFminus = source.totalFminus;
+	numRG = source.numRG;
 }
 
 
@@ -627,10 +631,12 @@ void Network::cudaCopy(const Network &source, cudaMemcpyKind kind)
 		sizeof(unsigned char) * reactions, kind);
 	cudaMemcpy(ReacParent, source.ReacParent,
 		sizeof(int) * reactions, kind);
+	cudaMemcpy(RGid, source.RGid,
+		sizeof(int) * numRG, kind);
+	cudaMemcpy(pEquil, source.pEquil,
+		sizeof(int) * numRG, kind);
     cudaMemcpy(ReacGroups, source.ReacGroups,
         sizeof(unsigned char) * reactions, kind);
-    cudaMemcpy(pEquil, source.pEquil,
-        sizeof(int) * numRG, kind);
     cudaMemcpy(pnQ, source.pnQ,
         sizeof(unsigned char) * reactions, kind);
 	cudaMemcpy(RGmemberIndex, source.RGmemberIndex,

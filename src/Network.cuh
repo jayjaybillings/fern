@@ -48,6 +48,7 @@ struct Network
     int *ReacParent; // [reactions] 
 	int numRG;
 	int *pEquil; //[numRG]
+	int *RGid; //[numRG]
 
 	
 	Network();
