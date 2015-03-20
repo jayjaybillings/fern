@@ -56,8 +56,6 @@ __global__ void integrateNetwork(
 	const fern_real massTol = network.massTol;
 	const fern_real fluxFrac = network.fluxFrac;
 
-	/* Declare pointer variables for Partial Equilibrium arrays */
-    int *ReacParent = new int [numberReactions];
 	/* Declare pointer variables for IntegrationData arrays.  */
 
 	fern_real *Y;
@@ -193,28 +191,17 @@ __global__ void integrateNetwork(
 
 	/* Author: Daniel Shyles */
 	/* Begin Partial Equilibrium calculation */
-    int RGParent;
 	const bool displayRGdata = false;
     fern_real kf;
     fern_real kr;
     fern_real *final_k[2];
 
 	if (tid == 0) {
-		//first loop through reactions to set up RG parents
-		int numRG = 0;
-		for(int i = 0; i < network.reactions; i++) {
-		    if(network.ReacGroups[i] != 0) {
-				numRG++;
-			    //This indicates a new reaction group
-				RGParent = i;
-		    }
-	        ReacParent[i] = RGParent;
-		}
-		//set up array of final reaction rates for each RG
+		//first set up array of final reaction rates for each RG based on Rate[i] calculated above
 		for(int m = 0; m < 2; m++)
-			final_k[m] = new fern_real [numRG];
+			final_k[m] = new fern_real [network.numRG];
 		if(displayRGdata)
-			printf("Start Reaction Group Data\nNumber Reaction Groups: %d\n\n",numRG);
+			printf("Start Reaction Group Data\nNumber Reaction Groups: %d\n\n",network.numRG);
 		//second to calculate final reaciton rates for each RG
 		for(int i = 0; i < network.reactions; i++) {
 
@@ -250,10 +237,6 @@ __global__ void integrateNetwork(
                 //iterate through each RGmember and calculate the total rate from forward and reverse reactions
                 for(int n = network.RGmemberIndex[i]; n >= 0; n--) {
                     //add the rate to forward reaction
-                    /****************************************************************************************************************************
-                     *TODO rework this such that reactions with multiple sets of parameters (n > 1, three or more reactions per reaction group) *
-                     *have their final rates (kf, kr) calculated properly. Currently being summed, but some other operation is necessary here...*
-                     ****************************************************************************************************************************/
                     if(network.pnQ[i-n] == 1) {
                         kf += Rate[i-n];
                     } else {
@@ -261,12 +244,12 @@ __global__ void integrateNetwork(
                         kr += Rate[i-n];
                     }
                 }
-                final_k[0][ReacParent[i]] = kf;
-                final_k[1][ReacParent[i]] = kr;
+                final_k[0][network.ReacParent[i]] = kf;
+                final_k[1][network.ReacParent[i]] = kr;
                 if(displayRGdata) {
                     printf("-----\n");
-                    printf("Final Forward Rate: kf = %f \n", final_k[0][ReacParent[i]]);
-                    printf("Final Reverse Rate: kr = %f \n", final_k[1][ReacParent[i]]);
+                    printf("Final Forward Rate: kf = %f \n", final_k[0][network.ReacParent[i]]);
+                    printf("Final Reverse Rate: kr = %f \n", final_k[1][network.ReacParent[i]]);
                     printf("\n\n\n");
                 }
             }
@@ -320,7 +303,7 @@ __global__ void integrateNetwork(
 		{
 			Yzero[i] = Y[i];
 		}
-		partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, 0.01, eq);
+		//partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, network.RGid, network.numRG, 0.01, eq);
 		
 		__syncthreads();
 		
@@ -733,7 +716,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 }
 
 /* Checks for partial equilibrium between reaction groups */
-__device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, fern_real tolerance, int eq)
+/*__device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *RGid, int numRG, fern_real tolerance, int eq)
 {
 	fern_real y_a;
 	fern_real y_b;
@@ -763,7 +746,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 	fern_real PE_val_e;
 
 		//final partial equilibrium loop for calculating equilibrium
-		for(int i = 0; i < numberReactions; i++) {
+		for(int i = 0; i < numRG; i++) {
 	        //reset RG reactant and product populations
             y_a = 0;
             y_b = 0;
@@ -771,7 +754,6 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
             y_d = 0;
             y_e = 0;
 			eq = 0;
-			if(ReacGroups[i] !=0) {
 				//Get current population for each reactant and product of this RG
 				//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
 				//TODO: Something to watch out for: if a reaction has, for example, three reactants and two products such as in RGclass 5,
@@ -779,7 +761,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 				// if the latter occurs, we'll need to add some logic to account for that. Right now, assuming that all RGParents are set up
 				// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null 
 				// in the reactant and product arrays.
-				if(ReacGroups[i] == 1) {
+				if(ReacGroups[RGid[i]] == 1) {
 					eq = 0;
 					y_a = Y[reactant[0][i]];
 					y_b = Y[product[0][i]];
@@ -803,7 +785,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                         eq = 0;
                     }
 				} 
-				else if(ReacGroups[i] == 2) {
+				else if(ReacGroups[RGid[i]] == 2) {
 					eq = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
@@ -828,7 +810,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                         eq = 0;
                     }
                 }
-                else if(ReacGroups[i] == 3) {
+                else if(ReacGroups[RGid[i]] == 3) {
 					eq = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
@@ -857,7 +839,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                         eq = 0;
                     }
                 }
-                else if(ReacGroups[i] == 4) {
+                else if(ReacGroups[RGid[i]] == 4) {
 					eq = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
@@ -884,12 +866,8 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 					if(PE_val_a < tolerance) {
 						eq = 1;
 					}
-
-        if(threadIdx.x == 0){
-				printf("Reactant 1: %f\n", PE_val_a);
-        }
 				}
-				else if(ReacGroups[i] == 5) {
+				else if(ReacGroups[RGid[i]] == 5) {
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[product[0][i]];
@@ -925,10 +903,9 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                         eq = 0;
                     }
 				}
-			}
 		}
 
-}
+}*/
 
 __device__ void network_print(const Network &network)
 {

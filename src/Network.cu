@@ -70,12 +70,9 @@ void Network::loadReactions(const char *filename)
 	
 	// Unused variables
 	char reactionLabel[100];
-//	int RGclass;
-//	int RGmemberIndex;
 	int reaclibClass;
 	int isEC;
 	int isReverseR;
-//	int tProductIndex[4];
 	
 	// Allocate the host-only memory to be used by parseFlux()
 	int *numProducts = new int [reactions];
@@ -86,9 +83,6 @@ void Network::loadReactions(const char *filename)
 	vec_4i *productZ = new vec_4i [reactions]; // [reactions]
 	vec_4i *productN = new vec_4i [reactions]; // [reactions]
 	vec_4i *RGclass = new vec_4i [reactions]; //DS partialeq
-	//DS reduce to reaction groups by reaction group class
-//    vec_4i *ReacGroups = new vec_4i [reactions]; 
-//	vec_4i *pnQ = new vec_4i [reactions];
 	
 	FILE *file = fopen(filename, "r");
 	
@@ -144,6 +138,7 @@ void Network::loadReactions(const char *filename)
 			PEnumProducts[n] = numProducts[n];
 			if (displayInput)
 				printf("RG Reaction Index: %d, RGclass: %d\n", n, ReacGroups[n]);
+			//establish if forward (+) or reverse (-) reaction for partial equilibrium
 			if(Q[n] > 0) {
 				pnQ[n] = 1;
 			} else {
@@ -152,6 +147,15 @@ void Network::loadReactions(const char *filename)
 
 			if (displayInput)
 				printf("Q+-: %d\n", pnQ[n]);
+
+        //loop through reactions to set up RG parents
+		int RGParent;
+        if(ReacGroups[n] != 0) {
+            numRG++;
+            //This indicates a new reaction group
+            RGParent = n;
+        }
+        ReacParent[n] = RGParent;
 		
 		// Line #2
 		
@@ -236,6 +240,7 @@ void Network::loadReactions(const char *filename)
 		if (displayInput)
 			printf("\n");
 	}
+		printf("numRG: %d\n", numRG);
 	
 	fclose(file);
 	
@@ -519,10 +524,12 @@ void Network::allocate()
 	
 	numReactingSpecies = new unsigned char[reactions];	
 	PEnumProducts = new unsigned char[reactions];
+	ReacParent = new int [reactions];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
 	ReacGroups = new unsigned char[reactions];
 	pnQ = new unsigned char[reactions];
+	pEquil = new int [numRG];
 	RGmemberIndex = new unsigned char[reactions];
 
 	for (int i = 0; i < 3; i++)
@@ -557,7 +564,9 @@ void Network::cudaAllocate()
 	
 	cudaMalloc(&numReactingSpecies, sizeof(unsigned char) * reactions);
 	cudaMalloc(&PEnumProducts, sizeof(unsigned char) * reactions);
+	cudaMalloc(&ReacParent, sizeof(int) * reactions);
 	cudaMalloc(&ReacGroups, sizeof(unsigned char) * reactions);
+	cudaMalloc(&pEquil, sizeof(int) * numRG);
 	cudaMalloc(&pnQ, sizeof(unsigned char) * reactions);
 	cudaMalloc(&RGmemberIndex, sizeof(unsigned char) * reactions);
 	cudaMalloc(&statFac, sizeof(fern_real) * reactions);
@@ -586,6 +595,7 @@ void Network::cudaCopy(const Network &source, cudaMemcpyKind kind)
 	
 	massTol = source.massTol;
 	fluxFrac = source.fluxFrac;
+	numRG = source.numRG;
 	
 	// Copy network vectors
 	
@@ -615,8 +625,12 @@ void Network::cudaCopy(const Network &source, cudaMemcpyKind kind)
 		sizeof(unsigned char) * reactions, kind);
 	cudaMemcpy(PEnumProducts, source.PEnumProducts,
 		sizeof(unsigned char) * reactions, kind);
+	cudaMemcpy(ReacParent, source.ReacParent,
+		sizeof(int) * reactions, kind);
     cudaMemcpy(ReacGroups, source.ReacGroups,
         sizeof(unsigned char) * reactions, kind);
+    cudaMemcpy(pEquil, source.pEquil,
+        sizeof(int) * numRG, kind);
     cudaMemcpy(pnQ, source.pnQ,
         sizeof(unsigned char) * reactions, kind);
 	cudaMemcpy(RGmemberIndex, source.RGmemberIndex,

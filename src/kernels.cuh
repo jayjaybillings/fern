@@ -28,7 +28,7 @@ __device__ fern_real NDreduceSum(fern_real *a, unsigned short length);
 __device__ fern_real reduceMax(fern_real *a, unsigned short length);
 
 
-__device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, fern_real tolerance, int eq);
+//__device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *RGid, int numRG, fern_real tolerance, int eq);
 
 
 size_t integrateNetwork_sharedSize(const Network &network);

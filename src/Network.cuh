@@ -45,6 +45,9 @@ struct Network
 	unsigned char *pnQ; //[reactions]
 	unsigned char *RGmemberIndex; // [reactions]
 	unsigned char *PEnumProducts; // [reactions]
+    int *ReacParent; // [reactions] 
+	int numRG;
+	int *pEquil; //[numRG]
 
 	
 	Network();
