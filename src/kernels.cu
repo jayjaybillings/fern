@@ -717,6 +717,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 /* Checks for partial equilibrium between reaction groups */
 __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq)
 {
+	if(threadIdx.x == 0) {
 	fern_real y_a;
 	fern_real y_b;
 	fern_real y_c;
@@ -752,7 +753,6 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
             y_c = 0;
             y_d = 0;
             y_e = 0;
-			eq = 0;
 				//Get current population for each reactant and product of this RG
 				//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
 				//TODO: Something to watch out for: if a reaction has, for example, three reactants and two products such as in RGclass 5,
@@ -761,7 +761,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 				// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null 
 				// in the reactant and product arrays.
 				if(ReacGroups[RGid[i]] == 1) {
-					eq = 0;
+                    pEquil[i] = 0;
 					y_a = Y[reactant[0][i]];
 					y_b = Y[product[0][i]];
                    //set specific constraints and coefficients for RGclass 1
@@ -779,13 +779,12 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     PE_val_a = abs(y_a-y_eq_a)/(y_eq_a);
                     PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
                     if(PE_val_a < tolerance && PE_val_b < tolerance) {
-                        eq = 1;
-                    } else {
-                        eq = 0;
-                    }
+                        pEquil[i] = 1;
+                    } 
+					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b);
 				} 
 				else if(ReacGroups[RGid[i]] == 2) {
-					eq = 0;
+                    pEquil[i] = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[product[0][i]];
@@ -804,13 +803,12 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
                     PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
-                        eq = 1;
-                    } else {
-                        eq = 0;
-                    }
+                        pEquil[i] = 1;
+                    } 
+					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\ny_eq_a: %f\ny_eq_b: %f\ny_eq_c: %f\ny_a: %f\ny_b: %f\ny_c: %f\nfinalkf: %f\nfinalkr:%f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, y_eq_a, y_eq_b, y_eq_c, y_a, y_b, y_c, final_k[0][i], final_k[1][i]);
                 }
                 else if(ReacGroups[RGid[i]] == 3) {
-					eq = 0;
+                    pEquil[i] = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[reactant[2][i]];
@@ -833,13 +831,11 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
                     PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
-                        eq = 1;
-                    } else {
-                        eq = 0;
-                    }
+                        pEquil[i] = 1;
+                    } 
+					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
                 }
                 else if(ReacGroups[RGid[i]] == 4) {
-					eq = 0;
                     pEquil[i] = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
@@ -863,21 +859,15 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 					PE_val_b = abs(y_b-y_eq_b)/(y_eq_b);
 					PE_val_c = abs(y_c-y_eq_c)/(y_eq_c);
 					PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
-                if(threadIdx.x == 0) {
-                    if(PE_val_a > tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
-                        pEquil[i] = 1;
+					//if(PE_val_a > tolerance) {
+					if(PE_val_a > tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+						pEquil[i] = 1;
 					}
-                    printf("a is in equilibrium for RG[%d]: %d\n",i, pEquil[i]);
-				}
-
-                    /*if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
-						eq = 1;
-					}
-				if(threadIdx.x == 0)
-					printf("TestingRGidoutput: %d\n", eq);
-*/
+					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n"
+							,i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
 				}
 				else if(ReacGroups[RGid[i]] == 5) {
+                    pEquil[i] = 0;
                     y_a = Y[reactant[0][i]];
                     y_b = Y[reactant[1][i]];
                     y_c = Y[product[0][i]];
@@ -908,13 +898,12 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     PE_val_d = abs(y_d-y_eq_d)/(y_eq_d);
                     PE_val_e = abs(y_e-y_eq_e)/(y_eq_e);
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
-                        eq = 1;
-                    } else {
-                        eq = 0;
-                    }
+                        pEquil[i] = 1;
+                    } 
+					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\nPE_val_e: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e);
 				}
 		}
-
+	}
 }
 
 __device__ void network_print(const Network &network)
