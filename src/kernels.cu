@@ -762,13 +762,13 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 				// in the reactant and product arrays.
 				if(ReacGroups[RGid[i]] == 1) {
                     pEquil[i] = 0;
-					y_a = Y[reactant[0][i]];
-					y_b = Y[product[0][i]];
+					y_a = Y[reactant[0][RGid[i]]];
+					y_b = Y[product[0][RGid[i]]];
                    //set specific constraints and coefficients for RGclass 1
                     c1 = y_a+y_b;
                     a = 0;
-                    b = -final_k[0][i];
-                    c = final_k[1][i];
+                    b = -final_k[0][RGid[i]];
+                    c = final_k[1][RGid[i]];
                     q = 0;
 
                     //theoretical equilibrium population of given species
@@ -785,14 +785,14 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 				} 
 				else if(ReacGroups[RGid[i]] == 2) {
                     pEquil[i] = 0;
-                    y_a = Y[reactant[0][i]];
-                    y_b = Y[reactant[1][i]];
-                    y_c = Y[product[0][i]];
+                    y_a = Y[reactant[0][RGid[i]]];
+                    y_b = Y[reactant[1][RGid[i]]];
+                    y_c = Y[product[0][RGid[i]]];
                     c1 = y_b-y_a;
                     c2 = y_b+y_c;
-                    a = -final_k[0][i];
-                    b = -(c1*final_k[0][i]+final_k[1][i]);
-                    c = final_k[1][i]*(c2-c1);
+                    a = -final_k[0][RGid[i]];
+                    b = -(c1*final_k[0][RGid[i]]+final_k[1][RGid[i]]);
+                    c = final_k[1][RGid[i]]*(c2-c1);
                     q = (4*a*c)-(b*b);
 
                     y_eq_a = ((-.5/a)*(b+sqrt(-q)));
@@ -805,20 +805,20 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
                         pEquil[i] = 1;
                     } 
-					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\ny_eq_a: %f\ny_eq_b: %f\ny_eq_c: %f\ny_a: %f\ny_b: %f\ny_c: %f\nfinalkf: %f\nfinalkr:%f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, y_eq_a, y_eq_b, y_eq_c, y_a, y_b, y_c, final_k[0][i], final_k[1][i]);
+					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\ny_eq_a: %f\ny_eq_b: %f\ny_eq_c: %f\ny_a: %f\ny_b: %f\ny_c: %f\nfinalkf: %f\nfinalkr:%f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, y_eq_a, y_eq_b, y_eq_c, y_a, y_b, y_c, final_k[0][RGid[i]], final_k[1][RGid[i]]);
                 }
                 else if(ReacGroups[RGid[i]] == 3) {
                     pEquil[i] = 0;
-                    y_a = Y[reactant[0][i]];
-                    y_b = Y[reactant[1][i]];
-                    y_c = Y[reactant[2][i]];
-                    y_d = Y[product[0][i]];
+                    y_a = Y[reactant[0][RGid[i]]];
+                    y_b = Y[reactant[1][RGid[i]]];
+                    y_c = Y[reactant[2][RGid[i]]];
+                    y_d = Y[product[0][RGid[i]]];
                     c1 = y_a-y_b;
                     c2 = y_a-y_c;
                     c3 = ((1/3)*(y_a+y_b+y_c))+y_d;
-                    a = final_k[0][i]*(c1+c2)-final_k[0][i]*y_a;
-                    b = -((final_k[0][i]*c1*c2)+final_k[1][i]);
-                    c = final_k[1][i]*(c3+(c1/3)+(c2/3));
+                    a = final_k[0][RGid[i]]*(c1+c2)-final_k[0][RGid[i]]*y_a;
+                    b = -((final_k[0][RGid[i]]*c1*c2)+final_k[1][RGid[i]]);
+                    c = final_k[1][RGid[i]]*(c3+(c1/3)+(c2/3));
                     q = (4*a*c)-(b*b);
 
                     y_eq_a = ((-.5/a)*(b+sqrt(-q)));
@@ -837,17 +837,17 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                 }
                 else if(ReacGroups[RGid[i]] == 4) {
                     pEquil[i] = 0;
-                    y_a = Y[reactant[0][i]];
-                    y_b = Y[reactant[1][i]];
-                    y_c = Y[product[0][i]];
-                    y_d = Y[product[1][i]];
+                    y_a = Y[reactant[0][RGid[i]]];
+                    y_b = Y[reactant[1][RGid[i]]];
+                    y_c = Y[product[0][RGid[i]]];
+                    y_d = Y[product[1][RGid[i]]];
 
                     c1 = y_a-y_b;
                     c2 = y_a+y_c;
                     c3 = y_a+y_d;
-                    a = final_k[1][i]-final_k[0][i];
-                    b = -(final_k[1][i]*(c2+c3))+(final_k[0][i]*c1);
-                    c = final_k[1][i]*c2*c3;
+                    a = final_k[1][RGid[i]]-final_k[0][RGid[i]];
+                    b = -(final_k[1][RGid[i]]*(c2+c3))+(final_k[0][RGid[i]]*c1);
+                    c = final_k[1][RGid[i]]*c2*c3;
 					q = (4*a*c)-(b*b);
 
 					y_eq_a = ((-.5/a)*(b+sqrt(-q)));	
@@ -868,22 +868,22 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 				}
 				else if(ReacGroups[RGid[i]] == 5) {
                     pEquil[i] = 0;
-                    y_a = Y[reactant[0][i]];
-                    y_b = Y[reactant[1][i]];
-                    y_c = Y[product[0][i]];
-                    y_d = Y[product[1][i]];
-					y_e = Y[product[2][i]];
+                    y_a = Y[reactant[0][RGid[i]]];
+                    y_b = Y[reactant[1][RGid[i]]];
+                    y_c = Y[product[0][RGid[i]]];
+                    y_d = Y[product[1][RGid[i]]];
+					y_e = Y[product[2][RGid[i]]];
 
                     c1 = y_a+(1/3)*(y_c+y_d+y_e);
                     c2 = y_a-y_b;
                     c3 = y_c-y_d;
                     c4 = y_c-y_e;
-                    a = (((3*c1)-y_a)*final_k[1][i])-final_k[0][i];
+                    a = (((3*c1)-y_a)*final_k[1][RGid[i]])-final_k[0][RGid[i]];
 					alpha = c1+((1/3)*(c3+c4));	
 					beta = c1-(2*c3/3)+(c4/3);	
 					gamma = c1+(c3/3)-(2*c4/3);	
-                    b = -(c2*final_k[0][i])-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*final_k[1][i]);
-                    c = final_k[1][i]*alpha*beta*gamma;
+                    b = -(c2*final_k[0][RGid[i]])-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*final_k[1][RGid[i]]);
+                    c = final_k[1][RGid[i]]*alpha*beta*gamma;
                     q = (4*a*c)-(b*b);
 
                     y_eq_a = ((-.5/a)*(b+sqrt(-q)));
