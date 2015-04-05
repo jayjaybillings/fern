@@ -1,7 +1,7 @@
 CXX = nvcc
 
 CXXFLAGS = -g -Xcompiler -Wall,-fopenmp -O3 \
-	-arch sm_35
+	-arch sm_20
 
 SRCS = \
 	src/main.cu \

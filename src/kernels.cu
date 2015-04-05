@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "kernels.cuh"
 
 extern __shared__ char dsmem[];
@@ -59,6 +60,7 @@ __global__ void integrateNetwork(
 	/* Declare pointer variables for IntegrationData arrays.  */
 
 	fern_real *Y;
+	fern_real *outputY[100];
 	int eq;
 
 	/* Assign globals pointers. */
@@ -201,6 +203,7 @@ __global__ void integrateNetwork(
 			final_k[m] = new fern_real [network.numRG];
 		if(displayRGdata)
 			printf("Start Reaction Group Data\nNumber Reaction Groups: %d\n\n",network.numRG);
+
 		//second to calculate final reaciton rates for each RG
 		for(int i = 0; i < network.reactions; i++) {
 
@@ -292,9 +295,16 @@ __global__ void integrateNetwork(
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
-	
+	//DSOUTPUT
+	fern_real intervalLogt = (log10(integrationData.t_max)-log10(t))/100;
+	fern_real nextOutput = log10(t)+intervalLogt;
 	while (t < integrationData.t_max)
 	{
+		if(tid == 0 && log10(t) >= nextOutput) {
+			printf("logt: %f\nnextOutput: %f\nintervalLogt: %f\nt_max: %e\n", log10(t), nextOutput, intervalLogt, integrationData.t_max);
+			nextOutput = log10(t)+intervalLogt;
+			printf("nextOutputafter: %f\n\n", nextOutput);
+		}
 		__syncthreads();
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		
@@ -744,6 +754,7 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 	fern_real PE_val_c;
 	fern_real PE_val_d;
 	fern_real PE_val_e;
+	bool PEprintData = false;
 
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
@@ -781,7 +792,8 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     if(PE_val_a < tolerance && PE_val_b < tolerance) {
                         pEquil[i] = 1;
                     } 
-					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b);
+					if(PEprintData)
+						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b);
 				} 
 				else if(ReacGroups[RGid[i]] == 2) {
                     pEquil[i] = 0;
@@ -805,7 +817,8 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
                         pEquil[i] = 1;
                     } 
-					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\ny_eq_a: %f\ny_eq_b: %f\ny_eq_c: %f\ny_a: %f\ny_b: %f\ny_c: %f\nfinalkf: %f\nfinalkr:%f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, y_eq_a, y_eq_b, y_eq_c, y_a, y_b, y_c, final_k[0][RGid[i]], final_k[1][RGid[i]]);
+                    if(PEprintData)
+						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\ny_eq_a: %f\ny_eq_b: %f\ny_eq_c: %f\ny_a: %f\ny_b: %f\ny_c: %f\nfinalkf: %f\nfinalkr:%f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, y_eq_a, y_eq_b, y_eq_c, y_a, y_b, y_c, final_k[0][RGid[i]], final_k[1][RGid[i]]);
                 }
                 else if(ReacGroups[RGid[i]] == 3) {
                     pEquil[i] = 0;
@@ -833,7 +846,8 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
                         pEquil[i] = 1;
                     } 
-					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
+                    if(PEprintData)
+						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
                 }
                 else if(ReacGroups[RGid[i]] == 4) {
                     pEquil[i] = 0;
@@ -863,7 +877,8 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
 					if(PE_val_a > tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
 						pEquil[i] = 1;
 					}
-					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n"
+                    if(PEprintData)
+						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n"
 							,i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
 				}
 				else if(ReacGroups[RGid[i]] == 5) {
@@ -900,7 +915,8 @@ __device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions
                     if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
                         pEquil[i] = 1;
                     } 
-					printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\nPE_val_e: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e);
+                    if(PEprintData)
+						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\nPE_val_e: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e);
 				}
 		}
 	}
