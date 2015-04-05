@@ -60,7 +60,11 @@ __global__ void integrateNetwork(
 	/* Declare pointer variables for IntegrationData arrays.  */
 
 	fern_real *Y;
-	fern_real *outputY[100];
+
+	//DSOUTPUT
+	const int numIntervals = 50;
+	fern_real *outputY[numIntervals];
+
 	int eq;
 
 	/* Assign globals pointers. */
@@ -296,15 +300,26 @@ __global__ void integrateNetwork(
 	
 	/* Main time integration loop */
 	//DSOUTPUT
-	fern_real intervalLogt = (log10(integrationData.t_max)-log10(t))/100;
+	fern_real intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
 	fern_real nextOutput = log10(t)+intervalLogt;
+	int outputCount = 0;
+
+
 	while (t < integrationData.t_max)
 	{
+		//DSOUTPUT
 		if(tid == 0 && log10(t) >= nextOutput) {
-			printf("logt: %f\nnextOutput: %f\nintervalLogt: %f\nt_max: %e\n", log10(t), nextOutput, intervalLogt, integrationData.t_max);
+			//printf("logt: %f\nnextOutput: %f\nintervalLogt: %f\nt_max: %e\n", log10(t), nextOutput, intervalLogt, integrationData.t_max);
 			nextOutput = log10(t)+intervalLogt;
-			printf("nextOutputafter: %f\n\n", nextOutput);
+			//printf("nextOutputafter: %f\n\n", nextOutput);
+				for(int m = 0; m < network.species; m++) {
+					outputY[outputCount] = new fern_real[network.species];
+					outputY[outputCount][m] = Y[m];
+					printf("intervalYval[%d][%d]: %f\n", outputCount, m, outputY[outputCount][m]);
+				}
+			outputCount++;
 		}
+
 		__syncthreads();
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		

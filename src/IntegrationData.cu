@@ -59,6 +59,8 @@ void IntegrationData::allocate(unsigned short species)
 {
 	this->species = species;
 	Y = new fern_real[species];
+	//DSOUTPUT
+	*outputY = new fern_real[species];
 }
 
 
@@ -66,6 +68,8 @@ void IntegrationData::cudaAllocate(unsigned short species)
 {
 	this->species = species;
 	cudaMalloc(&Y, sizeof(fern_real) * species);
+	//DSOUTPUT
+	cudaMalloc((fern_real**)&outputY, sizeof(fern_real) * 50 * species);
 }
 
 
@@ -82,6 +86,9 @@ void IntegrationData::cudaCopy(const IntegrationData &source, cudaMemcpyKind kin
 	// Copy vectors
 	
 	cudaMemcpy(Y, source.Y, sizeof(fern_real) * species, kind);
+	//DSOUTPUT
+	size_t pitch = species*sizeof(fern_real);
+	//cudaMemcpy2D(outputY, pitch, source.outputY, pitch, species*sizeof(fern_real), 50, kind);
 }
 
 
@@ -94,6 +101,9 @@ void IntegrationData::print(Network *n)
 	printf("t_max: %e\n", t_max);
 	printf("dt_init: %e\n", dt_init);
 	printf("rho: %e\n", rho);
+
+    //DSOUTPUT
+    printf("outputY: %f\n", outputY[0][1]);
 	
 	printf("Y: ");
     for (unsigned short i = 0; i < species; i++) {
