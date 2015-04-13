@@ -17,7 +17,7 @@ struct IntegrationData
 	
 	fern_real *Y;
 	/*DSOUTPUT*/
-	fern_real *outputY[50];
+	bool plotOutput;
 	
 	void loadAbundances(const char *filename);
 	

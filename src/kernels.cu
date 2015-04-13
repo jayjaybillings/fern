@@ -62,9 +62,11 @@ __global__ void integrateNetwork(
 	fern_real *Y;
 
 	//DSOUTPUT
+	const bool plotOutput = 0;
 	const int numIntervals = 50;
-	fern_real *outputY[numIntervals];
-
+	fern_real intervalLogt;
+    fern_real nextOutput;
+    int outputCount;
 	int eq;
 
 	/* Assign globals pointers. */
@@ -299,25 +301,38 @@ __global__ void integrateNetwork(
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
-	//DSOUTPUT
-	fern_real intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
-	fern_real nextOutput = log10(t)+intervalLogt;
-	int outputCount = 0;
+        if(plotOutput == 1) {
+            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
+            nextOutput = log10(t)+intervalLogt;
+            outputCount = 0;
+        }
 
+
+	if(tid==0 && plotOutput == 1)
+		printf("---startOutput---\n");
 
 	while (t < integrationData.t_max)
 	{
-		//DSOUTPUT
-		if(tid == 0 && log10(t) >= nextOutput) {
-			//printf("logt: %f\nnextOutput: %f\nintervalLogt: %f\nt_max: %e\n", log10(t), nextOutput, intervalLogt, integrationData.t_max);
-			nextOutput = log10(t)+intervalLogt;
-			//printf("nextOutputafter: %f\n\n", nextOutput);
+		if(plotOutput == 1) {
+		//stdout to file > fernOut.txt for plottable output
+			if(tid == 0 && log10(t) >= nextOutput) {
+				printf("---outputcount---\n");
 				for(int m = 0; m < network.species; m++) {
-					outputY[outputCount] = new fern_real[network.species];
-					outputY[outputCount][m] = Y[m];
-					printf("intervalYval[%d][%d]: %f\n", outputCount, m, outputY[outputCount][m]);
+					nextOutput = log10(t)+intervalLogt;
+						printf("Y: %e\n", Y[m]);
+						printf("Z: %d\n", Z[m]);
+						printf("N: %d\n", N[m]);
+						printf("Fplus: %e\n", Fplus[m]);
+						printf("Fminus: %e\n", Fminus[m]);
 				}
-			outputCount++;
+				printf("---startUniversaldata---\n");
+				printf("time: %e\n", t);
+				printf("deltat: %e\n", dt);
+				printf("T9: %e\n", integrationData.T9);
+				printf("rho: %e\n", integrationData.rho);
+				printf("sumX: %e\n", sumX);
+				outputCount++;
+			}
 		}
 
 		__syncthreads();
@@ -570,6 +585,8 @@ __global__ void integrateNetwork(
 		
 		sumXLast = sumX;
 	}
+    if(tid==0 && plotOutput == 1)
+	    printf("---endOutput---\n");
 }
 
 

@@ -12,7 +12,6 @@ int main(int argc, char const *argv[])
 	integrator.network.numRG = 19;
 	integrator.network.massTol = 1.0e-7;
 	integrator.network.fluxFrac = 0.01;
-
 	integrator.network.allocate();
 	integrator.network.loadNetwork("CUDAnet_alpha.inp");
 	integrator.network.loadReactions("rateLibrary_alpha.data");
