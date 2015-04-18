@@ -1,4 +1,4 @@
-CXX = gcc
+CXX = g++
 
 CXXFLAGS = -g -Wall -O3
 
