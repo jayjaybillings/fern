@@ -174,7 +174,7 @@ void integrateNetwork(
 	{
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		
-		for (int i = tid; i < numberSpecies; i += blockDim.x)
+		for (int i = 0; i < numberSpecies; i++)
 		{
 			Yzero[i] = Y[i];
 		}
@@ -184,7 +184,7 @@ void integrateNetwork(
 		
 		/* Parallel version of flux calculation */
 		
-		for (int i = tid; i < numberReactions; i += blockDim.x)
+		for (int i = 0; i < numberReactions; i++)
 		{
 			int nr = network.numReactingSpecies[i];
 			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
@@ -222,44 +222,28 @@ void integrateNetwork(
 		
 		int minny;
 		
-		for (int i = tid; i < numberSpecies; i += blockDim.x)
-		{
-            minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
-			if ((FplusMax[i] + 1) - minny < 40)
-			{
-				/* Serially sum secction of F+. */
-				FplusSum[i] = 0.0;
-				for (int j = minny; j <= FplusMax[i]; j++)
-				{
-					FplusSum[i] += Fplus[j];
-				}
-
-				/* Serially sum section of F-. */
-            	minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
-				FminusSum[i] = 0.0;
-				for (int j = minny; j <= FminusMax[i]; j++)
-				{
-					FminusSum[i] += Fminus[j];
-				}
-			}
-		}
-		
 		for (int i = 0; i < numberSpecies; i++)
 		{
             minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
-			if ((FplusMax[i] + 1) - minny >= 40)
+			/* Serially sum secction of F+. */
+			FplusSum[i] = 0.0;
+			for (int j = minny; j <= FplusMax[i]; j++)
 			{
-				FplusSum[i] = NDreduceSum(Fplus + minny, (FplusMax[i] + 1) - minny);
+				FplusSum[i] += Fplus[j];
+			}
 
-            	minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
-				FminusSum[i] = NDreduceSum(Fminus + minny, (FminusMax[i] + 1) - minny);
+			/* Serially sum section of F-. */
+           	minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
+			FminusSum[i] = 0.0;
+			for (int j = minny; j <= FminusMax[i]; j++)
+			{
+				FminusSum[i] += Fminus[j];
 			}
 		}
-
 		
 		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
 		
-		for (int i = tid; i < numberSpecies; i += blockDim.x)
+		for (int i = 0; i < numberSpecies; i++)
 		{
 			#ifdef FERN_SINGLE
 				Fdiff[i] = fabsf(FplusSum[i] - FminusSum[i]);
@@ -283,21 +267,18 @@ void integrateNetwork(
 		
 		/* Determine an initial trial timestep based on fluxes and dt in previous step. */
 		
-		if (tid == 0)
-		{
-			dtFlux = fluxFrac / maxFlux;
-			dtFloor = floorFac * t;
-			if (dtFlux > dtFloor) dtFlux = dtFloor;
+		dtFlux = fluxFrac / maxFlux;
+		dtFloor = floorFac * t;
+		if (dtFlux > dtFloor) dtFlux = dtFloor;
 			
-			dt = dtFlux;
-			if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
-		}
+		dt = dtFlux;
+		if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
 		
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		/* Compute sum of mass fractions sumX for all species. */
 		
-		for (int i = tid; i < numberSpecies; i += blockDim.x)
+		for (int i = 0; i < numberSpecies; i++)
 		{
 			/* Compute mass fraction X from abundance Y. */
 			X[i] = massNum[i] * Y[i];
@@ -313,37 +294,33 @@ void integrateNetwork(
 		   number and modify trial timestep accordingly.
 		*/
 		
-		if (tid == 0)
-		{
-			#ifdef FERN_SINGLE
-				fern_real test1 = fabsf(sumXLast - 1.0);
-				fern_real test2 = fabsf(sumX - 1.0);
-				massChecker = fabsf(sumXLast - sumX);
-						   
-				if (test2 > test1 && massChecker > massTol)
-				{
-					dt *= fmaxf(massTol / fmaxf(massChecker, (fern_real) 1.0e-16), downbumper);
-				}
-				else if (massChecker < massTolUp)
-				{
-					dt *= (massTol / (fmaxf(massChecker, upbumper)));
-				}
-			#else
-				fern_real test1 = fabs(sumXLast - 1.0);
-				fern_real test2 = fabs(sumX - 1.0);
-				massChecker = fabs(sumXLast - sumX);
-						   
-				if (test2 > test1 && massChecker > massTol)
-				{
-					dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
-				}
-				else if (massChecker < massTolUp)
-				{
-					dt *= (massTol / (fmax(massChecker, upbumper)));
-				}
+		#ifdef FERN_SINGLE
+			fern_real test1 = fabsf(sumXLast - 1.0);
+			fern_real test2 = fabsf(sumX - 1.0);
+			massChecker = fabsf(sumXLast - sumX);
 
-			#endif
-		}
+			if (test2 > test1 && massChecker > massTol)
+			{
+				dt *= fmaxf(massTol / fmaxf(massChecker, (fern_real) 1.0e-16), downbumper);
+			}
+			else if (massChecker < massTolUp)
+			{
+				dt *= (massTol / (fmaxf(massChecker, upbumper)));
+			}
+		#else
+			fern_real test1 = fabs(sumXLast - 1.0);
+			fern_real test2 = fabs(sumX - 1.0);
+			massChecker = fabs(sumXLast - sumX);
+
+			if (test2 > test1 && massChecker > massTol)
+			{
+				dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
+			}
+			else if (massChecker < massTolUp)
+			{
+				dt *= (massTol / (fmax(massChecker, upbumper)));
+			}
+		#endif
 		
 		
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
@@ -365,16 +342,13 @@ void integrateNetwork(
 		
 		if (t + dt >= integrationData.t_max)
 		{
-			if (tid == 0)
-			{
 				/*
 				   TODO
 				   Copy back to CPU for dt_init next operator split integration.
 				   Params2[2] = dt;
 				*/
 				
-				dt = integrationData.t_max - t;
-			}
+			dt = integrationData.t_max - t;
 			
 			
 			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
@@ -385,7 +359,7 @@ void integrateNetwork(
 		
 		/* Now that final dt is set, compute final sum of mass fractions sumX. */
 		
-		for (int i = tid; i < numberSpecies; i += blockDim.x)
+		for (int i = 0; i < numberSpecies; i++)
 		{
 			/* Compute mass fraction X from abundance Y. */
 			X[i] = massNum[i] * Y[i];
@@ -394,13 +368,10 @@ void integrateNetwork(
 		sumX = NDreduceSum(X, numberSpecies);
 		
 		
-		if (tid == 0)
-		{
-			/* Increment the integration time and set the new timestep. */
+		/* Increment the integration time and set the new timestep. */
 			
-			t += dt;
-			timesteps++;
-		}
+		t += dt;
+		timesteps++;
 		
 		sumXLast = sumX;
 	}
@@ -445,32 +416,6 @@ inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum, fern_real 
 }
 
 /*
-   Performs a parallel sum reduction in O(log(length)) time
-
-   The given array is overwritten by intermediate values during computation.
-   The maximum array size is 2 * blockDim.x.
-*/
-
-fern_real reduceSum(fern_real *a, unsigned short length)
-{
-	const int tid = threadIdx.x;
-	unsigned short k = length;
-	
-	do
-	{
-		k = (k + 1) / 2;
-		
-		if (tid < k && tid + k < length)
-			a[tid] += a[tid + k];
-		
-		length = k;
-	}
-	while (k > 1);
-	
-	return a[0];
-}
-
-/*
    Non-destructive sum reduction.
    Same as previous, but copies array to dsmem allocated
    to the global scratch_space before executing algorithm.
@@ -482,7 +427,7 @@ fern_real NDreduceSum(fern_real *a, unsigned short length)
 
 	sum = 0;
 
-	for (int i = 0; i < a; i++) {
+	for (int i = 0; i < length; i++) {
 		sum += a[i];
 	}
 
@@ -517,9 +462,7 @@ fern_real reduceMax(fern_real *a, unsigned short length)
 void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	unsigned short *MapFsign, unsigned short totalFsign)
 {
-	const int tid = threadIdx.x;
-	
-	for (int i = tid; i < totalFsign; i += blockDim.x)
+	for (int i = 0; i < totalFsign; i++)
 	{
 		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
 	}
@@ -531,10 +474,8 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	fern_real *Y, fern_real *Yzero, unsigned short numberSpecies, fern_real dt)
 {
-	const int tid = threadIdx.x;
-	
 	/* Parallel Update populations based on this trial timestep. */
-	for (int i = tid; i < numberSpecies; i += blockDim.x)
+	for (int i = 0; i < numberSpecies; i++)
 	{
 		if (checkAsy(FminusSum[i], Y[i], dt))
 		{
