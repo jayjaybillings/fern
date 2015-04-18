@@ -5,6 +5,7 @@
 #include "Network.hpp"
 #include "IntegrationData.hpp"
 #include "Globals.hpp"
+#include <cstdint>
 
 
 void integrateNetwork(
