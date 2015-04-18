@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "kernels.hpp"
+#include <cmath>
 
 void integrateNetwork(
 	Network network,
