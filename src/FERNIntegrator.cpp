@@ -30,5 +30,7 @@ FERNIntegrator::~FERNIntegrator()
 
 void FERNIntegrator::integrate(IntegrationData &integrationData)
 {
-	integrateNetwork(devNetwork,devIntegrationData,devGlobalsPt);
+	Globals globals;
+
+	integrateNetwork(network, integrationData, &globals);
 }
