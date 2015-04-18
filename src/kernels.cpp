@@ -2,9 +2,9 @@
 #include "kernels.hpp"
 
 extern __shared__ char dsmem[];
-__device__ fern_real *scratch_space;
+fern_real *scratch_space;
 
-__global__ void integrateNetwork(
+void integrateNetwork(
 	Network network,
 	IntegrationData integrationData,
 	Globals *globalsPtr
@@ -483,7 +483,7 @@ __global__ void integrateNetwork(
    asymptotic condition. Returns 1 if it does and 0 if not.
 */
 
-__device__ inline bool checkAsy(fern_real Fminus, fern_real Y, fern_real dt)
+inline bool checkAsy(fern_real Fminus, fern_real Y, fern_real dt)
 {
 	/* This is not needed because 1.0 / 0.0 == inf in C and inf > 1.0 */
 	
@@ -499,7 +499,7 @@ __device__ inline bool checkAsy(fern_real Fminus, fern_real Y, fern_real dt)
 
 /* Returns the updated Y using the asymptotic formula */
 
-__device__ inline fern_real asymptoticUpdate(fern_real Fplus, fern_real Fminus, fern_real Y, fern_real dt)
+inline fern_real asymptoticUpdate(fern_real Fplus, fern_real Fminus, fern_real Y, fern_real dt)
 {
 	/* Sophia He formula */
 	return (Y + Fplus * dt) / (1.0 + Fminus * dt / Y);
@@ -508,7 +508,7 @@ __device__ inline fern_real asymptoticUpdate(fern_real Fplus, fern_real Fminus, 
 
 /* Returns the Y specified by speciesIndex updated using the forward Euler method */
 
-__device__ inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum, fern_real Y, fern_real dt)
+inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum, fern_real Y, fern_real dt)
 {
 	return Y + (FplusSum - FminusSum) * dt;
 }
@@ -520,7 +520,7 @@ __device__ inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum,
    The maximum array size is 2 * blockDim.x.
 */
 
-__device__ fern_real reduceSum(fern_real *a, unsigned short length)
+fern_real reduceSum(fern_real *a, unsigned short length)
 {
 	const int tid = threadIdx.x;
 	unsigned short k = length;
@@ -546,7 +546,7 @@ __device__ fern_real reduceSum(fern_real *a, unsigned short length)
    to the global scratch_space before executing algorithm.
 */
 
-__device__ fern_real NDreduceSum(fern_real *a, unsigned short length)
+fern_real NDreduceSum(fern_real *a, unsigned short length)
 {
     const int tid = threadIdx.x;
     unsigned short k = length;
@@ -579,7 +579,7 @@ __device__ fern_real NDreduceSum(fern_real *a, unsigned short length)
    The given array is overwritten by intermediate values during computation.
    The maximum array size is 2 * blockDim.x.
 */
-__device__ fern_real reduceMax(fern_real *a, unsigned short length)
+fern_real reduceMax(fern_real *a, unsigned short length)
 {
 	const int tid = threadIdx.x;
 	unsigned short k = length;
@@ -609,7 +609,7 @@ __device__ fern_real reduceMax(fern_real *a, unsigned short length)
    of this function uses the term 'sign' to replace 'plus' and 'minus'.
 */
 
-__device__ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
+void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	unsigned short *MapFsign, unsigned short totalFsign)
 {
 	const int tid = threadIdx.x;
@@ -623,7 +623,7 @@ __device__ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux
 
 /* Updates populations based on the trial timestep */
 
-__device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
+inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	fern_real *Y, fern_real *Yzero, unsigned short numberSpecies, fern_real dt)
 {
 	const int tid = threadIdx.x;
@@ -642,7 +642,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 	}
 }
 
-__device__ void network_print(const Network &network)
+void network_print(const Network &network)
 {
 	/* Network data */
 	
