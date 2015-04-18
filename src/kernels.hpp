@@ -18,7 +18,7 @@ bool checkAsy(fern_real, fern_real, fern_real);
 fern_real asymptoticUpdate(fern_real, fern_real, fern_real, fern_real);
 fern_real eulerUpdate(fern_real, fern_real, fern_real, fern_real);
 
-vice__ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
+void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	unsigned short *MapFsign, unsigned short totalFsign);
 inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	fern_real *Y, fern_real *Yzero, unsigned short numberSpecies, fern_real dt);

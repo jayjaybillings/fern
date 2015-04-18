@@ -20,9 +20,6 @@ struct Globals
 	fern_real *Yzero;
 	fern_real *FplusSum;
 	fern_real *FminusSum;
-	
-	void cudaAllocate(const Network &network);
-	// void cudaFree();
 };
 
 #endif
