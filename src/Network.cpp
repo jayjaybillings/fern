@@ -1,7 +1,8 @@
 
 #include "Network.hpp"
-#include <stdio.h>
-#include <assert.h>
+#include <cstdio>
+#include <cassert>
+#include <cstdlib>
 #include "FERNIntegrator.hpp"
 
 

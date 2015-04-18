@@ -1,7 +1,8 @@
 
 #include "IntegrationData.hpp"
 #include "Network.hpp"
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
 
 
 void IntegrationData::loadAbundances(const char *filename)

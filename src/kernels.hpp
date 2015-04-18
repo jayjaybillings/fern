@@ -7,7 +7,7 @@
 #include "Globals.hpp"
 
 
-__global__ void integrateNetwork(
+void integrateNetwork(
 	Network network,
 	IntegrationData integrationData,
 	Globals *globalsPtr
