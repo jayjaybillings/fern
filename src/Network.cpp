@@ -1,8 +1,8 @@
 
-#include "Network.cuh"
+#include "Network.hpp"
 #include <stdio.h>
 #include <assert.h>
-#include "FERNIntegrator.cuh"
+#include "FERNIntegrator.hpp"
 
 
 Network::Network()

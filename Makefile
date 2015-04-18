@@ -3,12 +3,12 @@ CXX = gcc
 CXXFLAGS = -g -Wall -O3
 
 SRCS = \
-	src/main.cu \
-	src/FERNIntegrator.cu \
-	src/Network.cu \
-	src/Globals.cu \
-	src/IntegrationData.cu \
-	src/kernels.cu
+	src/main.cpp \
+	src/FERNIntegrator.cpp \
+	src/Network.cpp \
+	src/Globals.cpp \
+	src/IntegrationData.cpp \
+	src/kernels.cpp
 
 OBJS = $(SRCS:.cu=.o)
 

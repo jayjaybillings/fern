@@ -1,7 +1,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "FERNIntegrator.cuh"
+#include "FERNIntegrator.hpp"
 
 int main(int argc, char const *argv[])
 {

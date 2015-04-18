@@ -1,5 +1,5 @@
-#include "Globals.cuh"
-#include "Network.cuh"
+#include "Globals.hpp"
+#include "Network.hpp"
 
 
 void Globals::cudaAllocate(const Network &network)

@@ -1,4 +1,4 @@
-#include "Network.cuh"
+#include "Network.hpp"
 
 #ifndef IntegrationData_cuh
 #define IntegrationData_cuh

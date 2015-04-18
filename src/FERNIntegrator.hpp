@@ -10,7 +10,7 @@
 #ifndef FERNIntegrator_cuh
 #define FERNIntegrator_cuh
 
-#include "IntegrationData.cuh"
+#include "IntegrationData.hpp"
 
 
 class FERNIntegrator

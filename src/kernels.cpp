@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "kernels.cuh"
+#include "kernels.hpp"
 
 extern __shared__ char dsmem[];
 __device__ fern_real *scratch_space;

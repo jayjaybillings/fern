@@ -1,6 +1,6 @@
 
-#include "IntegrationData.cuh"
-#include "Network.cuh"
+#include "IntegrationData.hpp"
+#include "Network.hpp"
 #include <stdio.h>
 
 

@@ -2,9 +2,9 @@
 #ifndef kernels_cuh
 #define kernels_cuh
 
-#include "Network.cuh"
-#include "IntegrationData.cuh"
-#include "Globals.cuh"
+#include "Network.hpp"
+#include "IntegrationData.hpp"
+#include "Globals.hpp"
 
 
 __global__ void integrateNetwork(

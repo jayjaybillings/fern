@@ -1,5 +1,5 @@
 
-#include "FERNIntegrator.cuh"
+#include "FERNIntegrator.hpp"
 
 #ifndef Network_cuh
 #define Network_cuh

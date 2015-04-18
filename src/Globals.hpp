@@ -1,4 +1,4 @@
-#include "FERNIntegrator.cuh"
+#include "FERNIntegrator.hpp"
 
 #ifndef Globals_cuh
 #define Globals_cuh

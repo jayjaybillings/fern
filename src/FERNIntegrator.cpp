@@ -1,7 +1,7 @@
 
-#include "FERNIntegrator.cuh"
-#include "Globals.cuh"
-#include "kernels.cuh"
+#include "FERNIntegrator.hpp"
+#include "Globals.hpp"
+#include "kernels.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
