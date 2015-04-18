@@ -107,16 +107,8 @@ struct Network
 		size
 	*/
 	void allocate();
-	void cudaAllocate();
 	void setSizes(const Network &source);
 	
-	// void free();
-	// void cudaFree();
-	
-	/**	Copies the fields and vectors of the source to `this`
-	*/
-	void cudaCopy(const Network &source, cudaMemcpyKind kind);
-
 	void print();
 };
 

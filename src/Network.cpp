@@ -502,38 +502,6 @@ void Network::allocate()
 		reactant[i] = new unsigned short[reactions];
 }
 
-
-void Network::cudaAllocate()
-{
-	// Allocate network data
-	
-	cudaMalloc(&Z, sizeof(unsigned char) * species);
-	cudaMalloc(&N, sizeof(unsigned char) * species);
-	
-	cudaMalloc(&FplusFac, sizeof(fern_real) * totalFplus);
-	cudaMalloc(&FminusFac, sizeof(fern_real) * totalFminus);
-	cudaMalloc(&MapFplus, sizeof(unsigned short) * totalFplus);
-	cudaMalloc(&MapFminus, sizeof(unsigned short) * totalFminus);
-	
-	cudaMalloc(&FplusMax, sizeof(unsigned short) * species);
-	cudaMalloc(&FminusMax, sizeof(unsigned short) * species);
-	
-	// Allocate reaction data
-	
-	for (int i = 0; i < 7; i++)
-	{
-		cudaMalloc(&P[i], sizeof(fern_real) * reactions);
-	}
-	
-	cudaMalloc(&numReactingSpecies, sizeof(unsigned char) * reactions);
-	cudaMalloc(&statFac, sizeof(fern_real) * reactions);
-	cudaMalloc(&Q, sizeof(fern_real) * reactions);
-	
-	for (int i = 0; i < 3; i++)
-		cudaMalloc(&reactant[i], sizeof(unsigned short) * reactions);
-}
-
-
 void Network::setSizes(const Network &source)
 {
 	species = source.species;
@@ -541,51 +509,6 @@ void Network::setSizes(const Network &source)
 	totalFplus = source.totalFplus;
 	totalFminus = source.totalFminus;
 }
-
-
-void Network::cudaCopy(const Network &source, cudaMemcpyKind kind)
-{
-	// Copy scalars
-	
-	massTol = source.massTol;
-	fluxFrac = source.fluxFrac;
-	
-	// Copy network vectors
-	
-	cudaMemcpy(Z, source.Z, sizeof(unsigned char) * species, kind);
-	cudaMemcpy(N, source.N, sizeof(unsigned char) * species, kind);
-	
-	FERNIntegrator::checkCudaErrors();
-	cudaMemcpy(FplusFac, source.FplusFac, sizeof(fern_real) * totalFplus, kind);
-	FERNIntegrator::checkCudaErrors();
-	cudaMemcpy(FminusFac, source.FminusFac, sizeof(fern_real) * totalFminus, kind);
-	FERNIntegrator::checkCudaErrors();
-	cudaMemcpy(MapFplus, source.MapFplus, sizeof(unsigned short) * totalFplus, kind);
-	cudaMemcpy(MapFminus, source.MapFminus, sizeof(unsigned short) * totalFminus, kind);
-	
-	cudaMemcpy(FplusMax, source.FplusMax, sizeof(unsigned short) * species, kind);
-	cudaMemcpy(FminusMax, source.FminusMax, sizeof(unsigned short) * species, kind);
-	
-	// Copy reaction vectors
-	
-	
-	for (int i = 0; i < 7; i++)
-	{
-		cudaMemcpy(P[i], source.P[i], sizeof(fern_real) * reactions, kind);
-	}
-	
-	cudaMemcpy(numReactingSpecies, source.numReactingSpecies,
-		sizeof(unsigned char) * reactions, kind);
-	cudaMemcpy(statFac, source.statFac, sizeof(fern_real) * reactions, kind);
-	cudaMemcpy(Q, source.Q, sizeof(fern_real) * reactions, kind);
-	
-	for (int i = 0; i < 3; i++)
-	{
-		cudaMemcpy(reactant[i], source.reactant[i],
-			sizeof(unsigned short) * reactions, kind);
-	}
-}
-
 
 void Network::print()
 {

@@ -61,30 +61,6 @@ void IntegrationData::allocate(unsigned short species)
 	Y = new fern_real[species];
 }
 
-
-void IntegrationData::cudaAllocate(unsigned short species)
-{
-	this->species = species;
-	cudaMalloc(&Y, sizeof(fern_real) * species);
-}
-
-
-void IntegrationData::cudaCopy(const IntegrationData &source, cudaMemcpyKind kind)
-{
-	// Copy scalars
-	
-	T9 = source.T9;
-	t_init = source.t_init;
-	t_max = source.t_max;
-	dt_init = source.dt_init;
-	rho = source.rho;
-	
-	// Copy vectors
-	
-	cudaMemcpy(Y, source.Y, sizeof(fern_real) * species, kind);
-}
-
-
 void IntegrationData::print()
 {
 	printf("species: %d\n", species);

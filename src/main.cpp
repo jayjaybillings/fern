@@ -16,11 +16,6 @@ int main(int argc, char const *argv[])
 	integrator.network.loadNetwork("CUDAnet_150.inp");
 	integrator.network.loadReactions("rateLibrary_150.data");
 
-	/* Initialize the solver */
-
-	integrator.initializeCuda();
-	integrator.prepareKernel();
-
 	// Create the unique integration data
 
 	{
@@ -34,10 +29,8 @@ int main(int argc, char const *argv[])
 		integrationData.dt_init = 1.23456789e-22;
 		integrationData.rho = 1.0e8;
 
-		// Launch the kernel
-		
+		// Launch the integrator
 		integrator.integrate(integrationData);
-		
 		integrationData.print();
 	}
 	

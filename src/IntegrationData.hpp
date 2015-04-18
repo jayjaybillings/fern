@@ -21,11 +21,6 @@ struct IntegrationData
 	void loadAbundances(const char *filename);
 	
 	void allocate(unsigned short species);
-	void cudaAllocate(unsigned short species);
-	
-	/**	Copies the fields and vectors of the source to `this`
-	*/
-	void cudaCopy(const IntegrationData &source, cudaMemcpyKind kind);
 	
 	/**	Prints all scalars and vectors to stdout
 		
