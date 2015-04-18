@@ -6,6 +6,7 @@ SRCS = \
 	src/main.cpp \
 	src/FERNIntegrator.cpp \
 	src/Network.cpp \
+	src/Globals.cpp \
 	src/IntegrationData.cpp \
 	src/kernels.cpp
 

@@ -20,6 +20,8 @@ struct Globals
 	fern_real *Yzero;
 	fern_real *FplusSum;
 	fern_real *FminusSum;
+
+	void allocate(Network &network);
 };
 
 #endif
