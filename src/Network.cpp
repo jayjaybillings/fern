@@ -341,11 +341,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	printf("FLUX SPARSENESS: Non-zero F+ = %d; Non-zero F- = %d, out of %d x %d = %d possibilities.\n",
 		totalFplus, totalFminus, reactions, species, reactions * species);
 	
-	
-	
 	/*******************************************/
-	
-	
 	// Create 1D arrays to hold non-zero F+ and F- for all reactions for all isotopes,
 	// the arrays holding the species factors FplusFac and FminusFac,
 	// and also arrays to hold their sums for each isotope. Note that parseF() must
@@ -365,8 +361,6 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	
 	int *FplusIsotopeIndex = new int [totalFplus];
 	int *FminusIsotopeIndex = new int [totalFminus];
-	
-	
 	
 	FplusIsotopeCut[0] = numFluxPlus[0];
 	FminusIsotopeCut[0] = numFluxMinus[0];
@@ -390,19 +384,6 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 		if (i == (FminusIsotopeCut[currentIso] - 1)) currentIso ++;
 	}
 	
-	// Diagnostic output
-	// if (showFparsing == 1)
-	// {
-	// 	printf("\n\n");
-	// 	printf("MAX F+ and F- INDEX FOR EACH ISOTOPE:\n");
-	// 	for (int i = 0; i < species; i++)
-	// 	{
-	// 		printf("\n");
-	// 		printf("Isotope index = %d  %s  Max index F+ = %d  Max index F- = %d\n",
-	// 			   i, isoLabel[i], FplusIsotopeCut[i] - 1, FminusIsotopeCut[i] - 1);
-	// 	}
-	// }
-	
 	for (int i = 0; i < totalFplus; i++)
 	{
 		MapFplus[i] = tempInt1[i];
@@ -416,7 +397,6 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	// Populate the FplusMin and FplusMax arrays
 	unsigned short *FplusMin = new unsigned short [species];
 	unsigned short *FminusMin = new unsigned short [species];
-	
 	
 	FplusMin[0] = 0;
 	FplusMax[0] = numFluxPlus[0] - 1;

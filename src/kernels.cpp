@@ -497,25 +497,15 @@ fern_real NDreduceSum(fern_real *a, unsigned short length)
 */
 fern_real reduceMax(fern_real *a, unsigned short length)
 {
-	const int tid = threadIdx.x;
-	unsigned short k = length;
+    fern_real max;
+    max = a[0];
+    for (int i = 0; i < length; i++) {
+        if (a[i] > max) {
+            max = a[i];    
+        }
+    }
 	
-	do
-	{
-		k = (k + 1) / 2;
-		
-		if (tid < k && tid + k < length)
-			#ifdef FERN_SINGLE
-				a[tid] = fmaxf(a[tid], a[tid + k]);
-			#else
-				a[tid] = fmax(a[tid], a[tid + k]);
-			#endif
-		
-		length = k;
-	}
-	while (k > 1);
-	
-	return a[0];
+	return max;
 }
 
 /*
