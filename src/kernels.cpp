@@ -1,17 +1,12 @@
 #include <stdio.h>
 #include "kernels.hpp"
 
-extern __shared__ char dsmem[];
-fern_real *scratch_space;
-
 void integrateNetwork(
 	Network network,
 	IntegrationData integrationData,
 	Globals *globalsPtr
 )
 {
-	const int tid = threadIdx.x;
-	
 	Globals &globals = *globalsPtr;
 
 	/*
@@ -88,102 +83,59 @@ void integrateNetwork(
 	
 	Y = integrationData.Y;
 
-	/*
-	   TODO
-	   Evaluate shared bank conflicts to avoid serializing the shared
-	   memory accesses.
-
-	   Ref: https://developer.nvidia.com/content/using-shared-memory-cuda-cc
-	*/
-
-	/* Allocate shared memory. */
-
-	int shared_pos;
-
-	shared_pos = 0;
-
-	FplusSum = (fern_real *) (dsmem + shared_pos);
-	shared_pos += network.species * sizeof(fern_real);
-	FminusSum = (fern_real *) (dsmem + shared_pos);
-	shared_pos += network.species * sizeof(fern_real);
-
-	/*
-	   Allocate dsmem scratch space (see NDreduceSum).
-	   To be safe, ensure numberReactions * sizeof(fern_real)
-	   bytes are available, although this can be trimmed
-	   quite a bit for production.
-	*/
-
-	scratch_space = (fern_real *) (dsmem + shared_pos);
-	shared_pos += network.reactions * sizeof(fern_real);
-
-	if (tid == 0) printf("%d bytes of dsmem used.\n", shared_pos);
-
-	__syncthreads();
-
-
-	/* Static shared memory */
-	
-	__shared__ fern_real maxFlux;
-	__shared__ fern_real sumX;
-	__shared__ fern_real t;
-	__shared__ fern_real dt;
-	__shared__ unsigned int timesteps;
+	fern_real maxFlux;
+	fern_real sumX;
+	fern_real t;
+	fern_real dt;
+	unsigned int timesteps;
 	
 	fern_real sumXLast;
 
 	/* Compute the preFac vector. */
 	
-	if (tid == 0)
+	for (int i = 0; i < network.reactions; i++)
 	{
-		for (int i = 0; i < network.reactions; i++)
-		{
-			#ifdef FERN_SINGLE
-				globals.preFac[i] = network.statFac[i] *
-					powf(integrationData.rho, network.numReactingSpecies[i] - 1);
-			#else
-				globals.preFac[i] = network.statFac[i] *
-					pow(integrationData.rho, network.numReactingSpecies[i] - 1);
-			#endif
-		}
+		#ifdef FERN_SINGLE
+			globals.preFac[i] = network.statFac[i] *
+				powf(integrationData.rho, network.numReactingSpecies[i] - 1);
+		#else
+			globals.preFac[i] = network.statFac[i] *
+				pow(integrationData.rho, network.numReactingSpecies[i] - 1);
+		#endif
 	}
 
 	/* Compute the rate values. */
 
-	if (tid == 0)
-	{
-		/*
-		   Compute the temperature-dependent factors for the rates.
-		   Since we assume the GPU integration to be done at constant
-		   temperature and density, these only need be calculated once
-		   per GPU call.
-		*/
-		
-		fern_real T93 = cbrt(integrationData.T9);
-		fern_real t1 = 1 / integrationData.T9;
-		fern_real t2 = 1 / T93;
-		fern_real t3 = T93;
-		fern_real t4 = integrationData.T9;
-		fern_real t5 = T93 * T93 * T93 * T93 * T93;
-		fern_real t6 = log(integrationData.T9);
-		
-		for (int i = 0; i < network.reactions; i++)
-		{
-			#ifdef FERN_SINGLE
-				Rate[i] = globals.preFac[i] * expf(
-					     network.P[0][i] + t1 * network.P[1][i] +
-					t2 * network.P[2][i] + t3 * network.P[3][i] +
-					t4 * network.P[4][i] + t5 * network.P[5][i] +
-					t6 * network.P[6][i]);
-			#else
-	 			Rate[i] = globals.preFac[i] * exp(
-					     network.P[0][i] + t1 * network.P[1][i] +
-					t2 * network.P[2][i] + t3 * network.P[3][i] +
-					t4 * network.P[4][i] + t5 * network.P[5][i] +
-					t6 * network.P[6][i]);
-			#endif
+	/*
+	   Compute the temperature-dependent factors for the rates.
+	   Since we assume the GPU integration to be done at constant
+	   temperature and density, these only need be calculated once
+	   per GPU call.
+	*/
 
-		}
+	fern_real T93 = cbrt(integrationData.T9);
+	fern_real t1 = 1 / integrationData.T9;
+	fern_real t2 = 1 / T93;
+	fern_real t3 = T93;
+	fern_real t4 = integrationData.T9;
+	fern_real t5 = T93 * T93 * T93 * T93 * T93;
+	fern_real t6 = log(integrationData.T9);
+
+	for (int i = 0; i < network.reactions; i++)
+	{
+		#ifdef FERN_SINGLE
+			Rate[i] = globals.preFac[i] * expf(
+				     network.P[0][i] + t1 * network.P[1][i] +
+				t2 * network.P[2][i] + t3 * network.P[3][i] +
+				t4 * network.P[4][i] + t5 * network.P[5][i] +
+				t6 * network.P[6][i]);
+		#else
+ 			Rate[i] = globals.preFac[i] * exp(
+				     network.P[0][i] + t1 * network.P[1][i] +
+				t2 * network.P[2][i] + t3 * network.P[3][i] +
+				t4 * network.P[4][i] + t5 * network.P[5][i] +
+				t6 * network.P[6][i]);
+		#endif
 	}
 
 	/*
@@ -192,12 +144,9 @@ void integrateNetwork(
 	   code as well as the Java version.
 	*/
 	
-	if (tid == 0)
-	{
-		t = 1.0e-20;
-		dt = integrationData.dt_init;
-		timesteps = 1;
-	}
+	t = 1.0e-20;
+	dt = integrationData.dt_init;
+	timesteps = 1;
 	
 	fern_real floorFac = 0.1;
 	fern_real upbumper = 0.9 * massTol;
@@ -210,21 +159,19 @@ void integrateNetwork(
 	
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
 	
-	for (int i = tid; i < numberSpecies; i += blockDim.x)
+	for (int i = 0; i < numberSpecies; i++)
 	{
 		massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
 		/* Compute mass fraction X from abundance Y. */
 		X[i] = massNum[i] * Y[i];
 	}
 	
-	__syncthreads();
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
 	
 	while (t < integrationData.t_max)
 	{
-		__syncthreads();
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		
 		for (int i = tid; i < numberSpecies; i += blockDim.x)
@@ -232,7 +179,6 @@ void integrateNetwork(
 			Yzero[i] = Y[i];
 		}
 		
-		__syncthreads();
 		
 		/* Compute the fluxes from the previously-computed rates and the current abundances. */
 		
@@ -256,14 +202,12 @@ void integrateNetwork(
 			}
 		}
 		
-		__syncthreads();
 		
 		/* Populate the F+ and F- arrays in parallel from the master Flux array. */
 		
 		populateF(Fplus, FplusFac, Flux, MapFplus, totalFplus);
 		populateF(Fminus, FminusFac, Flux, MapFminus, totalFminus);
 
-		__syncthreads();
 
 		/*
 		   Sum the F+ and F- for each isotope. These are "sub-arrays"
@@ -312,7 +256,6 @@ void integrateNetwork(
 			}
 		}
 
-		__syncthreads();
 		
 		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
 		
@@ -325,13 +268,11 @@ void integrateNetwork(
 			#endif
 		}
 		
-		__syncthreads();
 		
 		/* Call tree algorithm to find max of array Fdiff. */
 
 		maxFlux = reduceMax(Fdiff, numberSpecies);
 
-		__syncthreads();
 		
 		/*
 		   Now use the fluxes to update the populations in parallel for this timestep.
@@ -352,9 +293,7 @@ void integrateNetwork(
 			if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
 		}
 		
-		__syncthreads();
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
-		__syncthreads();
 		
 		/* Compute sum of mass fractions sumX for all species. */
 		
@@ -364,10 +303,8 @@ void integrateNetwork(
 			X[i] = massNum[i] * Y[i];
 		}
 		
-		__syncthreads();
 		sumX = NDreduceSum(X, numberSpecies);
 		
-		__syncthreads();
 		
 		/*
 		   Now modify timestep if necessary to ensure that particle number is conserved to
@@ -408,11 +345,9 @@ void integrateNetwork(
 			#endif
 		}
 		
-		__syncthreads();
 		
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
-		__syncthreads();
 		
 		/*
 		   Store the actual timestep that would be taken. Same as dt unless
@@ -441,12 +376,10 @@ void integrateNetwork(
 				dt = integrationData.t_max - t;
 			}
 			
-			__syncthreads();
 			
 			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		}
 		
-		__syncthreads();
 		
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 		
@@ -458,10 +391,8 @@ void integrateNetwork(
 			X[i] = massNum[i] * Y[i];
 		}
 		
-		__syncthreads();
 		sumX = NDreduceSum(X, numberSpecies);
 		
-		__syncthreads();
 		
 		if (tid == 0)
 		{
@@ -533,7 +464,6 @@ fern_real reduceSum(fern_real *a, unsigned short length)
 			a[tid] += a[tid + k];
 		
 		length = k;
-		__syncthreads();
 	}
 	while (k > 1);
 	
@@ -548,29 +478,15 @@ fern_real reduceSum(fern_real *a, unsigned short length)
 
 fern_real NDreduceSum(fern_real *a, unsigned short length)
 {
-    const int tid = threadIdx.x;
-    unsigned short k = length;
-    fern_real *b;
+	int sum;
 
-    b = scratch_space;
+	sum = 0;
 
-    for (int i = tid; i < k; i += blockDim.x) {
-        b[i] = a[i];
-    }
+	for (int i = 0; i < a; i++) {
+		sum += a[i];
+	}
 
-    __syncthreads();
-
-    do {
-        k = (k + 1) / 2;
-
-        if (tid < k && tid + k < length)
-            b[tid] += b[tid + k];
-
-        length = k;
-        __syncthreads();
-    } while (k > 1);
-
-    return b[0];
+    return sum;
 }
 
 /*
@@ -596,7 +512,6 @@ fern_real reduceMax(fern_real *a, unsigned short length)
 			#endif
 		
 		length = k;
-		__syncthreads();
 	}
 	while (k > 1);
 	
