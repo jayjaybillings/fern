@@ -9,7 +9,7 @@ SRCS = \
 	src/IntegrationData.cpp \
 	src/kernels.cpp
 
-OBJS = $(SRCS:.cu=.o)
+OBJS = $(SRCS:.cpp=.o)
 
 all: build/fern
 
