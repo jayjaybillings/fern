@@ -1,7 +1,6 @@
-CXX = nvcc
+CXX = gcc
 
-CXXFLAGS = -g -Xcompiler -Wall,-fopenmp -O3 \
-	-arch sm_35
+CXXFLAGS = -g -Wall -O3
 
 SRCS = \
 	src/main.cu \
