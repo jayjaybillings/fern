@@ -376,7 +376,6 @@ void integrateNetwork(
 		
 		sumXLast = sumX;
 	}
-	printf("%d timesteps.\n", timesteps);
 }
 
 
@@ -577,11 +576,4 @@ void network_print(const Network &network)
 	for (int i = 0; i < network.species; i++)
 		printf("%4u ", network.FminusMax[i]);
 	printf("}\n");
-}
-
-size_t integrateNetwork_sharedSize(const Network &network)
-{
-	size_t size = 49100;
-
-	return size;
 }
