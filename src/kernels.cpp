@@ -376,6 +376,7 @@ void integrateNetwork(
 		
 		sumXLast = sumX;
 	}
+	printf("%d timesteps.\n", timesteps);
 }
 
 
@@ -424,9 +425,9 @@ inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum, fern_real 
 
 fern_real NDreduceSum(fern_real *a, unsigned short length)
 {
-	int sum;
+	fern_real sum;
 
-	sum = 0;
+	sum = 0.0;
 
 	for (int i = 0; i < length; i++) {
 		sum += a[i];
