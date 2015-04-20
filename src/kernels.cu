@@ -62,11 +62,17 @@ __global__ void integrateNetwork(
 	fern_real *Y;
 
 	//DSOUTPUT
-	const bool plotOutput = 0;
-	const int numIntervals = 50;
+	const bool plotOutput = 1;
+	const int numIntervals = 125;
+	int plotStartTime = -16;
 	fern_real intervalLogt;
     fern_real nextOutput;
-    int outputCount;
+    int outputCount = 0;
+	int setNextOut = 0;
+	fern_real asyCount = 0;
+	fern_real peCount = 0;
+    fern_real FracAsy = 0; 
+    fern_real FracRGPE = 0;
 	int eq;
 
 	/* Assign globals pointers. */
@@ -301,36 +307,39 @@ __global__ void integrateNetwork(
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
-        if(plotOutput == 1) {
-            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
-            nextOutput = log10(t)+intervalLogt;
-            outputCount = 0;
-        }
-
-
 	if(tid==0 && plotOutput == 1)
-		printf("---startOutput---\n");
+		printf("SO\n");//StartOutput
 
 	while (t < integrationData.t_max)
 	{
-		if(plotOutput == 1) {
+		if(plotOutput == 1 && log10(t) >= plotStartTime) {
+			//Do this once after log10(t) >= plotStartTime.
+			if(setNextOut == 0) {
+	            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
+				nextOutput = log10(t)+intervalLogt;
+				setNextOut = 1;
+			}
 		//stdout to file > fernOut.txt for plottable output
 			if(tid == 0 && log10(t) >= nextOutput) {
-				printf("---outputcount---\n");
+				printf("OC\n");//OutputCount
+				nextOutput = log10(t)+intervalLogt;
+				asyCount = 0;
+				peCount = 0;
 				for(int m = 0; m < network.species; m++) {
-					nextOutput = log10(t)+intervalLogt;
-						printf("Y: %e\n", Y[m]);
-						printf("Z: %d\n", Z[m]);
-						printf("N: %d\n", N[m]);
-						printf("Fplus: %e\n", Fplus[m]);
-						printf("Fminus: %e\n", Fminus[m]);
+					printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
+
+					if(checkAsy(FminusSum[m], Y[m], dt))
+						asyCount++;	
 				}
-				printf("---startUniversaldata---\n");
-				printf("time: %e\n", t);
-				printf("deltat: %e\n", dt);
-				printf("T9: %e\n", integrationData.T9);
-				printf("rho: %e\n", integrationData.rho);
-				printf("sumX: %e\n", sumX);
+                //check frac RG PartialEq
+	            partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, network.pEquil, network.RGid, network.numRG, 0.01, eq);
+				for(int i = 0; i < network.numRG; i++) {
+					if(network.pEquil[i] == 1)
+						peCount++;			
+				}
+				FracAsy = asyCount/network.species;
+				FracRGPE = peCount/network.numRG;
+				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T9, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
 				outputCount++;
 			}
 		}
@@ -342,7 +351,7 @@ __global__ void integrateNetwork(
 		{
 			Yzero[i] = Y[i];
 		}
-		partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, network.pEquil, network.RGid, network.numRG, 0.01, eq);
+//		partialEquil(Y, numberReactions, network.ReacGroups, network.reactant, network.product, final_k, network.pEquil, network.RGid, network.numRG, 0.01, eq);
 		
 		__syncthreads();
 		
@@ -586,7 +595,7 @@ __global__ void integrateNetwork(
 		sumXLast = sumX;
 	}
     if(tid==0 && plotOutput == 1)
-	    printf("---endOutput---\n");
+	    printf("EO\n");//EndOutput
 }
 
 
@@ -757,7 +766,7 @@ __device__ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusS
 }
 
 /* Checks for partial equilibrium between reaction groups */
-__device__ inline void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq)
+__device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsigned char *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq)
 {
 	if(threadIdx.x == 0) {
 	fern_real y_a;
