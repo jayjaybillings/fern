@@ -67,9 +67,9 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
+	static const bool displayPEInput = true;
 	
 	// Unused variables
-	char reactionLabel[100];
 	int reaclibClass;
 	int isEC;
 	int isReverseR;
@@ -96,20 +96,22 @@ void Network::loadReactions(const char *filename)
 	
 	// Read eight lines at a time
 	numRG = 0;	
+    reactionLabel = (char **) malloc(sizeof(char *) * reactions);
 	for (int n = 0; n < reactions; n++)
 	{
+		reactionLabel[n] = (char *) malloc(sizeof(char) * 50);
 		int status;
 		
 		// Line #1
 
 		#ifdef FERN_SINGLE		
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %f %f",
-				reactionLabel, &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
 				&statFac[n], &Q[n]);
 		#else
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %lf %lf",
-				reactionLabel, &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
 				&statFac[n], &Q[n]);
 		#endif
@@ -123,7 +125,7 @@ void Network::loadReactions(const char *filename)
 			printf("isReverseR = %d reaclibIndex = %d\n RGclass = %d\n",
 				isReverseR, reaclibClass, *RGclass[n]);
 			printf("%s %d %d %d %d %d %d %d %f %f\n",
-				reactionLabel, &RGclass[n], RGmemberIndex[n], reaclibClass,
+				reactionLabel[n], &RGclass[n], RGmemberIndex[n], reaclibClass,
 				numReactingSpecies[n], numProducts[n], isEC,
 				isReverseR, statFac[n], Q[n]);
 		}
@@ -154,6 +156,8 @@ void Network::loadReactions(const char *filename)
             //This indicates a new reaction group
             RGParent = n;
 			RGid[numRG] = n;
+			if (displayPEInput)
+				printf("RG #%d: %s\n", numRG, reactionLabel[n]);
             numRG++;
         }
         ReacParent[n] = RGParent;

@@ -68,7 +68,15 @@ foreach($outIntervals as $outIntID => $outIntVal) {
     $masterRho[$outIntID] = $splodemessyRhoVal[0];
     $parseSumX[$outIntID] = $splodemessyRhoVal[1];
 
-    $masterSumX[$outIntID] = str_replace("\n","", $parseSumX[$outIntID]);
+    $splodemessySumXVal = explode("fasy:", $parseSumX[$outIntID]);
+    $masterSumX[$outIntID] = $splodemessySumXVal[0];
+    $parseFracAsy[$outIntID] = $splodemessySumXVal[1];
+
+    $splodemessyFracAsyVal = explode("frpe:", $parseFracAsy[$outIntID]);
+    $masterFracAsy[$outIntID] = $splodemessyFracAsyVal[0];
+    $parseFracRGPE[$outIntID] = $splodemessyFracAsyVal[1];
+
+    $masterFracRGPE[$outIntID] = str_replace("\n","", $parseFracRGPE[$outIntID]);
 
 } //end foreach($outIntID)
 
@@ -113,6 +121,14 @@ $finalOut .= "0.5000 ";
 }
 $finalOut .= "\n\nsumX(time):\n";
 foreach($masterSumX as $v) {
+$finalOut .= $v." ";
+}
+$finalOut .= "\n\nFracAsy(time):\n";
+foreach($masterFracAsy as $v) {
+$finalOut .= $v." ";
+}
+$finalOut .= "\n\nFracRGPE(time):\n";
+foreach($masterFracRGPE as $v) {
 $finalOut .= $v." ";
 }
 

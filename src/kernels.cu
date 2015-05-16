@@ -62,8 +62,8 @@ __global__ void integrateNetwork(
 	fern_real *Y;
 
 	//DSOUTPUT
-	const bool plotOutput = 1;
-	const int numIntervals = 125;
+	const bool plotOutput = 0;
+	const int numIntervals = 100;
 	int plotStartTime = -16;
 	fern_real intervalLogt;
     fern_real nextOutput;
@@ -209,6 +209,7 @@ __global__ void integrateNetwork(
     fern_real kf;
     fern_real kr;
     fern_real *final_k[2];
+	int countRG = 0;
 	if (tid == 0) {
 		//first set up array of final reaction rates for each RG based on Rate[i] calculated above
 		for(int m = 0; m < 2; m++)
@@ -251,6 +252,7 @@ __global__ void integrateNetwork(
                 //iterate through each RGmember and calculate the total rate from forward and reverse reactions
                 for(int n = network.RGmemberIndex[i]; n >= 0; n--) {
                     //add the rate to forward reaction
+					//printf("Rate[RG:%d][%d]: %e\n",countRG,network.pnQ[i-n], Rate[i-n]);
                     if(network.pnQ[i-n] == 1) {
                         kf += Rate[i-n];
                     } else {
@@ -260,12 +262,15 @@ __global__ void integrateNetwork(
                 }
                 final_k[0][network.ReacParent[i]] = kf;
                 final_k[1][network.ReacParent[i]] = kr;
+                    printf("kf[RGID:%d] = %e \n", countRG, final_k[0][network.ReacParent[i]]);
+                    printf("kr[RGID:%d] = %e \n", countRG, final_k[1][network.ReacParent[i]]);
                 if(displayRGdata) {
                     printf("-----\n");
                     printf("Final Forward Rate: kf = %f \n", final_k[0][network.ReacParent[i]]);
                     printf("Final Reverse Rate: kr = %f \n", final_k[1][network.ReacParent[i]]);
                     printf("\n\n\n");
                 }
+				countRG++;
             }
 		}
 	}
@@ -316,13 +321,14 @@ __global__ void integrateNetwork(
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
 	            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
-				nextOutput = log10(t)+intervalLogt;
+				nextOutput = log10(t);
 				setNextOut = 1;
 			}
 		//stdout to file > fernOut.txt for plottable output
 			if(tid == 0 && log10(t) >= nextOutput) {
 				printf("OC\n");//OutputCount
-				nextOutput = log10(t)+intervalLogt;
+				//renormalize nextOutput by compensating for overshooting last expected output time
+				nextOutput = intervalLogt+nextOutput;
 				asyCount = 0;
 				peCount = 0;
 				for(int m = 0; m < network.species; m++) {
@@ -795,7 +801,7 @@ __device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsig
 	fern_real PE_val_c;
 	fern_real PE_val_d;
 	fern_real PE_val_e;
-	bool PEprintData = false;
+	bool PEprintData = true;
 
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
@@ -834,7 +840,7 @@ __device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsig
                         pEquil[i] = 1;
                     } 
 					if(PEprintData)
-						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b);
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass=%d c1=%f\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e R0: %e R1: %e\n\n",i, abs(RGid[i]-RGid[i+1]),final_k[0][RGid[i]],final_k[1][RGid[i]],ReacGroups[RGid[i]], c1, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, PE_val_a, PE_val_b);
 				} 
 				else if(ReacGroups[RGid[i]] == 2) {
                     pEquil[i] = 0;
@@ -859,7 +865,7 @@ __device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsig
                         pEquil[i] = 1;
                     } 
                     if(PEprintData)
-						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\ny_eq_a: %f\ny_eq_b: %f\ny_eq_c: %f\ny_a: %f\ny_b: %f\ny_c: %f\nfinalkf: %f\nfinalkr:%f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, y_eq_a, y_eq_b, y_eq_c, y_a, y_b, y_c, final_k[0][RGid[i]], final_k[1][RGid[i]]);
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%f c2=%f\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e\nR0: %e R1: %e R2: %e\n\n",i, abs(RGid[i]-RGid[i+1]),final_k[0][RGid[i]],final_k[1][RGid[i]],ReacGroups[RGid[i]], c1, c2, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, PE_val_a, PE_val_b, PE_val_c);
                 }
                 else if(ReacGroups[RGid[i]] == 3) {
                     pEquil[i] = 0;
@@ -888,7 +894,7 @@ __device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsig
                         pEquil[i] = 1;
                     } 
                     if(PEprintData)
-						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%f c2=%f c3=%f\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e\n\n",i, abs(RGid[i]-RGid[i+1]),final_k[0][RGid[i]],final_k[1][RGid[i]],ReacGroups[RGid[i]], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d);
                 }
                 else if(ReacGroups[RGid[i]] == 4) {
                     pEquil[i] = 0;
@@ -919,8 +925,7 @@ __device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsig
 						pEquil[i] = 1;
 					}
                     if(PEprintData)
-						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\n\n"
-							,i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d);
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%f c2=%f c3=%f\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e\n\n",i, abs(RGid[i]-RGid[i+1]),final_k[0][RGid[i]],final_k[1][RGid[i]],ReacGroups[RGid[i]], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d);
 				}
 				else if(ReacGroups[RGid[i]] == 5) {
                     pEquil[i] = 0;
@@ -957,7 +962,7 @@ __device__ void partialEquil(fern_real *Y, unsigned short numberReactions, unsig
                         pEquil[i] = 1;
                     } 
                     if(PEprintData)
-						printf("Eq for RG[%d] of RGClass[%d]: %d\nPE_val_a: %f\nPE_val_b: %f\nPE_val_c: %f\nPE_val_d: %f\nPE_val_e: %f\n\n",i,ReacGroups[RGid[i]], pEquil[i], PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e);
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%f c2=%f c3=%f c4=%f\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e y4_eq: %e y4: %e\nR0: %e R1: %e R2: %e R3: %e R4: %e\n\n",i, abs(RGid[i]-RGid[i+1]),final_k[0][RGid[i]],final_k[1][RGid[i]],ReacGroups[RGid[i]], c1, c2, c3, c4, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, y_eq_e, y_e, PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e);
 				}
 		}
 	}
