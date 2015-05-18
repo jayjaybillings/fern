@@ -1,4 +1,3 @@
-
 #include "Network.hpp"
 #include <cstdio>
 #include <cassert>
@@ -14,7 +13,6 @@ Network::Network()
 void Network::loadNetwork(const char *filename)
 {
 	// Unused variables
-	char isotopeLabel[10];
 	unsigned short A;
 	fern_real massExcess;
 	fern_real pf;
@@ -32,19 +30,20 @@ void Network::loadNetwork(const char *filename)
 	}
 	
 	// Read 4 lines at a time
-	
+	isotopeLabel = (char **) malloc(sizeof(char *) * species);
 	for (int n = 0; n < species; n++)
 	{
+		isotopeLabel[n] = (char *) malloc(sizeof(char) * 10);
 		int status;
 		
 		// Line #1
 		
 		#ifdef FERN_SINGLE
 			status = fscanf(file, "%s %hu %hhu %hhu %f %f\n",
-				isotopeLabel, &A, &Z[n], &N[n], &Y, &massExcess);
+				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#else
 			status = fscanf(file, "%s %hu %hhu %hhu %lf %lf\n",
-				isotopeLabel, &A, &Z[n], &N[n], &Y, &massExcess);
+				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
 		
 		if (status == EOF)
@@ -67,18 +66,15 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
+	static const bool displayPEInput = true;
 	
 	// Unused variables
-	char reactionLabel[100];
-	int RGclass;
-	int RGmemberIndex;
 	int reaclibClass;
 	int isEC;
-	int isReverseR;
-	int ProductIndex[4];
 	
 	// Allocate the host-only memory to be used by parseFlux()
 	int *numProducts = new int [reactions];
+  int *RGclass = new int [reactions];
 	
 	// Each element of these dynamic arrays are pointers to static arrays of size 4.
 	vec_4i *reactantZ = new vec_4i [reactions]; // [reactions]
@@ -98,22 +94,27 @@ void Network::loadReactions(const char *filename)
 	}
 	
 	// Read eight lines at a time
-	
+  numRG = 0;
+  reactionLabel = (char **) malloc(sizeof(char *) * reactions);
+  reacVector = (int **) malloc(sizeof(int *) * reactions);
+	int RGParent = 0;
 	for (int n = 0; n < reactions; n++)
 	{
+		reactionLabel[n] = (char *) malloc(sizeof(char) * 50);
+		reacVector[n] = (int *) malloc(sizeof(int) * species);
 		int status;
 		
 		// Line #1
 
 		#ifdef FERN_SINGLE		
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %f %f",
-				reactionLabel, &RGclass, &RGmemberIndex, &reaclibClass,
-				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
+				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&statFac[n], &Q[n]);
 		#else
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %lf %lf",
-				reactionLabel, &RGclass, &RGmemberIndex, &reaclibClass,
-				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
+				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&statFac[n], &Q[n]);
 		#endif
 		
@@ -124,13 +125,12 @@ void Network::loadReactions(const char *filename)
 		{
 			printf("Reaction Index = %d\n", n);
 			printf("isReverseR = %d reaclibIndex = %d\n",
-				isReverseR, reaclibClass);
+				isReverseR[n], reaclibClass);
 			printf("%s %d %d %d %d %d %d %d %f %f\n",
-				reactionLabel, RGclass, RGmemberIndex, reaclibClass,
+				reactionLabel[n], RGclass[n], RGmemberIndex[n], reaclibClass,
 				numReactingSpecies[n], numProducts[n], isEC,
-				isReverseR, statFac[n], Q[n]);
+				isReverseR[n], statFac[n], Q[n]);
 		}
-		
 		// Line #2
 		
 		if (displayInput)
@@ -196,7 +196,12 @@ void Network::loadReactions(const char *filename)
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
 			status = fscanf(file, "%hu", &reactant[mm][n]);
-			
+      //"subtract" reactants from reacVector (PE)
+      for(int i = 0; i < species; i++) {
+        if(i==reactant[mm][n]){
+          reacVector[n][i]--;
+        }      
+      }
 			if (displayInput)
 				printf("\treactant[%d]: N=%d\n", mm, reactant[mm][n]);
 		}
@@ -205,14 +210,55 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
-			status = fscanf(file, "%d", &ProductIndex[mm]);
+			status = fscanf(file, "%hu", &product[mm][n]);
+      //"add" products to reacVector (PE)
+      for(int i = 0; i < species; i++) {
+        if(i==product[mm][n]){
+          reacVector[n][i]++;
+        }      
+      }
 			
 			if (displayInput)
-				printf("\tProductIndex[%d]: N=%d\n", mm, ProductIndex[mm]);
+				printf("\tProductIndex[%d]: N=%d\n", mm, product[mm][n]);
 		}
+    //PartialEquilibrium: define Reaction Groups based on ReacVector
+    int isRGParent = 0;
+
+    for (int i = 0; i < species; i++) {
+      //Check if current reaction has different reactants or products as previous
+      if(n==0) {
+        isRGParent = 1;
+        break;
+      } else if (abs(reacVector[n-1][i]) != abs(reacVector[n][i])) {
+			  isRGParent = 1;
+        //if current reaction has different reac/prod break out of
+        //species loop
+        numRG++;
+        break;
+  		}
+    }
+
+    //indicates this reaction's RG
+    RGid[n] = numRG;
+    if(isRGParent == 1) {
+		  RGParent = 0;
+      //indicates the reaction group's class
+      ReacGroups[numRG] = RGclass[n];
+      //this is the parent of a new RG
+      RGParent = n;
+    }
+    //indicates each reaction's parent
+    ReacParent[n] = RGParent;
+    PEnumProducts[n] = numProducts[n];
 		
-		if (displayInput)
+    if(displayPEInput) {
+	    printf("\nRG #%d: %s\n", RGid[n], reactionLabel[RGParent]);
+      printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
+      for (int j = 0; j < species; j++) {
+        printf("%d ", reacVector[n][j]);
+      }
 			printf("\n");
+    }
 	}
 	
 	fclose(file);
@@ -478,6 +524,16 @@ void Network::allocate()
 	numReactingSpecies = new unsigned char[reactions];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
+  RGmemberIndex = new int [reactions];
+  isReverseR = new int [reactions];
+  PEnumProducts = new int[reactions];
+  ReacParent = new int [reactions];
+  RGid = new int [reactions];
+  pEquil = new int [numRG];
+  ReacGroups = new int[numRG];
+
+  for (int i = 0; i < 3; i++)
+    product[i] = new unsigned short[reactions];
 	
 	for (int i = 0; i < 3; i++)
 		reactant[i] = new unsigned short[reactions];
