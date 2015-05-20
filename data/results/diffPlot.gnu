@@ -77,16 +77,14 @@ height = 5
 # Set screen display to same aspect ratio as postscript plot
 set size ratio height/width
 
-set title 'Double (lines) vs single (symbols) precision; 150 network' textcolor rgb title_color
+set title 'Relative error between single and double precision; 150 network' textcolor rgb title_color
 set xlabel 'log time (s)' textcolor rgb tic_color
-set ylabel 'log Mass fraction X' textcolor rgb tic_color
+set ylabel 'log relative error' textcolor rgb tic_color
 # Uncomment following to set log or log-log plots
-#set logscale x
-#set logscale y
+set logscale x
+set logscale y
 
 # Plot limits
-set xrange [-19:-9]
-set yrange[-20:0]
 
 set pointsize 0.75    # Size of the plotted points
 
@@ -102,26 +100,26 @@ set key samplen 1 spacing .9 font ",12"
 # Read data from file and plot to screen
 
 # Lines
-plot "150_diff_20150520.dat" using 1:5 ls 1 with lines title 'n' 
-replot "150_diff_20150520.dat" using 1:6 ls 2 with lines title 'p'
-replot "150_diff_20150520.dat" using 1:7 ls 3 with lines title 'o17'
-replot "150_diff_20150520.dat" using 1:8 ls 4 with lines title 'o18'
-replot "150_diff_20150520.dat" using 1:9 ls 5 with lines title 'f17'
-replot "150_diff_20150520.dat" using 1:10 ls 6 with lines title 'f18'
-replot "150_diff_20150520.dat" using 1:11 ls 7 with lines title 'he4'
-replot "150_diff_20150520.dat" using 1:12 ls 8 with lines title 'c12'
-replot "150_diff_20150520.dat" using 1:13 ls 9 with lines title 'o16'
-replot "150_diff_20150520.dat" using 1:14 ls 10 with lines title 'ne20'
-replot "150_diff_20150520.dat" using 1:15 ls 11 with lines title 'mg24'
-replot "150_diff_20150520.dat" using 1:16 ls 12 with lines title 'si28'
-replot "150_diff_20150520.dat" using 1:17 ls 13 with lines title 's32'
-replot "150_diff_20150520.dat" using 1:18 ls 14 with lines title 'ar36'
-replot "150_diff_20150520.dat" using 1:19 ls 15 with lines title 'ca40'
-replot "150_diff_20150520.dat" using 1:20 ls 16 with lines title 'ti44'
-replot "150_diff_20150520.dat" using 1:21 ls 17 with lines title 'cr48'
-replot "150_diff_20150520.dat" using 1:22 ls 18 with lines title 'fe52'
-replot "150_diff_20150520.dat" using 1:23 ls 19 with lines title 'ni56'
-replot "150_diff_20150520.dat" using 1:24 ls 20 with lines title 'fe54'
+plot "150_diff_20150520.dat" using 1:5 ls 1 title 'n' 
+replot "150_diff_20150520.dat" using 1:6 ls 2 title 'p'
+replot "150_diff_20150520.dat" using 1:7 ls 3 title 'o17'
+replot "150_diff_20150520.dat" using 1:8 ls 4 title 'o18'
+replot "150_diff_20150520.dat" using 1:9 ls 5 title 'f17'
+replot "150_diff_20150520.dat" using 1:10 ls 6 title 'f18'
+replot "150_diff_20150520.dat" using 1:11 ls 7 title 'he4'
+replot "150_diff_20150520.dat" using 1:12 ls 8 title 'c12'
+replot "150_diff_20150520.dat" using 1:13 ls 9 title 'o16'
+replot "150_diff_20150520.dat" using 1:14 ls 10 title 'ne20'
+replot "150_diff_20150520.dat" using 1:15 ls 11 title 'mg24'
+replot "150_diff_20150520.dat" using 1:16 ls 12 title 'si28'
+replot "150_diff_20150520.dat" using 1:17 ls 13 title 's32'
+replot "150_diff_20150520.dat" using 1:18 ls 14 title 'ar36'
+replot "150_diff_20150520.dat" using 1:19 ls 15 title 'ca40'
+replot "150_diff_20150520.dat" using 1:20 ls 16 title 'ti44'
+replot "150_diff_20150520.dat" using 1:21 ls 17 title 'cr48'
+replot "150_diff_20150520.dat" using 1:22 ls 18 title 'fe52'
+replot "150_diff_20150520.dat" using 1:23 ls 19 title 'ni56'
+replot "150_diff_20150520.dat" using 1:24 ls 20 title 'fe54'
 
 # Plot to postscript file
 
