@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 		
 		integrationData.T9 = 7.0;
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 1.0e-9;
+		integrationData.t_max = 1.0e-5;
 		integrationData.dt_init = 1.23456789e-22;
 		integrationData.rho = 1.0e8;
 

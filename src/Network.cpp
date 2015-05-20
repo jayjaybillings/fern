@@ -66,7 +66,7 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
-	static const bool displayPEInput = true;
+	static const bool displayPEInput = false;
 	
 	// Unused variables
 	int reaclibClass;
@@ -222,37 +222,32 @@ void Network::loadReactions(const char *filename)
 				printf("\tProductIndex[%d]: N=%d\n", mm, product[mm][n]);
 		}
     //PartialEquilibrium: define Reaction Groups based on ReacVector
-    int isRGParent = 0;
-
     for (int i = 0; i < species; i++) {
       //Check if current reaction has different reactants or products as previous
       if(n==0) {
-        isRGParent = 1;
+        RGParent = n;
+        RGid[numRG] = n;
+        ReacGroups[n] = RGclass[n];
         break;
       } else if (abs(reacVector[n-1][i]) != abs(reacVector[n][i])) {
-			  isRGParent = 1;
+        numRG++;
+			  RGParent = n;
+        ReacGroups[n] = RGclass[n];
+        RGid[numRG] = n;
         //if current reaction has different reac/prod break out of
         //species loop
-        numRG++;
+        //indicates this RG's Parent Reaction
         break;
   		}
     }
 
-    //indicates this reaction's RG
-    RGid[n] = numRG;
-    if(isRGParent == 1) {
-		  RGParent = 0;
-      //indicates the reaction group's class
-      ReacGroups[numRG] = RGclass[n];
-      //this is the parent of a new RG
-      RGParent = n;
-    }
     //indicates each reaction's parent
     ReacParent[n] = RGParent;
     PEnumProducts[n] = numProducts[n];
 		
     if(displayPEInput) {
-	    printf("\nRG #%d: %s\n", RGid[n], reactionLabel[RGParent]);
+	    printf("\nRG #%d: %s\n", numRG, reactionLabel[RGParent]);
+	    printf("RGid: %d, ReacParent: %d\n", RGid[numRG], ReacParent[n]);
       printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
       for (int j = 0; j < species; j++) {
         printf("%d ", reacVector[n][j]);
@@ -260,6 +255,7 @@ void Network::loadReactions(const char *filename)
 			printf("\n");
     }
 	}
+  numRG++;
 	
 	fclose(file);
 	
@@ -528,15 +524,16 @@ void Network::allocate()
   isReverseR = new int [reactions];
   PEnumProducts = new int[reactions];
   ReacParent = new int [reactions];
-  RGid = new int [reactions];
-  pEquil = new int [numRG];
-  ReacGroups = new int[numRG];
+  RGid = new int [numRG];
+  ReacGroups = new int[reactions];
 
   for (int i = 0; i < 3; i++)
     product[i] = new unsigned short[reactions];
 	
 	for (int i = 0; i < 3; i++)
 		reactant[i] = new unsigned short[reactions];
+
+  pEquil = new int [numRG];
 }
 
 void Network::setSizes(const Network &source)
