@@ -78,13 +78,15 @@ height = 5
 set size ratio height/width
 
 set title 'Relative error between single and double precision; 150 network' textcolor rgb title_color
-set xlabel 'log time (s)' textcolor rgb tic_color
-set ylabel 'log relative error' textcolor rgb tic_color
+set xlabel 'log10 time (s)' textcolor rgb tic_color
+set ylabel 'log10 relative error' textcolor rgb tic_color
 # Uncomment following to set log or log-log plots
-set logscale x
-set logscale y
+#set logscale x
+#set logscale y
 
 # Plot limits
+set xrange [-19:-9]
+set yrange[-8:0]
 
 set pointsize 0.75    # Size of the plotted points
 

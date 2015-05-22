@@ -16,6 +16,10 @@ import java.util.ArrayList;
  * A simple Java code for computing the relative error between the single
  * precision and double precision results.
  * 
+ * The results were stored as "log(t) log(y_1) log(y_2) ... log(y_n)" so this
+ * code converts everything to a regular scale and then computes the
+ * differences.
+ * 
  * @author Jay Jay Billings
  *
  */
@@ -32,7 +36,7 @@ public class CSVRelErrorCalculator {
 	public static void main(String[] args) {
 
 		// Local Declarations
-		double err = 0.0;
+		double err = 0.0, doubleVal = 0.0, singleVal = 0.0;
 		String[] singleLine;
 		String[] doubleLine;
 
@@ -49,12 +53,20 @@ public class CSVRelErrorCalculator {
 		for (int i = 0; i < singleLines.size(); i++) {
 			singleLine = singleLines.get(i);
 			doubleLine = doubleLines.get(i);
+			// Print the time
+			System.out.print(doubleLine[0] + " ");
 			// Compute the relative error, (s-d)/d, for each element and print
 			// it.
-			for (int j = 0; j < singleLines.get(i).length; j++) {
-					err = (Double.valueOf(singleLine[j]) - Double.valueOf(doubleLine[j]))
-							/ (Double.valueOf(doubleLine[j]));
-					System.out.print(err + " ");
+			for (int j = 1; j < singleLines.get(i).length; j++) {
+				singleVal = Math.pow(Double.valueOf(singleLine[j]), 10.0);
+				doubleVal = Math.pow(Double.valueOf(doubleLine[j]), 10.0);
+				err = Math.abs((singleVal - doubleVal) / (doubleVal));
+				// If the error is zero, then log(e) ~ -Inf, so cap it at -38.0.
+				if (err != 0.0) {
+					System.out.print(err + " " + Math.log10(err) + " ");
+				} else {
+					System.out.print("-38.0 ");
+				}
 			}
 			System.out.print("\n");
 		}
@@ -78,7 +90,8 @@ public class CSVRelErrorCalculator {
 		try {
 			// Grab the contents of the file
 			InputStream stream = new FileInputStream(file);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(stream));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				// Skip lines that are pure comments
