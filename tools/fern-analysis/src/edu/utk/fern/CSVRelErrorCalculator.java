@@ -58,12 +58,12 @@ public class CSVRelErrorCalculator {
 			// Compute the relative error, (s-d)/d, for each element and print
 			// it.
 			for (int j = 1; j < singleLines.get(i).length; j++) {
-				singleVal = Math.pow(Double.valueOf(singleLine[j]), 10.0);
-				doubleVal = Math.pow(Double.valueOf(doubleLine[j]), 10.0);
-				err = Math.abs((singleVal - doubleVal) / (doubleVal));
+				singleVal = Math.pow(10.0, Double.valueOf(singleLine[j]));
+				doubleVal = Math.pow(10.0, Double.valueOf(doubleLine[j]));
+				err = Math.abs((singleVal - doubleVal) / doubleVal);
 				// If the error is zero, then log(e) ~ -Inf, so cap it at -38.0.
 				if (err != 0.0) {
-					System.out.print(err + " " + Math.log10(err) + " ");
+					System.out.print(Math.log10(err) + " ");
 				} else {
 					System.out.print("-38.0 ");
 				}
