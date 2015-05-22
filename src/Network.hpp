@@ -39,8 +39,8 @@ struct Network
 	
 	fern_real *statFac; // [reactions]
 	fern_real *Q; // [reactions]
-	unsigned short *reactant[3]; // [reactions]
-	unsigned short *product[3]; // [reactions]
+	unsigned short *reactant[10]; // [reactions]
+	unsigned short *product[10]; // [reactions]
 
 	//Partial Equilibrium
   int *ReacGroups; //[reactions]

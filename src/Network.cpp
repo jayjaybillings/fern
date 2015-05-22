@@ -244,8 +244,9 @@ void Network::loadReactions(const char *filename)
       RGmemID[j] = RGmemberID;
       ReacParent[j] = j;
       if(displayPEInput) {
-	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
-        printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[j], j);
+	      printf("\nRG #%d, Parent Reaction: %s\n", numRG, reactionLabel[ReacParent[j]]);
+	    	printf("-----\n");
+        printf("Reaction %s ID[%d], RGmemID: %d\nReaction Vector: ", reactionLabel[j], j, RGmemID[j]);
         for (int q = 0; q < species; q++) {
           printf("%d ", reacVector[j][q]);
         }
@@ -271,7 +272,7 @@ void Network::loadReactions(const char *filename)
           RGmemID[n] = RGmemberID;
           ReacParent[n] = j;
           RGid[numRG] = j;
-  	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d\n", RGid[numRG], ReacParent[n], RGmemID[n]);
+  	        printf("ReacParent: %d,  RGmemID: %d\n", ReacParent[n], RGmemID[n]);
             printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
             for (int q = 0; q < species; q++) {
               printf("%d ", reacVector[n][q]);
@@ -555,10 +556,10 @@ void Network::allocate()
   RGid = new int [numRG];
   ReacGroups = new int[reactions];
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 10; i++)
     product[i] = new unsigned short[reactions];
 	
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 10; i++)
 		reactant[i] = new unsigned short[reactions];
 
   pEquil = new int [numRG];
@@ -619,7 +620,7 @@ void Network::print()
 		printf("%e ", Q[i]);
 	printf("}\n");
 	
-	for (int n = 0; n < 3; n++)
+	for (int n = 0; n < 10; n++)
 	{
 		printf("reactant[%d]: { ", n);
 		for (int i = 0; i < reactions; i++)
