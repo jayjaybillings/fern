@@ -30,22 +30,25 @@ void Network::loadNetwork(const char *filename)
 	}
 	
 	// Read 4 lines at a time
-	isotopeLabel = (char **) malloc(sizeof(char *) * species);
+	speciesLabel = (char **) malloc(sizeof(char *) * species);
+	speciesFamily = (char **) malloc(sizeof(char *) * species);
 	for (int n = 0; n < species; n++)
 	{
-		isotopeLabel[n] = (char *) malloc(sizeof(char) * 10);
+		speciesLabel[n] = (char *) malloc(sizeof(char) * 10);
+		speciesFamily[n] = (char *) malloc(sizeof(char) * 10);
 		int status;
 		
 		// Line #1
 		
 		#ifdef FERN_SINGLE
-			status = fscanf(file, "%s %hu %hhu %hhu %f %f\n",
-				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
+			status = fscanf(file, "%s %s %hu %hhu %hhu %f %f\n",
+				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#else
-			status = fscanf(file, "%s %hu %hhu %hhu %lf %lf\n",
-				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
+			status = fscanf(file, "%s %s %hu %hhu %hhu %lf %lf\n",
+				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
 		
+    //printf("speciesLabel[%d]: %s, Z: %d, N: %d\n", n, speciesLabel[n], Z[n], N[n]);
 		if (status == EOF)
 			break;
 		
@@ -66,7 +69,7 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
-	static const bool displayPEInput = false;
+	static const bool displayPEInput = true;
 	
 	// Unused variables
 	int reaclibClass;
@@ -100,7 +103,7 @@ void Network::loadReactions(const char *filename)
 	int RGParent = 0;
 	for (int n = 0; n < reactions; n++)
 	{
-		reactionLabel[n] = (char *) malloc(sizeof(char) * 50);
+		reactionLabel[n] = (char *) malloc(sizeof(char) * 150);
 		reacVector[n] = (int *) malloc(sizeof(int) * species);
 		int status;
 		
@@ -221,42 +224,67 @@ void Network::loadReactions(const char *filename)
 			if (displayInput)
 				printf("\tProductIndex[%d]: N=%d\n", mm, product[mm][n]);
 		}
-    //PartialEquilibrium: define Reaction Groups based on ReacVector
-    for (int i = 0; i < species; i++) {
-      //Check if current reaction has different reactants or products as previous
-      if(n==0) {
-        RGParent = n;
-        RGid[numRG] = n;
-        ReacGroups[n] = RGclass[n];
-        break;
-      } else if (abs(reacVector[n-1][i]) != abs(reacVector[n][i])) {
-        numRG++;
-			  RGParent = n;
-        ReacGroups[n] = RGclass[n];
-        RGid[numRG] = n;
-        //if current reaction has different reac/prod break out of
-        //species loop
-        //indicates this RG's Parent Reaction
-        break;
-  		}
-    }
-
-    //indicates each reaction's parent
-    ReacParent[n] = RGParent;
     PEnumProducts[n] = numProducts[n];
-		
-    if(displayPEInput) {
-	    printf("\nRG #%d: %s\n", numRG, reactionLabel[RGParent]);
-	    printf("RGid: %d, ReacParent: %d\n", RGid[numRG], ReacParent[n]);
-      printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
-      for (int j = 0; j < species; j++) {
-        printf("%d ", reacVector[n][j]);
-      }
-			printf("\n");
-    }
 	}
-  numRG++;
-	
+  //PartialEquilibrium: define Reaction Groups based on ReacVector
+  //reworked so parsing to reaction groups does not depend on the reaction input
+  //file having RG members in order
+  int isRGmember = 0;
+  int RGmemberID = 0;
+  //each reaction's home RGid
+  int *reactionRG = new int [reactions];
+  int *reacPlaced = new int [reactions];
+  //member ID within this reaction's RG
+  int *RGmemID = new int [reactions];
+  int *RGnumMembers = new int [numRG];
+  for(int j = 0; j < reactions; j++) {
+    //if this reaction doesn't yet have an RG home of its own...
+    if(reacPlaced[j] == 0) {
+      RGmemberID = 0;
+      RGmemID[j] = RGmemberID;
+      ReacParent[j] = j;
+      if(displayPEInput) {
+	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
+        printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[j], j);
+        for (int q = 0; q < species; q++) {
+          printf("%d ", reacVector[j][q]);
+        }
+	    	printf("\n");
+      }
+      for(int n = 0; n < reactions; n++) {
+        for (int i = 0; i < species; i++) {
+          //if reaction j has a different species than reaction n, check n+1
+          //also if n = j, skip it
+          if(abs(reacVector[j][i]) != abs(reacVector[n][i]) || j == n) {
+            isRGmember = 0;
+            break;
+          } else {
+            isRGmember = 1;
+          }
+        }
+          //if reac n was determined to have same species as reac j, 
+        if(isRGmember == 1) {
+          //give reac n the current reaction group ID. 
+          reacPlaced[n] = 1;
+          RGmemberID++;
+          reactionRG[n] = numRG; 
+          RGmemID[n] = RGmemberID;
+          ReacParent[n] = j;
+          RGid[numRG] = j;
+  	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d\n", RGid[numRG], ReacParent[n], RGmemID[n]);
+            printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
+            for (int q = 0; q < species; q++) {
+              printf("%d ", reacVector[n][q]);
+            }
+	      		printf("\n");
+        }
+      }
+    //indicates number of members in each reaction group
+    RGnumMembers[numRG] = RGmemberID + 1;
+    printf("Number Members: %d\n", RGnumMembers[numRG]);
+    numRG++;
+    }
+  }
 	fclose(file);
 	
 	
