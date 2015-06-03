@@ -195,7 +195,7 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
-			status = fscanf(file, "%hu", &reactant[mm][n]);
+			status = fscanf(file, "%d", &reactant[mm][n]);
       //"subtract" reactants from reacVector (PE)
       for(int i = 0; i < species; i++) {
         if(i==reactant[mm][n]){
@@ -210,7 +210,7 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
-			status = fscanf(file, "%hu", &product[mm][n]);
+			status = fscanf(file, "%d", &product[mm][n]);
       //"add" products to reacVector (PE)
       for(int i = 0; i < species; i++) {
         if(i==product[mm][n]){
@@ -221,42 +221,72 @@ void Network::loadReactions(const char *filename)
 			if (displayInput)
 				printf("\tProductIndex[%d]: N=%d\n", mm, product[mm][n]);
 		}
-    //PartialEquilibrium: define Reaction Groups based on ReacVector
-    for (int i = 0; i < species; i++) {
-      //Check if current reaction has different reactants or products as previous
-      if(n==0) {
-        RGParent = n;
-        RGid[numRG] = n;
-        ReacGroups[n] = RGclass[n];
-        break;
-      } else if (abs(reacVector[n-1][i]) != abs(reacVector[n][i])) {
-        numRG++;
-			  RGParent = n;
-        ReacGroups[n] = RGclass[n];
-        RGid[numRG] = n;
-        //if current reaction has different reac/prod break out of
-        //species loop
-        //indicates this RG's Parent Reaction
-        break;
-  		}
-    }
-
-    //indicates each reaction's parent
-    ReacParent[n] = RGParent;
     PEnumProducts[n] = numProducts[n];
-		
-    if(displayPEInput) {
-	    printf("\nRG #%d: %s\n", numRG, reactionLabel[RGParent]);
-	    printf("RGid: %d, ReacParent: %d\n", RGid[numRG], ReacParent[n]);
-      printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
-      for (int j = 0; j < species; j++) {
-        printf("%d ", reacVector[n][j]);
-      }
-			printf("\n");
-    }
 	}
-  numRG++;
-	
+  //PartialEquilibrium: define Reaction Groups based on ReacVector
+  //reworked so parsing to reaction groups does not depend on the reaction input
+  //file having RG members in order
+  int isRGmember = 0;
+  int RGmemberID = 0;
+  //each reaction's home RGid
+  int *reactionRG = new int [reactions];
+  int *reacPlaced = new int [reactions];
+  //member ID within this reaction's RG
+  int *RGmemID = new int [reactions];
+  int *RGnumMembers = new int [numRG];
+  for(int j = 0; j < reactions; j++) {
+    //if this reaction doesn't yet have an RG home of its own...
+    if(reacPlaced[j] == 0) {
+      RGmemberID = 0;
+      RGmemID[j] = RGmemberID;
+      ReacParent[j] = j;
+      if(displayPEInput) {
+	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
+        printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[j], j);
+        for (int q = 0; q < species; q++) {
+          printf("%d ", reacVector[j][q]);
+        }
+	    	printf("\n");
+      }
+      for(int n = 0; n < reactions; n++) {
+        for (int i = 0; i < species; i++) {
+          //if reaction j has a different species than reaction n, check n+1
+          //also if n = j, skip it
+          if(abs(reacVector[j][i]) != abs(reacVector[n][i]) || j == n) {
+            isRGmember = 0;
+            break;
+          } else {
+            isRGmember = 1;
+          }
+        }
+          //if reac n was determined to have same species as reac j, 
+        if(isRGmember == 1) {
+          //give reac n the current reaction group ID. 
+          reacPlaced[n] = 1;
+          RGmemberID++;
+          reactionRG[n] = numRG; 
+          RGmemID[n] = RGmemberID;
+          ReacParent[n] = j;
+          RGid[numRG] = j;
+          ReacGroups[j] = RGclass[j];
+          if(displayPEInput) {
+            printf("Reac: %d, Class: %d\n", j, ReacGroups[j]);
+  	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d\n", RGid[numRG], ReacParent[n], RGmemID[n]);
+            printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
+            for (int q = 0; q < species; q++) {
+              printf("%d ", reacVector[n][q]);
+            }
+	      		printf("\n");
+          }
+        }
+      }
+    //indicates number of members in each reaction group
+    RGnumMembers[numRG] = RGmemberID + 1;
+    if(displayPEInput)
+    printf("Number Members: %d\n", RGnumMembers[numRG]);
+    numRG++;
+    }
+  }
 	fclose(file);
 	
 	
@@ -520,18 +550,18 @@ void Network::allocate()
 	numReactingSpecies = new unsigned char[reactions];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
+  ReacGroups = new int[reactions];
   RGmemberIndex = new int [reactions];
   isReverseR = new int [reactions];
   PEnumProducts = new int[reactions];
   ReacParent = new int [reactions];
   RGid = new int [numRG];
-  ReacGroups = new int[reactions];
 
   for (int i = 0; i < 3; i++)
-    product[i] = new unsigned short[reactions];
+    product[i] = new int[reactions];
 	
 	for (int i = 0; i < 3; i++)
-		reactant[i] = new unsigned short[reactions];
+		reactant[i] = new int[reactions];
 
   pEquil = new int [numRG];
 }
