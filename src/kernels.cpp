@@ -57,7 +57,6 @@ void integrateNetwork(
 
 	fern_real *Y;
 
-	//DSOUTPUT
 	const bool plotOutput = 1;
 	const int numIntervals = 100;
 	int plotStartTime = -16;
@@ -175,10 +174,13 @@ void integrateNetwork(
     fern_real *final_k[2];
 	int countRG = 0;
 		//first set up array of final reaction rates for each RG based on Rate[i] calculated above
-		for(int m = 0; m < 2; m++)
+		for(int m = 0; m < 2; m++) {
 			final_k[m] = new fern_real [network.numRG];
-		if(displayRGdata)
+    }
+
+		if(displayRGdata) {
 			printf("Start Reaction Group Data\nNumber Reaction Groups: %d\n\n",network.numRG);
+    }
 
 		//second to calculate final reaciton rates for each RG
 		for(int i = 0; i < network.reactions; i++) {
@@ -266,8 +268,9 @@ void integrateNetwork(
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
-	if(plotOutput == 1)
-		//printf("SO\n");//StartOutput
+	if(plotOutput == 1) {
+		printf("SO\n");//StartOutput
+  }
 	
 	while (t < integrationData.t_max)
 	{
@@ -286,18 +289,20 @@ void integrateNetwork(
 				asyCount = 0;
 				peCount = 0;
 				for(int m = 0; m < network.species; m++) {
-				//printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
+				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
 
-					if(checkAsy(FminusSum[m], Y[m], dt))
+					if(checkAsy(FminusSum[m], Y[m], dt)) {
 						asyCount++;	
+          }
 				}
         //check frac RG PartialEq
         
 	      partialEquil(Y, numberReactions, ReacGroups, network.reactant, network.product, final_k, pEquil, RGid, numRG, 0.01, eq);
-  
+
 				for(int i = 0; i < numRG; i++) {
-					if(pEquil[i] == 1)
+					if(pEquil[i] == 1) {
 						peCount++;			
+          }
 				}
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
@@ -736,7 +741,7 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           y_d = Y[product[0][RGid[i]]];
           c1 = y_a-y_b;
           c2 = y_a-y_c;
-          c3 = ((1/3)*(y_a+y_b+y_c))+y_d;
+          c3 = ((y_a+y_b+y_c)/3)+y_d;
           a = final_k[0][i]*(c1+c2)-final_k[0][i]*y_a;
           b = -((final_k[0][i]*c1*c2)+final_k[1][i]);
           c = final_k[1][i]*(c3+(c1/3)+(c2/3));

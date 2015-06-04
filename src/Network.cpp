@@ -282,9 +282,15 @@ void Network::loadReactions(const char *filename)
       }
     //indicates number of members in each reaction group
     RGnumMembers[numRG] = RGmemberID + 1;
-    if(displayPEInput)
-    printf("Number Members: %d\n", RGnumMembers[numRG]);
+    if(displayPEInput) {
+      printf("Number Members: %d\n", RGnumMembers[numRG]);
+    }
     numRG++;
+    }
+  }
+  if(displayPEInput) {
+    for(int i = 0; i < numRG; i++) {
+      printf("ReacParent for each RG[%d]: %d\n", i, RGid[i]);
     }
   }
 	fclose(file);
@@ -555,15 +561,14 @@ void Network::allocate()
   isReverseR = new int [reactions];
   PEnumProducts = new int[reactions];
   ReacParent = new int [reactions];
-  RGid = new int [numRG];
 
   for (int i = 0; i < 3; i++)
     product[i] = new int[reactions];
 	
 	for (int i = 0; i < 3; i++)
 		reactant[i] = new int[reactions];
-
   pEquil = new int [numRG];
+  RGid = new int [numRG];
 }
 
 void Network::setSizes(const Network &source)
@@ -572,6 +577,7 @@ void Network::setSizes(const Network &source)
 	reactions = source.reactions;
 	totalFplus = source.totalFplus;
 	totalFminus = source.totalFminus;
+	numRG = source.numRG;
 }
 
 void Network::print()
