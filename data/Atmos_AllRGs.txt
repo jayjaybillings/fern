@@ -1,0 +1,633 @@
+
+RG #0, Parent Reaction: H2O2+hv-->OH+OH
+-----
+Reaction H2O2+hv-->OH+OH ID[1], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #1, Parent Reaction: NO2+hv(+O2)-->NO+O3
+-----
+Reaction NO2+hv(+O2)-->NO+O3 ID[2], RGmemID: 0
+Reaction Vector: 1 0 -1 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 2,  RGmemID: 1
+Reaction O3+NO-->NO2+O2 ID[31]
+Reaction Vector: -1 0 1 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 2
+
+RG #2, Parent Reaction: NO3+hv(+O2)-->NO2+O3
+-----
+Reaction NO3+hv(+O2)-->NO2+O3 ID[3], RGmemID: 0
+Reaction Vector: 1 0 -1 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 3,  RGmemID: 1
+Reaction O3+NO2-->NO3+O2 ID[32]
+Reaction Vector: -1 0 1 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 2
+
+RG #3, Parent Reaction: NO3+hv-->0.1NO+0.9NO2+0.9O3
+-----
+Reaction NO3+hv-->0.1NO+0.9NO2+0.9O3 ID[4], RGmemID: 0
+Reaction Vector: 1 0 0 0 0 1 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #4, Parent Reaction: N2O5+hv-->NO2+NO3
+-----
+Reaction N2O5+hv-->NO2+NO3 ID[5], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 5,  RGmemID: 1
+Reaction NO2+NO3+M-->N2O5+M ID[39]
+Reaction Vector: 0 0 0 0 0 0 -1 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 5,  RGmemID: 2
+Reaction N2O5+M-->NO2+NO3+M ID[40]
+Reaction Vector: 0 0 0 0 0 0 1 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 3
+
+RG #5, Parent Reaction: HNO3+hv-->NO2+OH
+-----
+Reaction HNO3+hv-->NO2+OH ID[6], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 6,  RGmemID: 1
+Reaction OH+NO2+M-->HNO3+M ID[37]
+Reaction Vector: 0 0 0 0 0 0 -1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 2
+
+RG #6, Parent Reaction: HNO4+hv-->NO2+HO2
+-----
+Reaction HNO4+hv-->NO2+HO2 ID[7], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 7,  RGmemID: 1
+Reaction NO2+HO2+M-->HNO4+M ID[43]
+Reaction Vector: 0 0 0 0 0 0 -1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 7,  RGmemID: 2
+Reaction HNO4+M-->NO2+HO2+M ID[44]
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 3
+
+RG #7, Parent Reaction: PAN+hv-->CH3COO2+NO2
+-----
+Reaction PAN+hv-->CH3COO2+NO2 ID[8], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 8,  RGmemID: 1
+Reaction CH3COO2+NO2+M-->PAN+M ID[83]
+Reaction Vector: 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 8,  RGmemID: 2
+Reaction PAN+M-->CH3COO2+NO2+M ID[84]
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 3
+
+RG #8, Parent Reaction: CH3OOH+hv-->CH2O+OH+HO2
+-----
+Reaction CH3OOH+hv-->CH2O+OH+HO2 ID[9], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #9, Parent Reaction: C2H5OOH+hv-->CH3CHO+OH+HO2
+-----
+Reaction C2H5OOH+hv-->CH3CHO+OH+HO2 ID[10], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #10, Parent Reaction: C3H7OOH+hv-->0.24C2H5O2+0.09CH3CHO+0.18CO+0.7CH3COCH3+OH+HO2
+-----
+Reaction C3H7OOH+hv-->0.24C2H5O2+0.09CH3CHO+0.18CO+0.7CH3COCH3+OH+HO2 ID[11], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #11, Parent Reaction: CH3COCH3+hv-->CH3COO2+CH3O2
+-----
+Reaction CH3COCH3+hv-->CH3COO2+CH3O2 ID[12], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #12, Parent Reaction: HOROOH+hv-->0.5CH3CHO+1.5CH2O+HO2+H2O
+-----
+Reaction HOROOH+hv-->0.5CH3CHO+1.5CH2O+HO2+H2O ID[13], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #13, Parent Reaction: CH3COOOH+hv-->CH3O2+CO2+OH
+-----
+Reaction CH3COOOH+hv-->CH3O2+CO2+OH ID[14], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+Number Members: 1
+
+RG #14, Parent Reaction: CH2O+hv-->CO+HO2+HO2
+-----
+Reaction CH2O+hv-->CO+HO2+HO2 ID[15], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #15, Parent Reaction: CH2O+hv-->CO+H2+H2
+-----
+Reaction CH2O+hv-->CO+H2+H2 ID[16], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 
+Number Members: 1
+
+RG #16, Parent Reaction: CH3CHO+hv-->CH3O2+CO+HO2
+-----
+Reaction CH3CHO+hv-->CH3O2+CO+HO2 ID[17], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #17, Parent Reaction: ISOOH+hv-->MACR+CH2O+OH+HO2
+-----
+Reaction ISOOH+hv-->MACR+CH2O+OH+HO2 ID[18], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #18, Parent Reaction: ISON+hv-->NO2+MACR+CH2O+HO2
+-----
+Reaction ISON+hv-->NO2+MACR+CH2O+HO2 ID[19], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #19, Parent Reaction: MACR+hv-->CH3COO2+CH2O+CO+HO2
+-----
+Reaction MACR+hv-->CH3COO2+CH2O+CO+HO2 ID[20], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #20, Parent Reaction: MPAN+hv-->MACRO2+NO2
+-----
+Reaction MPAN+hv-->MACRO2+NO2 ID[21], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 21,  RGmemID: 1
+Reaction MACRO2+NO2+M-->MPAN+M ID[103]
+Reaction Vector: 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 21,  RGmemID: 2
+Reaction MPAN+M-->MACRO2+NO2+M ID[104]
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 3
+
+RG #21, Parent Reaction: MACROOH+hv-->OH+0.5HACET+0.5CO+0.5MGLY+0.5CH2O+HO2
+-----
+Reaction MACROOH+hv-->OH+0.5HACET+0.5CO+0.5MGLY+0.5CH2O+HO2 ID[22], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #22, Parent Reaction: HACET+hv-->CH3COO2+CH2O+HO2
+-----
+Reaction HACET+hv-->CH3COO2+CH2O+HO2 ID[23], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #23, Parent Reaction: MGLY+hv-->CH3COO2+CO+HO2
+-----
+Reaction MGLY+hv-->CH3COO2+CO+HO2 ID[24], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #24, Parent Reaction: NALD+hv-->CH2O+CO+NO2+HO2
+-----
+Reaction NALD+hv-->CH2O+CO+NO2+HO2 ID[25], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #25, Parent Reaction: O1D+O2-->O3+O2
+-----
+Reaction O1D+O2-->O3+O2 ID[26], RGmemID: 0
+Reaction Vector: 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 26,  RGmemID: 1
+Reaction O3+hv(+O2)-->O1D+O2 ID[0]
+Reaction Vector: -1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ReacParent: 26,  RGmemID: 2
+Reaction O1D+N2-->O3+N2 ID[27]
+Reaction Vector: 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 3
+
+RG #26, Parent Reaction: O1D+H2O-->OH+OH
+-----
+Reaction O1D+H2O-->OH+OH ID[28], RGmemID: 0
+Reaction Vector: -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #27, Parent Reaction: O3+OH-->HO2+O2
+-----
+Reaction O3+OH-->HO2+O2 ID[29], RGmemID: 0
+Reaction Vector: -1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #28, Parent Reaction: O3+HO2-->OH+O2+O2
+-----
+Reaction O3+HO2-->OH+O2+O2 ID[30], RGmemID: 0
+Reaction Vector: -1 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #29, Parent Reaction: OH+HO2-->H2O+O2
+-----
+Reaction OH+HO2-->H2O+O2 ID[33], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #30, Parent Reaction: OH+H2O2-->H2O+HO2
+-----
+Reaction OH+H2O2-->H2O+HO2 ID[34], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #31, Parent Reaction: HO2+NO-->NO2+OH
+-----
+Reaction HO2+NO-->NO2+OH ID[35], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #32, Parent Reaction: HO2+HO2-->H2O2+O2
+-----
+Reaction HO2+HO2-->H2O2+O2 ID[36], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #33, Parent Reaction: OH+HNO3-->NO3+H2O
+-----
+Reaction OH+HNO3-->NO3+H2O ID[38], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 1 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #34, Parent Reaction: N2O5+H2O-->HNO3+HNO3
+-----
+Reaction N2O5+H2O-->HNO3+HNO3 ID[41], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #35, Parent Reaction: NO3+NO-->NO2+NO2
+-----
+Reaction NO3+NO-->NO2+NO2 ID[42], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 2 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #36, Parent Reaction: HNO4+OH-->NO2+H2O+O2
+-----
+Reaction HNO4+OH-->NO2+H2O+O2 ID[45], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 1 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #37, Parent Reaction: CH4+OH-->CH3O2+H2O
+-----
+Reaction CH4+OH-->CH3O2+H2O ID[46], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #38, Parent Reaction: CH4+O1D-->CH3O2+OH
+-----
+Reaction CH4+O1D-->CH3O2+OH ID[47], RGmemID: 0
+Reaction Vector: 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #39, Parent Reaction: CH3O2+NO-->CH2O+NO2+HO2
+-----
+Reaction CH3O2+NO-->CH2O+NO2+HO2 ID[48], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #40, Parent Reaction: CH3O2+CH3O2-->1.8CH2O+0.6HO2
+-----
+Reaction CH3O2+CH3O2-->1.8CH2O+0.6HO2 ID[49], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #41, Parent Reaction: CH3O2+HO2-->CH3OOH+O2
+-----
+Reaction CH3O2+HO2-->CH3OOH+O2 ID[50], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #42, Parent Reaction: CH3OOH+OH-->0.7CH3O2+0.3CH2O+0.3OH+H2O
+-----
+Reaction CH3OOH+OH-->0.7CH3O2+0.3CH2O+0.3OH+H2O ID[51], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #43, Parent Reaction: CH2O+OH-->CO+HO2+H2O
+-----
+Reaction CH2O+OH-->CO+HO2+H2O ID[52], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #44, Parent Reaction: CH2O+NO3-->HNO3+CO+HO2
+-----
+Reaction CH2O+NO3-->HNO3+CO+HO2 ID[53], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 -1 0 1 0 0 1 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #45, Parent Reaction: CO+OH-->CO2+HO2
+-----
+Reaction CO+OH-->CO2+HO2 ID[54], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+Number Members: 1
+
+RG #46, Parent Reaction: C2H6+OH-->C2H5O2+H2O
+-----
+Reaction C2H6+OH-->C2H5O2+H2O ID[55], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #47, Parent Reaction: C2H5O2+NO-->CH3CHO+NO2+HO2
+-----
+Reaction C2H5O2+NO-->CH3CHO+NO2+HO2 ID[56], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #48, Parent Reaction: C2H5O2+HO2-->C2H5OOH+O2
+-----
+Reaction C2H5O2+HO2-->C2H5OOH+O2 ID[57], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #49, Parent Reaction: C2H5O2+CH3O2-->0.8CH3CHO+0.6HO2
+-----
+Reaction C2H5O2+CH3O2-->0.8CH3CHO+0.6HO2 ID[58], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #50, Parent Reaction: C2H5OOH+OH-->0.286C2H5O2+0.714CH3CHO+0.714OH+H2O
+-----
+Reaction C2H5OOH+OH-->0.286C2H5O2+0.714CH3CHO+0.714OH+H2O ID[59], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #51, Parent Reaction: C3H8+OH-->C3H7O2+H2O
+-----
+Reaction C3H8+OH-->C3H7O2+H2O ID[60], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #52, Parent Reaction: C3H7O2+NO-->NO2+0.24C2H5O2+0.09CH3CHO+0.18CO+0.7CH3COCH3+HO2
+-----
+Reaction C3H7O2+NO-->NO2+0.24C2H5O2+0.09CH3CHO+0.18CO+0.7CH3COCH3+HO2 ID[61], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #53, Parent Reaction: C3H7O2+HO2-->C3H7OOH+O2
+-----
+Reaction C3H7O2+HO2-->C3H7OOH+O2 ID[62], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #54, Parent Reaction: C3H7O2+CH3O2-->0.8C2H5O2+0.3CH3CHO+0.6CO+0.2CH3COCH3+HO2
+-----
+Reaction C3H7O2+CH3O2-->0.8C2H5O2+0.3CH3CHO+0.6CO+0.2CH3COCH3+HO2 ID[63], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #55, Parent Reaction: C3H7OOH+OH-->0.157C3H7O2+0.142C2H5O2+0.053CH3CHO+0.106CO+0.666CH3COCH3+0.843OH+0.157H2O
+-----
+Reaction C3H7OOH+OH-->0.157C3H7O2+0.142C2H5O2+0.053CH3CHO+0.106CO+0.666CH3COCH3+0.843OH+0.157H2O ID[64], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #56, Parent Reaction: CH3COCH3+OH-->CH3COCH2O2+H2O
+-----
+Reaction CH3COCH3+OH-->CH3COCH2O2+H2O ID[65], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #57, Parent Reaction: CH3COCH2O2+NO-->NO2+CH3COO2+CH2O
+-----
+Reaction CH3COCH2O2+NO-->NO2+CH3COO2+CH2O ID[66], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #58, Parent Reaction: CH3COCH2O2+NO3-->NO2+CH3COO2+CH2O
+-----
+Reaction CH3COCH2O2+NO3-->NO2+CH3COO2+CH2O ID[67], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #59, Parent Reaction: CH3COCH2O2+HO2-->HACET+O2
+-----
+Reaction CH3COCH2O2+HO2-->HACET+O2 ID[68], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #60, Parent Reaction: HACET+OH-->0.323CH3COCH2O2+0.677MGLY+0.677OH
+-----
+Reaction HACET+OH-->0.323CH3COCH2O2+0.677MGLY+0.677OH ID[69], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #61, Parent Reaction: C2H4+OH+M-->HOC2H4O2+M
+-----
+Reaction C2H4+OH+M-->HOC2H4O2+M ID[70], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #62, Parent Reaction: C2H4+O3-->CH2O+0.8CO+0.2OH+0.2HO2+0.1H2+0.2CO2+0.4H2O+0.8O2
+-----
+Reaction C2H4+O3-->CH2O+0.8CO+0.2OH+0.2HO2+0.1H2+0.2CO2+0.4H2O+0.8O2 ID[71], RGmemID: 0
+Reaction Vector: -1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 0 
+Number Members: 1
+
+RG #63, Parent Reaction: HOC2H4O2+NO-->NO2+HO2+CH2O+CH2O
+-----
+Reaction HOC2H4O2+NO-->NO2+HO2+CH2O+CH2O ID[72], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #64, Parent Reaction: HOC2H4O2+HO2-->HOROOH+O2
+-----
+Reaction HOC2H4O2+HO2-->HOROOH+O2 ID[73], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #65, Parent Reaction: C3H6+OH+M-->HOC3H6O2+M
+-----
+Reaction C3H6+OH+M-->HOC3H6O2+M ID[74], RGmemID: 0
+Reaction Vector: 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #66, Parent Reaction: C3H6+O3-->0.5CH2O+0.5CH3CHO+0.36OH+0.3HO2+0.28CH3O2+0.56CO
+-----
+Reaction C3H6+O3-->0.5CH2O+0.5CH3CHO+0.36OH+0.3HO2+0.28CH3O2+0.56CO ID[75], RGmemID: 0
+Reaction Vector: -1 0 0 0 0 0 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #67, Parent Reaction: HOC3H6O2+NO-->NO2+CH3CHO+CH2O+HO2
+-----
+Reaction HOC3H6O2+NO-->NO2+CH3CHO+CH2O+HO2 ID[76], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #68, Parent Reaction: HOC3H6O2+HO2-->HOROOH+O2
+-----
+Reaction HOC3H6O2+HO2-->HOROOH+O2 ID[77], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #69, Parent Reaction: HOROOH+OH-->0.1HOC2H4O2+0.05HOC3H6O2+0.2CH3COO2+0.6CH2O+0.4CO+0.85OH+H2O
+-----
+Reaction HOROOH+OH-->0.1HOC2H4O2+0.05HOC3H6O2+0.2CH3COO2+0.6CH2O+0.4CO+0.85OH+H2O ID[78], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #70, Parent Reaction: ONMV+OH-->0.5C2H5O2+0.6ISO2
+-----
+Reaction ONMV+OH-->0.5C2H5O2+0.6ISO2 ID[79], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #71, Parent Reaction: CH3CHO+OH-->CH3COO2+H2O
+-----
+Reaction CH3CHO+OH-->CH3COO2+H2O ID[80], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #72, Parent Reaction: CH3CHO+NO3-->CH3COO2+HNO3
+-----
+Reaction CH3CHO+NO3-->CH3COO2+HNO3 ID[81], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 -1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #73, Parent Reaction: CH3COO2+NO-->NO2+CH3O2+CO2
+-----
+Reaction CH3COO2+NO-->NO2+CH3O2+CO2 ID[82], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+Number Members: 1
+
+RG #74, Parent Reaction: CH3COO+HO2-->CH3COOOH+O2
+-----
+Reaction CH3COO+HO2-->CH3COOOH+O2 ID[85], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 
+Number Members: 1
+
+RG #75, Parent Reaction: CH3COO2+HO2-->CH3COOH+O3
+-----
+Reaction CH3COO2+HO2-->CH3COOH+O3 ID[86], RGmemID: 0
+Reaction Vector: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 
+Number Members: 1
+
+RG #76, Parent Reaction: CH3COOOH+OH-->CH3COO2+H2O
+-----
+Reaction CH3COOOH+OH-->CH3COO2+H2O ID[87], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #77, Parent Reaction: CH3COO2+CH3O2-->CH3O2+CH2O+HO2+CO2+O2
+-----
+Reaction CH3COO2+CH3O2-->CH3O2+CH2O+HO2+CO2+O2 ID[88], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+Number Members: 1
+
+RG #78, Parent Reaction: CH3COO2+CH3O2-->CH3COOH+CH2O+O2
+-----
+Reaction CH3COO2+CH3O2-->CH3COOH+CH2O+O2 ID[89], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 
+Number Members: 1
+
+RG #79, Parent Reaction: CH3COO2+CH3COO2-->CH3O2+CH3O2+CO2+CO2+O2
+-----
+Reaction CH3COO2+CH3COO2-->CH3O2+CH3O2+CO2+CO2+O2 ID[90], RGmemID: 0
+Reaction Vector: 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 -2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 
+Number Members: 1
+
+RG #80, Parent Reaction: C5H8+OH-->ISO2
+-----
+Reaction C5H8+OH-->ISO2 ID[91], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #81, Parent Reaction: C5H8+O3-->0.65MACR+0.58CH2O+0.1MACRO2+0.1CH3COO2+0.08CH3O2+0.28HCOOH+0.14CO+0.09H2O2+0.25HO2+0.25OH
+-----
+Reaction C5H8+O3-->0.65MACR+0.58CH2O+0.1MACRO2+0.1CH3COO2+0.08CH3O2+0.28HCOOH+0.14CO+0.09H2O2+0.25HO2+0.25OH ID[92], RGmemID: 0
+Reaction Vector: -1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 -1 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+Number Members: 1
+
+RG #82, Parent Reaction: C5H8+NO3-->ISON
+-----
+Reaction C5H8+NO3-->ISON ID[93], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #83, Parent Reaction: ISO2+NO-->0.956NO2+0.956MACR+0.956CH2O+0.956HO2+0.044ISON
+-----
+Reaction ISO2+NO-->0.956NO2+0.956MACR+0.956CH2O+0.956HO2+0.044ISON ID[94], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #84, Parent Reaction: ISO2+HO2-->ISOOH
+-----
+Reaction ISO2+HO2-->ISOOH ID[95], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #85, Parent Reaction: ISO2+ISO2-->MACR+MACR+CH2O+HO2
+-----
+Reaction ISO2+ISO2-->MACR+MACR+CH2O+HO2 ID[96], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 -2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #86, Parent Reaction: ISON+OH-->ACETOL+NALD
+-----
+Reaction ISON+OH-->ACETOL+NALD ID[97], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #87, Parent Reaction: MACR+OH-->MACRO2
+-----
+Reaction MACR+OH-->MACRO2 ID[98], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #88, Parent Reaction: MACR+O3-->0.9MGLY+0.45HCOOH+0.32HO2+0.22CO+0.19OH+0.1CH3COO2
+-----
+Reaction MACR+O3-->0.9MGLY+0.45HCOOH+0.32HO2+0.22CO+0.19OH+0.1CH3COO2 ID[99], RGmemID: 0
+Reaction Vector: -1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+Number Members: 1
+
+RG #89, Parent Reaction: MACRO2+NO-->NO2+0.25HACET+0.25CO+0.25CH3COO2+0.5MGLY+0.75CH2O+0.75HO2
+-----
+Reaction MACRO2+NO-->NO2+0.25HACET+0.25CO+0.25CH3COO2+0.5MGLY+0.75CH2O+0.75HO2 ID[100], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 -1 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #90, Parent Reaction: MACRO2+HO2-->MACROOH
+-----
+Reaction MACRO2+HO2-->MACROOH ID[101], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #91, Parent Reaction: MACRO2+MACRO2-->HACET+MGLY+0.5CH2O+0.5CO
+-----
+Reaction MACRO2+MACRO2-->HACET+MGLY+0.5CH2O+0.5CO ID[102], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #92, Parent Reaction: MPAN+OH-->ACETOL+NO2
+-----
+Reaction MPAN+OH-->ACETOL+NO2 ID[105], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #93, Parent Reaction: MACROOH+OH-->MACRO2+H2O
+-----
+Reaction MACROOH+OH-->MACRO2+H2O ID[106], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+Number Members: 1
+
+RG #94, Parent Reaction: MGLY+OH-->CH3COO2+CO
+-----
+Reaction MGLY+OH-->CH3COO2+CO ID[107], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #95, Parent Reaction: MGLY+NO3-->CH3COO2+CO+HNO3
+-----
+Reaction MGLY+NO3-->CH3COO2+CO+HNO3 ID[108], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 -1 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #96, Parent Reaction: NALD+OH-->CH2O+CO+NO2
+-----
+Reaction NALD+OH-->CH2O+CO+NO2 ID[109], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #97, Parent Reaction: C10H16+OH-->1.5ISO2+CH3COCH3
+-----
+Reaction C10H16+OH-->1.5ISO2+CH3COCH3 ID[110], RGmemID: 0
+Reaction Vector: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Number Members: 1
+
+RG #98, Parent Reaction: C10H16+O3-->1.3MACR+1.16CH2O+0.2MACRO2+0.2CH3COO2+0.16CH3O2+0.56HCOOH+0.28CO+0.18H2O2+0.5HO2+0.5OH
+-----
+Reaction C10H16+O3-->1.3MACR+1.16CH2O+0.2MACRO2+0.2CH3COO2+0.16CH3O2+0.56HCOOH+0.28CO+0.18H2O2+0.5HO2+0.5OH ID[111], RGmemID: 0
+Reaction Vector: -1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 -1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+Number Members: 1

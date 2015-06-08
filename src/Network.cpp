@@ -47,8 +47,7 @@ void Network::loadNetwork(const char *filename)
 			status = fscanf(file, "%s %s %hu %hhu %hhu %lf %lf\n",
 				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
-		
-    //printf("speciesLabel[%d]: %s, Z: %d, N: %d\n", n, speciesLabel[n], Z[n], N[n]);
+      printf("species[%d]: %s\n", n, speciesLabel[n]);
 		if (status == EOF)
 			break;
 		
@@ -69,7 +68,7 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
-	static const bool displayPEInput = true;
+	static const bool displayPEInput = false;
 	
 	// Unused variables
 	int reaclibClass;
@@ -272,17 +271,20 @@ void Network::loadReactions(const char *filename)
           RGmemID[n] = RGmemberID;
           ReacParent[n] = j;
           RGid[numRG] = j;
+          if(displayPEInput) {
   	        printf("ReacParent: %d,  RGmemID: %d\n", ReacParent[n], RGmemID[n]);
             printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
             for (int q = 0; q < species; q++) {
               printf("%d ", reacVector[n][q]);
             }
 	      		printf("\n");
+          }
         }
       }
     //indicates number of members in each reaction group
     RGnumMembers[numRG] = RGmemberID + 1;
-    printf("Number Members: %d\n", RGnumMembers[numRG]);
+    if(displayPEInput)
+      printf("Number Members: %d\n", RGnumMembers[numRG]);
     numRG++;
     }
   }
