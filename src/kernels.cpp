@@ -134,6 +134,8 @@ void integrateNetwork(
 	}
 
 	/* Compute the rate values. */
+  /* Altered for Atmospheric Chemistry */
+  /* Removing globals.preFac... Will I need something like it?*/
 
 	/*
 	   Compute the temperature-dependent factors for the rates.
@@ -142,6 +144,7 @@ void integrateNetwork(
 	   per GPU call.
 	*/
 
+/*
 	fern_real T93 = cbrt(integrationData.T9);
 	fern_real t1 = 1 / integrationData.T9;
 	fern_real t2 = 1 / T93;
@@ -149,9 +152,12 @@ void integrateNetwork(
 	fern_real t4 = integrationData.T9;
 	fern_real t5 = T93 * T93 * T93 * T93 * T93;
 	fern_real t6 = log(integrationData.T9);
+*/
+
 
 	for (int i = 0; i < network.reactions; i++)
 	{
+   /* Astrophysical Rate Calculation, Removing for Atmos 
 		#ifdef FERN_SINGLE
 			Rate[i] = globals.preFac[i] * expf(
 				     network.P[0][i] + t1 * network.P[1][i] +
@@ -165,6 +171,56 @@ void integrateNetwork(
 				t4 * network.P[4][i] + t5 * network.P[5][i] +
 				t6 * network.P[6][i]);
 		#endif
+  */
+    fern_real A = network.P[0][i];
+    fern_real B = network.P[1][i];
+    fern_real C = network.P[2][i];
+    fern_real D = network.P[3][i];
+    fern_real E = network.P[4][i];
+    fern_real F = network.P[5][i];
+    fern_real G = network.P[6][i];
+    fern_real a = network.P[7][i];
+    fern_real b = network.P[8][i];
+    fern_real c = network.P[9][i];
+    fern_real d = network.P[10][i];
+    fern_real e = network.P[11][i];
+    fern_real t = network.P[12][i];
+    fern_real u = network.P[13][i];
+    fern_real v = network.P[14][i];
+    fern_real w = network.P[15][i];
+    fern_real x = network.P[16][i];
+    fern_real Q = network.P[17][i];
+    fern_real R = network.P[18][i];
+    fern_real T = integrationData.T9;
+    fern_real H2O = integrationData.H2O;
+    fern_real M = integrationData.M;
+    fern_real Patm = integrationData.Patm;
+		#ifdef FERN_SINGLE
+    fern_real p1 = 1 + B*H2O*exp(a/T);
+    fern_real p2 = C*exp(b/T)*(v+w*M);
+    fern_real p3 = E*exp(d/T);
+    fern_real p4 = pow(D*exp(c/T), x);
+    fern_real p5 = F*pow(T,2)*exp(e/T);
+		#else
+    fern_real p1 = 1 + B*H2O*expf(a/T);
+    fern_real p2 = C*expf(b/T)*(v+w*M);
+    fern_real p3 = E*expf(d/T);
+    fern_real p4 = powf(D*expf(c/T), x);
+    fern_real p5 = F*powf(T,2)*expf(e/T);
+		#endif
+    fern_real p6 = G*(1+R*Patm);
+    
+		Rate[i] = A + ((Q * p1 * (p2 + p3)) / (t + (u * p2 * p4))) + p5 + p6;
+    if(i<26) {
+      printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
+    } else {
+      /*
+      printf("%e + ((%f * (1 + %e * H2O * exp(%f/T)) * (%eexp(%f/T) * (%f + %f*M)+%eexp(%f/T)))/(%f + (%f * %eexp(%f/T) * (%f + %f*M)) * pow(%eexp(%f/T), %f))) + %e*pow(T,2)*exp(%f/T) + %e*(1+%fPatm)\n", 
+        A, Q, B, a, C, b, v, w, E, d, t, u, C, b, v, w, D, c, x, F, e, G, R);
+      */
+      printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
+    }
+
 	}
 
 	/* Author: Daniel Shyles */

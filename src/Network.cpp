@@ -47,7 +47,7 @@ void Network::loadNetwork(const char *filename)
 			status = fscanf(file, "%s %s %hu %hhu %hhu %lf %lf\n",
 				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
-      printf("species[%d]: %s\n", n, speciesLabel[n]);
+      //printf("species[%d]: %s\n", n, speciesLabel[n]);
 		if (status == EOF)
 			break;
 		
@@ -67,7 +67,7 @@ void Network::loadNetwork(const char *filename)
 
 void Network::loadReactions(const char *filename)
 {
-	static const bool displayInput = false;
+	static const bool displayInput = true;
 	static const bool displayPEInput = false;
 	
 	// Unused variables
@@ -138,16 +138,17 @@ void Network::loadReactions(const char *filename)
 		if (displayInput)
 			printf("P: { ");
 		
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 19; i++)
 		{
 			#ifdef FERN_SINGLE
-				status = fscanf(file, "%f", &P[i][n]);
+				status = fscanf(file, "%e", &P[i][n]);
+				printf("%e, ", P[i][n]);
 			#else
-				status = fscanf(file, "%lf", &P[i][n]);
+				status = fscanf(file, "%le", &P[i][n]);
 			#endif
 			
 			if (displayInput)
-				printf("%f, ", P[i][n]);
+				printf("%e, ", P[i][n]);
 		}
 		
 		if (displayInput)
@@ -545,7 +546,7 @@ void Network::allocate()
 	
 	// Allocate the reaction data
 	
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 19; i++)
 		P[i] = new fern_real[reactions];
 	
 	numReactingSpecies = new unsigned char[reactions];
@@ -597,7 +598,7 @@ void Network::print()
 	
 	printf("reactions: %d\n", reactions);
 	
-	for (int n = 0; n < 7; n++)
+	for (int n = 0; n < 19; n++)
 	{
 		printf("P[%d]: { ", n);
 		for (int i = 0; i < reactions; i++)

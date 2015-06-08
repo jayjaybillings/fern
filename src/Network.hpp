@@ -34,7 +34,7 @@ struct Network
 	
 	// Reaction data
 	
-	fern_real *P[7]; // [reactions]
+	fern_real *P[19]; // [reactions]
 	unsigned char *numReactingSpecies; // [reactions]
 	
 	fern_real *statFac; // [reactions]

@@ -67,6 +67,9 @@ void IntegrationData::print()
 	printf("species: %d\n", species);
 	
 	printf("T9: %e\n", T9);
+  printf("M: %e\n", M);
+  printf("H2O: %e\n", H2O);
+  printf("Patm: %e\n", Patm);
 	printf("t_init: %e\n", t_init);
 	printf("t_max: %e\n", t_max);
 	printf("dt_init: %e\n", dt_init);
