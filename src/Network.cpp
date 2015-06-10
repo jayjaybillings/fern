@@ -226,6 +226,8 @@ void Network::loadReactions(const char *filename)
   //PartialEquilibrium: define Reaction Groups based on ReacVector
   //reworked so parsing to reaction groups does not depend on the reaction input
   //file having RG members in order
+  //embedded loop over all reactions to compare to all other reactions
+  //and group them if the absolute value of their reaction vectors are equivalent.
   int isRGmember = 0;
   int RGmemberID = 0;
   //each reaction's home RGid
@@ -289,6 +291,7 @@ void Network::loadReactions(const char *filename)
     }
   }
   if(displayPEInput) {
+    printf("numRG: %d\n",numRG);
     for(int i = 0; i < numRG; i++) {
       printf("ReacParent for each RG[%d]: %d\n", i, RGid[i]);
     }

@@ -187,22 +187,22 @@ void integrateNetwork(
 			if(displayRGdata && ReacGroups[i] != 0) {
 				printf("RG #%d\nRG Class: %d\nParent Reaction: %d\n", countRG, ReacGroups[i], i);
 				//output numReactingSpecies and numProducts for Parent of RG
-                printf("numReacting: %d, numProducts: %d\n", network.numReactingSpecies[i], network.PEnumProducts[i]);			
+        printf("numReacting: %d, numProducts: %d\n", network.numReactingSpecies[i], network.PEnumProducts[i]);			
 				if(ReacGroups[i] == 1) {		
 					printf("Reactant SID: %d; Product SID: %d\n",network.reactant[0][i], network.product[0][i]);
 				} 
 				else if(ReacGroups[i] == 2) {
-                    printf("Reactant SID: %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i]);
-                }
-                else if(ReacGroups[i] == 3) {
-                    printf("Reactant SID: %d, %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.reactant[2][i], network.product[0][i]);
-                }
-                else if(ReacGroups[i] == 4) {
-                    printf("Reactant SID: %d, %d; Product SID: %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i]);
-                }
-                else if(ReacGroups[i] == 5) {
-                    printf("Reactant SID: %d, %d; Product SID: %d, %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i], network.product[2][i]);
-                }
+          printf("Reactant SID: %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i]);
+        }
+        else if(ReacGroups[i] == 3) {
+          printf("Reactant SID: %d, %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.reactant[2][i], network.product[0][i]);
+        }
+        else if(ReacGroups[i] == 4) {
+          printf("Reactant SID: %d, %d; Product SID: %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i]);
+        }
+        else if(ReacGroups[i] == 5) {
+          printf("Reactant SID: %d, %d; Product SID: %d, %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i], network.product[2][i]);
+        }
 				printf("-----\n|\n");
 			}				
 			if(displayRGdata)
@@ -277,28 +277,28 @@ void integrateNetwork(
 		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
-	            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
+	      intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
 				nextOutput = log10(t);
 				setNextOut = 1;
 			}
 		//stdout to file > fernOut.txt for plottable output
 			if(log10(t) >= nextOutput) {
-			//	printf("OC\n");//OutputCount
+				printf("OC\n");//OutputCount
 				//renormalize nextOutput by compensating for overshooting last expected output time
 				nextOutput = intervalLogt+nextOutput;
+        //For this timestep start asy and pe counts at zero, then count them up for this timestep
 				asyCount = 0;
 				peCount = 0;
+        //Check all Species if undergoing asymptotic update
 				for(int m = 0; m < network.species; m++) {
-				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
-
+				  printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
 					if(checkAsy(FminusSum[m], Y[m], dt)) {
 						asyCount++;	
           }
 				}
         //check frac RG PartialEq
-        
 	      partialEquil(Y, numberReactions, ReacGroups, network.reactant, network.product, final_k, pEquil, RGid, numRG, 0.01, eq);
-
+        //Check all RG if in Equilibrium
 				for(int i = 0; i < numRG; i++) {
 					if(pEquil[i] == 1) {
 						peCount++;			
@@ -468,8 +468,22 @@ void integrateNetwork(
 		   Store the actual timestep that would be taken. Same as dt unless
 		   artificially shortened in the last integration step to match end time.
 		*/
-		
+
 		deltaTimeRestart = dt;
+
+    /*
+      DS plotting addon, if next time is greater than plotStartTime, set dt to 
+      diff between plotStartTime and current time. This will ensure that the 
+      output data begins at exactly the plotSartTime
+    */ 
+
+    if(plotOutput == 1 && log10(t+dt) > plotStartTime && setNextOut == 0) {
+      #ifdef FERN_SINGLE
+        dt = pow(10, plotStartTime) - t;
+      #else
+        dt = powf(10, plotStartTime) - t;
+      #endif
+    }
 		
 		/*
 		   Finally check to be sure that timestep will not overstep next plot output
@@ -657,16 +671,12 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 	fern_real PE_val_d=0;
 	fern_real PE_val_e=0;
   int members=0;
-	bool PEprintData = true;
+	bool PEprintData = false;
 
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
 				if(PEprintData) {
           printf("RGprintnumber: %d\n", i);
-          printf("ReacGroups[RGid[i]]: %d\n", ReacGroups[RGid[i]]);
-          printf("Y[product[0][RGid[i]]]: %e\n", Y[product[0][RGid[i]]]);
-          printf("RGid[i]: %d\n", RGid[i]);
-          printf("product[0][RGid[i]]: %d\n", product[0][RGid[i]]);
         }
         pEquil[i] = 0;
 	      //reset RG reactant and product populations
@@ -675,6 +685,9 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
         y_c = 0;
         y_d = 0;
         y_e = 0;
+        //if i is not the last RG, calculate number of members by the difference between
+        //this RG's parent rID, and that of the next RG. Else, take the difference between the
+        //total number of reactions and the current RG parent rID.
         if(i!=numRG-1) {
           members = RGid[i+1]-RGid[i];
         } else {
@@ -702,8 +715,8 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           y_eq_b = c1-y_eq_a;
 
           //is each reactant and product in equilibrium?
-          PE_val_a = fabs(y_a-y_eq_a)/(y_eq_a);
-          PE_val_b = fabs(y_b-y_eq_b)/(y_eq_b);
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
           if(PE_val_a < tolerance && PE_val_b < tolerance) {
             pEquil[i] = 1;
           } 
@@ -724,9 +737,9 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           y_eq_a = ((-.5/a)*(b+sqrt(-q)));
           y_eq_b = y_eq_a+c1;
           y_eq_c = c2-y_eq_b;
-          PE_val_a = fabs(y_a-y_eq_a)/(y_eq_a);
-          PE_val_b = fabs(y_b-y_eq_b)/(y_eq_b);
-          PE_val_c = fabs(y_c-y_eq_c)/(y_eq_c);
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
             pEquil[i] = 1;
           }   
@@ -750,10 +763,10 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           y_eq_b = y_eq_a-c1;
           y_eq_c = y_eq_a-c2;
           y_eq_d = c3-y_eq_a+((1/3)*(c1+c2));
-          PE_val_a = fabs(y_a-y_eq_a)/(y_eq_a);
-          PE_val_b = fabs(y_b-y_eq_b)/(y_eq_b);
-          PE_val_c = fabs(y_c-y_eq_c)/(y_eq_c);
-          PE_val_d = fabs(y_d-y_eq_d)/(y_eq_d);
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+          PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
             pEquil[i] = 1;
           } 
@@ -777,10 +790,10 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
   				y_eq_b = y_eq_a-c1;
   				y_eq_c = c2-y_eq_a;
   				y_eq_d = c3-y_eq_a;
-	        PE_val_a = fabs(y_a-y_eq_a)/(y_eq_a);
-  				PE_val_b = fabs(y_b-y_eq_b)/(y_eq_b);
-	        PE_val_c = fabs(y_c-y_eq_c)/(y_eq_c);
-  				PE_val_d = fabs(y_d-y_eq_d)/(y_eq_d);
+	        PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  				PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+	        PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+  				PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
     				pEquil[i] = 1;
 		      }
@@ -794,15 +807,15 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           y_c = Y[product[0][RGid[i]]];
           y_d = Y[product[1][RGid[i]]];
 			   	y_e = Y[product[2][RGid[i]]];
-          c1 = y_a+(1/3)*(y_c+y_d+y_e);
+          c1 = y_a+((y_c+y_d+y_e)/3);
           c2 = y_a-y_b;
           c3 = y_c-y_d;
           c4 = y_c-y_e;
           a = (((3*c1)-y_a)*final_k[1][i])-final_k[0][i];
- 					alpha = c1+((1/3)*(c3+c4));	
+ 					alpha = c1+((c3+c4)/3);	
           beta = c1-(2*c3/3)+(c4/3);	
   				gamma = c1+(c3/3)-(2*c4/3);	
-          b = -(c2*final_k[0][i])-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*final_k[1][i]);
+          b = (c2*final_k[0][i])-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*final_k[1][i]);
           c = final_k[1][i]*alpha*beta*gamma;
           q = (4*a*c)-(b*b);
           y_eq_a = ((-.5/a)*(b+sqrt(-q)));
@@ -810,11 +823,11 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           y_eq_c = alpha-y_eq_a;
           y_eq_d = beta-y_eq_a;
           y_eq_e = gamma-y_eq_a;
-          PE_val_a = fabs(y_a-y_eq_a)/(y_eq_a);
-          PE_val_b = fabs(y_b-y_eq_b)/(y_eq_b);
-          PE_val_c = fabs(y_c-y_eq_c)/(y_eq_c);
-          PE_val_d = fabs(y_d-y_eq_d)/(y_eq_d);
-          PE_val_e = fabs(y_e-y_eq_e)/(y_eq_e);
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+          PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+          PE_val_e = fabs(y_e-y_eq_e)/fabs(y_eq_e);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
             pEquil[i] = 1;
           } 
