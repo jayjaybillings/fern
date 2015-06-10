@@ -47,6 +47,7 @@ struct Network
   int *RGmemberIndex; // [reactions]
   int *PEnumProducts; // [reactions]
   int *isReverseR; //[reactions]
+  int *reacType; //[reactions]
   int *ReacParent; // [reactions] 
 	int numRG;
 	int *pEquil; //[numRG]

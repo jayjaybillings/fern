@@ -67,8 +67,8 @@ void Network::loadNetwork(const char *filename)
 
 void Network::loadReactions(const char *filename)
 {
-	static const bool displayInput = true;
-	static const bool displayPEInput = false;
+	static const bool displayInput = false;
+	static const bool displayPEInput = true;
 	
 	// Unused variables
 	int reaclibClass;
@@ -109,15 +109,15 @@ void Network::loadReactions(const char *filename)
 		// Line #1
 
 		#ifdef FERN_SINGLE		
-			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %f %f",
+			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %d %f %f",
 				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
-				&statFac[n], &Q[n]);
+				&reacType[n], &statFac[n], &Q[n]);
 		#else
-			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %lf %lf",
+			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %d %lf %lf",
 				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
-				&statFac[n], &Q[n]);
+				&reacType[n], &statFac[n], &Q[n]);
 		#endif
 		
 		if (status == EOF)
@@ -128,10 +128,10 @@ void Network::loadReactions(const char *filename)
 			printf("Reaction Index = %d\n", n);
 			printf("isReverseR = %d reaclibIndex = %d\n",
 				isReverseR[n], reaclibClass);
-			printf("%s %d %d %d %d %d %d %d %f %f\n",
+			printf("%s %d %d %d %d %d %d %d reacType: %d %f %f\n",
 				reactionLabel[n], RGclass[n], RGmemberIndex[n], reaclibClass,
 				numReactingSpecies[n], numProducts[n], isEC,
-				isReverseR[n], statFac[n], Q[n]);
+				isReverseR[n], reacType[n], statFac[n], Q[n]);
 		}
 		// Line #2
 		
@@ -554,6 +554,7 @@ void Network::allocate()
 	Q = new fern_real[reactions];
   RGmemberIndex = new int [reactions];
   isReverseR = new int [reactions];
+  reacType = new int [reactions];
   PEnumProducts = new int[reactions];
   ReacParent = new int [reactions];
   RGid = new int [numRG];

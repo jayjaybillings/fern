@@ -83,6 +83,8 @@ void integrateNetwork(
   ReacGroups = network.ReacGroups;
   int *pEquil;
   pEquil = network.pEquil;
+  int *reacType;
+  reacType = network.reacType;
 
 	/* Assign globals pointers. */
 	
@@ -144,83 +146,113 @@ void integrateNetwork(
 	   per GPU call.
 	*/
 
-/*
-	fern_real T93 = cbrt(integrationData.T9);
-	fern_real t1 = 1 / integrationData.T9;
-	fern_real t2 = 1 / T93;
-	fern_real t3 = T93;
-	fern_real t4 = integrationData.T9;
-	fern_real t5 = T93 * T93 * T93 * T93 * T93;
-	fern_real t6 = log(integrationData.T9);
-*/
-
+  fern_real T = integrationData.T9;
+  fern_real H2O = integrationData.H2O;
+  fern_real M = integrationData.M;
+  fern_real Patm = integrationData.Patm;
 
 	for (int i = 0; i < network.reactions; i++)
 	{
-   /* Astrophysical Rate Calculation, Removing for Atmos 
-		#ifdef FERN_SINGLE
-			Rate[i] = globals.preFac[i] * expf(
-				     network.P[0][i] + t1 * network.P[1][i] +
-				t2 * network.P[2][i] + t3 * network.P[3][i] +
-				t4 * network.P[4][i] + t5 * network.P[5][i] +
-				t6 * network.P[6][i]);
-		#else
- 			Rate[i] = globals.preFac[i] * exp(
-				     network.P[0][i] + t1 * network.P[1][i] +
-				t2 * network.P[2][i] + t3 * network.P[3][i] +
-				t4 * network.P[4][i] + t5 * network.P[5][i] +
-				t6 * network.P[6][i]);
-		#endif
-  */
-    fern_real A = network.P[0][i];
-    fern_real B = network.P[1][i];
-    fern_real C = network.P[2][i];
-    fern_real D = network.P[3][i];
-    fern_real E = network.P[4][i];
-    fern_real F = network.P[5][i];
-    fern_real G = network.P[6][i];
-    fern_real a = network.P[7][i];
-    fern_real b = network.P[8][i];
-    fern_real c = network.P[9][i];
-    fern_real d = network.P[10][i];
-    fern_real e = network.P[11][i];
-    fern_real t = network.P[12][i];
-    fern_real u = network.P[13][i];
-    fern_real v = network.P[14][i];
-    fern_real w = network.P[15][i];
-    fern_real x = network.P[16][i];
-    fern_real Q = network.P[17][i];
-    fern_real R = network.P[18][i];
-    fern_real T = integrationData.T9;
-    fern_real H2O = integrationData.H2O;
-    fern_real M = integrationData.M;
-    fern_real Patm = integrationData.Patm;
-		#ifdef FERN_SINGLE
-    fern_real p1 = 1 + B*H2O*exp(a/T);
-    fern_real p2 = C*exp(b/T)*(v+w*M);
-    fern_real p3 = E*exp(d/T);
-    fern_real p4 = pow(D*exp(c/T), x);
-    fern_real p5 = F*pow(T,2)*exp(e/T);
-		#else
-    fern_real p1 = 1 + B*H2O*expf(a/T);
-    fern_real p2 = C*expf(b/T)*(v+w*M);
-    fern_real p3 = E*expf(d/T);
-    fern_real p4 = powf(D*expf(c/T), x);
-    fern_real p5 = F*powf(T,2)*expf(e/T);
-		#endif
-    fern_real p6 = G*(1+R*Patm);
     
-		Rate[i] = A + ((Q * p1 * (p2 + p3)) / (t + (u * p2 * p4))) + p5 + p6;
-    if(i<26) {
+    if(reacType[i] == 2) {
+/*******************************************************************************
+From Rick's Fortran Code
+CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
+              altitude and cosine(zenith angle).
+              Photolysis frequencies were generated from TUV 5.0
+              (Madronich, S. and S. Flocke, Theoretical estimation of 
+              biologically effective UV radiation at the Earth's surface, 
+              in Solar Ultraviolet Radiation - Modeling, Measurements and 
+              Effects (Zerefos, C., ed.). NATO ASI Series Vol. I52, 
+              Springer-Verlag, Berlin, 1997.) as a function of altitude 
+              above sea level and zenith angle.  For each photolysis reaction 
+              polynomial fits were created as a function of cosine(zenith 
+              angle) at seven altitudes.  At a given altitude, the 
+              photolysis frequency for each reaction is determined 
+              by interpolation between bounding altitudes. Frequencies are
+              valid from 0 to 12 km above mean sea level.
+*******************************************************************************/
+
+
       printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
-    } else {
+    } else if(reacType[i] == 0) {
+      fern_real A = network.P[0][i];
+      fern_real B = network.P[1][i];
+      fern_real C = network.P[2][i];
+      fern_real D = network.P[3][i];
+      fern_real E = network.P[4][i];
+      fern_real F = network.P[5][i];
+      fern_real G = network.P[6][i];
+      fern_real a = network.P[7][i];
+      fern_real b = network.P[8][i];
+      fern_real c = network.P[9][i];
+      fern_real d = network.P[10][i];
+      fern_real e = network.P[11][i];
+      fern_real t = network.P[12][i];
+      fern_real u = network.P[13][i];
+      fern_real v = network.P[14][i];
+      fern_real w = network.P[15][i];
+      fern_real x = network.P[16][i];
+      fern_real Q = network.P[17][i];
+      fern_real R = network.P[18][i];
+		  #ifdef FERN_SINGLE
+      fern_real p1 = 1 + B*H2O*exp(a/T);
+      fern_real p2 = C*exp(b/T)*(v+w*M);
+      fern_real p3 = E*exp(d/T);
+      fern_real p4 = pow(D*exp(c/T), x);
+      fern_real p5 = F*pow(T,2)*exp(e/T);
+		  #else
+      fern_real p1 = 1 + B*H2O*expf(a/T);
+      fern_real p2 = C*expf(b/T)*(v+w*M);
+      fern_real p3 = E*expf(d/T);
+      fern_real p4 = powf(D*expf(c/T), x);
+      fern_real p5 = F*powf(T,2)*expf(e/T);
+		  #endif
+      fern_real p6 = G*(1+R*Patm);
+		  Rate[i] = A + ((Q * p1 * (p2 + p3)) / (t + (u * p2 * p4))) + p5 + p6;
       /*
       printf("%e + ((%f * (1 + %e * H2O * exp(%f/T)) * (%eexp(%f/T) * (%f + %f*M)+%eexp(%f/T)))/(%f + (%f * %eexp(%f/T) * (%f + %f*M)) * pow(%eexp(%f/T), %f))) + %e*pow(T,2)*exp(%f/T) + %e*(1+%fPatm)\n", 
         A, Q, B, a, C, b, v, w, E, d, t, u, C, b, v, w, D, c, x, F, e, G, R);
       */
       printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
-    }
+    } else if(reacType[i] == 1) {
+      fern_real A = network.P[0][i];
+      fern_real B = network.P[1][i];
+      fern_real C = network.P[2][i];
+      fern_real a = network.P[3][i];
+      fern_real b = network.P[4][i];
+      fern_real x = network.P[5][i];
+      fern_real y = network.P[6][i];
+      //check if this reaction is a reverse M-type reaction of previous reaction
+      //Depents on Mtype RG members to be in sequence, forward then reverse as deemed by CHASER paper
+      if(ReacParent[i] == ReacParent[i-1]) {
+		    #ifdef FERN_SINGLE
+          fern_real p1 = A*exp(B/T);
+        #else
+          fern_real p1 = A*expf(B/T);
+        #endif
 
+        Rate[i] = Rate[i-1]/p1;
+        printf("Reverse MType[%d] = %e\n", i-25, Rate[i]);
+      //Mtype Reaction
+      } else {
+		    #ifdef FERN_SINGLE
+          fern_real p1 = A*pow((a/T),x);
+          fern_real p2 = B*pow((b/T),y);
+          fern_real p3 = p1*pow((M/p2),2);
+          fern_real p4 = 1/log10(p3);
+          fern_real p5 = pow(C, p4);
+        #else
+          fern_real p1 = A*powf((a/T),x);
+          fern_real p2 = B*powf((b/T),y);
+          fern_real p3 = p1*powf((M/p2),2);
+          fern_real p4 = 1/log10f(p3);
+          fern_real p5 = powf(C, p4);
+        #endif
+        Rate[i] = (p1*M/(1+(p1*M/p2)))*p5;
+        printf("Parent/Solo MType[%d] = %e\n", i-25, Rate[i]);
+      }
+    }
 	}
 
 	/* Author: Daniel Shyles */
@@ -707,7 +739,7 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 	fern_real PE_val_d;
 	fern_real PE_val_e;
   int members;
-	bool PEprintData = true;
+	bool PEprintData = false;
 
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
