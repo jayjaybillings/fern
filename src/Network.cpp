@@ -66,7 +66,7 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
-	static const bool displayPEInput = false;
+	static const bool displayPEInput = true;
 	
 	// Unused variables
 	int reaclibClass;
@@ -131,6 +131,8 @@ void Network::loadReactions(const char *filename)
 				numReactingSpecies[n], numProducts[n], isEC,
 				isReverseR[n], statFac[n], Q[n]);
 		}
+    //Reset isReverseR to zero so I can determine if Reverse by reaction vector
+    isReverseR[n] = 0;
 		// Line #2
 		
 		if (displayInput)
@@ -242,6 +244,7 @@ void Network::loadReactions(const char *filename)
       RGmemberID = 0;
       RGmemID[j] = RGmemberID;
       ReacParent[j] = j;
+      RGid[numRG] = j;
       if(displayPEInput) {
 	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
         printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[j], j);
@@ -263,6 +266,11 @@ void Network::loadReactions(const char *filename)
         }
           //if reac n was determined to have same species as reac j, 
         if(isRGmember == 1) {
+          for(int b = 0; b < species; b++) {
+            if(reacVector[j][b] != (reacVector[n][b]) && abs(reacVector[j][b]) == abs(reacVector[n][b])) {
+              isReverseR[n] = 1;
+            }
+          }
           //give reac n the current reaction group ID. 
           reacPlaced[n] = 1;
           RGmemberID++;
@@ -273,7 +281,7 @@ void Network::loadReactions(const char *filename)
           ReacGroups[j] = RGclass[j];
           if(displayPEInput) {
             printf("Reac: %d, Class: %d\n", j, ReacGroups[j]);
-  	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d\n", RGid[numRG], ReacParent[n], RGmemID[n]);
+  	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d, isReverseR: %d\n", RGid[numRG], ReacParent[n], RGmemID[n], isReverseR[n]);
             printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
             for (int q = 0; q < species; q++) {
               printf("%d ", reacVector[n][q]);

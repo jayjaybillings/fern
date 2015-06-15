@@ -168,7 +168,7 @@ void integrateNetwork(
 
 	/* Author: Daniel Shyles */
 	/* Begin Partial Equilibrium calculation */
-	const bool displayRGdata = false;
+	const bool displayRGdata = true;
     fern_real kf;
     fern_real kr;
     fern_real *final_k[2];
@@ -282,8 +282,12 @@ void integrateNetwork(
 				setNextOut = 1;
 			}
 		//stdout to file > fernOut.txt for plottable output
-			if(log10(t) >= nextOutput) {
+      //tolerance to check if time is close to nextOutput
+      fern_real nextOuttol = fabs(log10(t)-nextOutput)/fabs(nextOutput);
+			if(nextOuttol <= .000001) {
+        //printf("tol = %f, log10(t): %f, nextOut: %f\n", nextOuttol, log10(t), nextOutput);
 				printf("OC\n");//OutputCount
+				//printf("OC: %d\n", outputCount);//OutputCount
 				//renormalize nextOutput by compensating for overshooting last expected output time
 				nextOutput = intervalLogt+nextOutput;
         //For this timestep start asy and pe counts at zero, then count them up for this timestep
@@ -484,6 +488,16 @@ void integrateNetwork(
         dt = powf(10, plotStartTime) - t;
       #endif
     }
+
+    if(plotOutput == 1 && log10(t+dt) > nextOutput) {
+//      printf("nextOut: %e, t: %e, dt: %e, t+dt: %e", pow(10, nextOutput), t, dt, t+dt);
+      #ifdef FERN_SINGLE
+        dt = pow(10, nextOutput) - t;
+      #else
+        dt = powf(10, nextOutput) - t;
+      #endif
+ //     printf(", updated time: %e\n", t+dt);
+    }
 		
 		/*
 		   Finally check to be sure that timestep will not overstep next plot output
@@ -671,12 +685,12 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 	fern_real PE_val_d=0;
 	fern_real PE_val_e=0;
   int members=0;
-	bool PEprintData = false;
+	bool PEprintData = true;
 
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
 				if(PEprintData) {
-          printf("RGprintnumber: %d\n", i);
+          //printf("RGprintnumber: %d\n", i);
         }
         pEquil[i] = 0;
 	      //reset RG reactant and product populations
