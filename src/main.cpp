@@ -7,26 +7,26 @@ int main(int argc, char const *argv[])
 {
 	/* Load the network */
 	FERNIntegrator integrator;
-	integrator.network.species = 16;
-	integrator.network.reactions = 48;
+	integrator.network.species = 150;
+	integrator.network.reactions = 1604;
 	integrator.network.massTol = 1.0e-7;
 	integrator.network.fluxFrac = 0.01;
-	integrator.network.numRG = 19;
+	integrator.network.numRG = 741;
 
 	integrator.network.allocate();
-	integrator.network.loadNetwork("CUDAnet_alpha.inp");
-	integrator.network.loadReactions("rateLibrary_alpha.data");
+	integrator.network.loadNetwork("CUDAnet_150.inp");
+	integrator.network.loadReactions("rateLibrary_150.data");
 
 	// Create the unique integration data
 
 	{
 		IntegrationData integrationData;
 		integrationData.allocate(integrator.network.species);
-		integrationData.loadAbundances("CUDAnet_alpha.inp");
+		integrationData.loadAbundances("CUDAnet_150.inp");
 		
 		integrationData.T9 = 7.0;
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 1.0e-3;
+		integrationData.t_max = 1.0e-7;
 		integrationData.dt_init = 1.23456789e-22;
 		integrationData.rho = 1.0e8;
 

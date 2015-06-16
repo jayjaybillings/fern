@@ -66,7 +66,7 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
-	static const bool displayPEInput = true;
+	static const bool displayPEInput = false;
 	
 	// Unused variables
 	int reaclibClass;
@@ -235,15 +235,21 @@ void Network::loadReactions(const char *filename)
   //each reaction's home RGid
   int *reactionRG = new int [reactions];
   int *reacPlaced = new int [reactions];
+  // initialize reacPlaced for logic below. This indicates whether a reaction has been placed into a reaction group yet... If not, it will be the parent of a new RG.
+  for (int i = 0; i < reactions; i++) {
+    reacPlaced[i] = 0;
+  }
   //member ID within this reaction's RG
   int *RGmemID = new int [reactions];
   int *RGnumMembers = new int [numRG];
   for(int j = 0; j < reactions; j++) {
+
     //if this reaction doesn't yet have an RG home of its own...
     if(reacPlaced[j] == 0) {
       RGmemberID = 0;
       RGmemID[j] = RGmemberID;
       ReacParent[j] = j;
+      ReacGroups[j] = RGclass[j];
       RGid[numRG] = j;
       if(displayPEInput) {
 	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
@@ -277,8 +283,6 @@ void Network::loadReactions(const char *filename)
           reactionRG[n] = numRG; 
           RGmemID[n] = RGmemberID;
           ReacParent[n] = j;
-          RGid[numRG] = j;
-          ReacGroups[j] = RGclass[j];
           if(displayPEInput) {
             printf("Reac: %d, Class: %d\n", j, ReacGroups[j]);
   	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d, isReverseR: %d\n", RGid[numRG], ReacParent[n], RGmemID[n], isReverseR[n]);

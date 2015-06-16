@@ -168,7 +168,7 @@ void integrateNetwork(
 
 	/* Author: Daniel Shyles */
 	/* Begin Partial Equilibrium calculation */
-	const bool displayRGdata = true;
+	const bool displayRGdata = false;
     fern_real kf;
     fern_real kr;
     fern_real *final_k[2];
@@ -685,12 +685,12 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 	fern_real PE_val_d=0;
 	fern_real PE_val_e=0;
   int members=0;
-	bool PEprintData = true;
+	bool PEprintData = false;
 
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
 				if(PEprintData) {
-          //printf("RGprintnumber: %d\n", i);
+          printf("RGNUM: %d, Class: %d, RGid: %d\n", i, ReacGroups[RGid[i]], RGid[i]);
         }
         pEquil[i] = 0;
 	      //reset RG reactant and product populations
