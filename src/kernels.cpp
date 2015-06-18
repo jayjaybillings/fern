@@ -358,6 +358,7 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
 	
 	while (t < integrationData.t_max)
 	{
+return;
 		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {

@@ -98,24 +98,26 @@ void Network::loadReactions(const char *filename)
 	// Read eight lines at a time
   numRG = 0;
   reactionLabel = (char **) malloc(sizeof(char *) * reactions);
+  photoID = (char **) malloc(sizeof(char *) * reactions);
   reacVector = (int **) malloc(sizeof(int *) * reactions);
 	int RGParent = 0;
 	for (int n = 0; n < reactions; n++)
 	{
 		reactionLabel[n] = (char *) malloc(sizeof(char) * 150);
+		photoID[n] = (char *) malloc(sizeof(char) * 15);
 		reacVector[n] = (int *) malloc(sizeof(int) * species);
 		int status;
 		
 		// Line #1
 
 		#ifdef FERN_SINGLE		
-			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %d %f %f",
-				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+			status = fscanf(file, "%s %s %d %d %d %hhu %d %d %d %d %f %f",
+				reactionLabel[n], photoID[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&reacType[n], &statFac[n], &Q[n]);
 		#else
-			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %d %lf %lf",
-				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+			status = fscanf(file, "%s %s %d %d %d %hhu %d %d %d %d %lf %lf",
+				reactionLabel[n], photoID[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&reacType[n], &statFac[n], &Q[n]);
 		#endif
@@ -128,8 +130,8 @@ void Network::loadReactions(const char *filename)
 			printf("Reaction Index = %d\n", n);
 			printf("isReverseR = %d reaclibIndex = %d\n",
 				isReverseR[n], reaclibClass);
-			printf("%s %d %d %d %d %d %d %d reacType: %d %f %f\n",
-				reactionLabel[n], RGclass[n], RGmemberIndex[n], reaclibClass,
+			printf("%s %s %d %d %d %d %d %d %d %d %f %f\n",
+				reactionLabel[n], photoID[n], RGclass[n], RGmemberIndex[n], reaclibClass,
 				numReactingSpecies[n], numProducts[n], isEC,
 				isReverseR[n], reacType[n], statFac[n], Q[n]);
 		}
@@ -155,46 +157,26 @@ void Network::loadReactions(const char *filename)
 			printf("}\n");
 		
 		// Line #3
-		
+	  //TODO: CHANGE THIS TO reactant and product COEFFICIENTS!!! and accommodate throughout the code... Some places require reactantZ and productZ for certain stuffs	
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
 			status = fscanf(file, "%d", &reactantZ[n][mm]);
 			
 			if (displayInput)
-				printf("\tReactant[%d]: Z=%d\n", mm, reactantZ[n][mm]);
+				printf("\tReactant[%d]: Coeff=%d\n", mm, reactantZ[n][mm]);
 		}
 		
 		// Line #4
-		
-		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
-		{
-			status = fscanf(file, "%d", &reactantN[n][mm]);
-			
-			if (displayInput)
-				printf("\tReactant[%d]: N=%d\n", mm, reactantN[n][mm]);
-		}
-		
-		// Line #5
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
 			status = fscanf(file, "%d", &productZ[n][mm]);
 			
 			if (displayInput)
-				printf("\tProduct[%d]: Z=%d\n", mm, productZ[n][mm]);
+				printf("\tProduct[%d]: Coeff=%d\n", mm, productZ[n][mm]);
 		}
 		
-		// Line #6
-		
-		for (int mm = 0; mm < numProducts[n]; mm++)
-		{
-			status = fscanf(file, "%d", &productN[n][mm]);
-			
-			if (displayInput)
-				printf("\tProduct[%d]: N=%d\n", mm, productN[n][mm]);
-		}
-		
-		// Line #7
+		// Line #5
 		
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
@@ -209,7 +191,7 @@ void Network::loadReactions(const char *filename)
 				printf("\treactant[%d]: N=%d\n", mm, reactant[mm][n]);
 		}
 		
-		// Line #8
+		// Line #6
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
