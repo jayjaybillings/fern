@@ -19,6 +19,10 @@ struct Network
 	char **speciesLabel;
 	char **speciesFamily;
 	char **reactionLabel;
+  char **photoID; 
+  char **photoLabel; 
+  char **pparamID; 
+  char *paramTag; 
 	
 	fern_real *FplusFac; // [totalFplus]
 	fern_real *FminusFac; // [totalFminus]
@@ -42,6 +46,9 @@ struct Network
 	unsigned short *reactant[10]; // [reactions]
 	unsigned short *product[10]; // [reactions]
 
+  // Photolysis data
+  fern_real *aparam[7][7];
+
 	//Partial Equilibrium
   int *ReacGroups; //[reactions]
   int *RGmemberIndex; // [reactions]
@@ -50,6 +57,7 @@ struct Network
   int *reacType; //[reactions]
   int *ReacParent; // [reactions] 
 	int numRG;
+  int photoparams; 
 	int *pEquil; //[numRG]
 	int *RGid; //[numRG]
   int *RGclass; // [reactions]
@@ -103,7 +111,12 @@ struct Network
 		all fields on a line are separated by a space character.
 	*/
 	void loadReactions(const char *filename);
-	
+
+
+  /** Reads special rate parameter data for PHOTOLYSIS REACTIONS, 
+      and pairs with repspective reactions in loadReactions function
+  **/
+	void loadPhotolytic(const char *filename);
 	
 	// Define vec_4i as the type int[4]
 	// This is bad and should probably be changed during

@@ -13,6 +13,8 @@ struct IntegrationData
 	fern_real H2O;
 	fern_real M;
 	fern_real Patm;
+	fern_real zenith;
+	fern_real alt;
 	fern_real t_init;
 	fern_real t_max;
 	fern_real dt_init;

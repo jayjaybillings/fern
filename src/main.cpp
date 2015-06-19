@@ -9,6 +9,8 @@ int main(int argc, char const *argv[])
 	FERNIntegrator integrator;
 	integrator.network.species = 102;
 	integrator.network.reactions = 114;
+	integrator.network.photoparams = 40;
+	integrator.network.numRG = 101;
 	integrator.network.massTol = 1.0e-7;
 	integrator.network.fluxFrac = 0.01;
 

@@ -68,7 +68,7 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
-	static const bool displayPEInput = true;
+	static const bool displayPEInput = false;
 	
 	// Unused variables
 	int reaclibClass;
@@ -104,7 +104,7 @@ void Network::loadReactions(const char *filename)
 	for (int n = 0; n < reactions; n++)
 	{
 		reactionLabel[n] = (char *) malloc(sizeof(char) * 150);
-		photoID[n] = (char *) malloc(sizeof(char) * 15);
+		photoID[n] = (char *) malloc(sizeof(char) * 50);
 		reacVector[n] = (int *) malloc(sizeof(int) * species);
 		int status;
 		
@@ -157,7 +157,9 @@ void Network::loadReactions(const char *filename)
 			printf("}\n");
 		
 		// Line #3
-	  //TODO: CHANGE THIS TO reactant and product COEFFICIENTS!!! and accommodate throughout the code... Some places require reactantZ and productZ for certain stuffs	
+	  // TODO: CHANGE THIS TO reactant and product COEFFICIENTS!!! 
+    // and accommodate throughout the code... Some places 
+    // require reactantZ and productZ for certain stuffs	
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
 			status = fscanf(file, "%d", &reactantZ[n][mm]);
@@ -216,17 +218,29 @@ void Network::loadReactions(const char *filename)
   //each reaction's home RGid
   int *reactionRG = new int [reactions];
   int *reacPlaced = new int [reactions];
+  for(int p = 0; p < reactions; p++) {
+    reacPlaced[p] = 0;
+  }
   //member ID within this reaction's RG
   int *RGmemID = new int [reactions];
   int *RGnumMembers = new int [numRG];
   for(int j = 0; j < reactions; j++) {
     //if this reaction doesn't yet have an RG home of its own...
     if(reacPlaced[j] == 0) {
+
+      /* //to be used for parsing photoID to hook up to photolysis
+      int i = 0;
+      while(photoID[j][i] > 0) {
+        printf("PhotoID piece: %c\n",photoID[j][i]);
+      i++;
+      }
+      */
+
       RGmemberID = 0;
       RGmemID[j] = RGmemberID;
       ReacParent[j] = j;
       if(displayPEInput) {
-	      printf("\nRG #%d, Parent Reaction: %s\n", numRG, reactionLabel[ReacParent[j]]);
+	      printf("\nRG #%d, Parent Reaction: %s, photoID: %s\n", numRG, reactionLabel[ReacParent[j]], photoID[j]);
 	    	printf("-----\n");
         printf("Reaction %s ID[%d], RGmemID: %d\nReaction Vector: ", reactionLabel[j], j, RGmemID[j]);
         for (int q = 0; q < species; q++) {
@@ -271,7 +285,8 @@ void Network::loadReactions(const char *filename)
     numRG++;
     }
   }
-	fclose(file);
+  printf("numRG: %d", numRG);
+	fclose(file); 
 	
 	
 	// We're not done yet.
@@ -287,8 +302,55 @@ void Network::loadReactions(const char *filename)
 	delete [] reactantN;
 	delete [] productZ;
 	delete [] productN;
-}
+} //end loadReactions
 
+void Network::loadPhotolytic(const char *filename) {
+  printf("STARTED PHOTOLYTIC\n\n\n");
+  
+	FILE *file = fopen(filename, "r");
+	
+	// Exit if the file doesn't exist or can't be read
+	
+	if (!file)
+	{
+		fprintf(stderr, "File Input Error: No readable file named %s\n", filename);
+		exit(1);
+	}
+  photoLabel = (char **) malloc(sizeof(char *) * reactions);
+  pparamID = (char **) malloc(sizeof(char *) * reactions);
+	for (int n = 0; n < photoparams; n++) {
+		photoLabel[n] = (char *) malloc(sizeof(char) * 100);
+		pparamID[n] = (char *) malloc(sizeof(char) * 50);
+		int status;
+		
+		// Line #1
+
+		status = fscanf(file, "%s %s", photoLabel[n], pparamID[n]);
+		
+		if (status == EOF)
+			break;
+	//		printf(" photoLab = %s ppram= %s\n",	photoLabel[n], pparamID[n]);
+		
+
+  // Param Lines
+  // for this polynomial coefficient (a_0,a_1, ... ,a_j)...
+  for (int j = 0; j < 7; j++) {
+      printf("params for a%d= ", j);
+  // ...save parameter for 7 interpolation altitudes.
+  	for (int i = 0; i < 7; i++)	{
+			#ifdef FERN_SINGLE
+				status = fscanf(file, "%e", &aparam[j][i][n]);
+				printf("%e, ", aparam[j][i][n]);
+			#else
+				status = fscanf(file, "%le", &aparam[j][i][n]);
+				printf("%le, ", aparam[j][i][n]);
+			#endif
+    }
+    printf("\n");
+	}
+
+  }
+}
 
 void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	vec_4i *productZ, vec_4i *productN)
@@ -547,6 +609,12 @@ void Network::allocate()
 	
 	for (int i = 0; i < 10; i++)
 		reactant[i] = new unsigned short[reactions];
+
+  for (int j = 0; j < 7; j++) {
+  	for (int i = 0; i < 7; i++) {
+  		aparam[j][i] = new fern_real[photoparams];
+    }
+	}
 
   pEquil = new int [numRG];
 }
