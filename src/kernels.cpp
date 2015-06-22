@@ -174,7 +174,7 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
 *******************************************************************************/
 
 
-      printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
+      //printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
     } else if(reacType[i] == 0) {
       fern_real A = network.P[0][i];
       fern_real B = network.P[1][i];
@@ -214,7 +214,7 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
       printf("%e + ((%f * (1 + %e * H2O * exp(%f/T)) * (%eexp(%f/T) * (%f + %f*M)+%eexp(%f/T)))/(%f + (%f * %eexp(%f/T) * (%f + %f*M)) * pow(%eexp(%f/T), %f))) + %e*pow(T,2)*exp(%f/T) + %e*(1+%fPatm)\n", 
         A, Q, B, a, C, b, v, w, E, d, t, u, C, b, v, w, D, c, x, F, e, G, R);
       */
-      printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
+      //printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
     } else if(reacType[i] == 1) {
       fern_real A = network.P[0][i];
       fern_real B = network.P[1][i];
@@ -233,7 +233,7 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
         #endif
 
         Rate[i] = Rate[i-1]/p1;
-        printf("Reverse MType[%d] = %e\n", i-25, Rate[i]);
+        //printf("Reverse MType[%d] = %e\n", i-25, Rate[i]);
       //Mtype Reaction
       } else {
 		    #ifdef FERN_SINGLE
@@ -250,7 +250,7 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
           fern_real p5 = powf(C, p4);
         #endif
         Rate[i] = (p1*M/(1+(p1*M/p2)))*p5;
-        printf("Parent/Solo MType[%d] = %e\n", i-25, Rate[i]);
+        //printf("Parent/Solo MType[%d] = %e\n", i-25, Rate[i]);
       }
     }
 	}

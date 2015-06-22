@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
+#include <cmath>
 #include "FERNIntegrator.hpp"
 
 
@@ -306,7 +307,6 @@ void Network::loadReactions(const char *filename)
 
 void Network::loadPhotolytic(const char *filename) {
   printf("STARTED PHOTOLYTIC\n\n\n");
-  
 	FILE *file = fopen(filename, "r");
 	
 	// Exit if the file doesn't exist or can't be read
@@ -318,10 +318,15 @@ void Network::loadPhotolytic(const char *filename) {
 	}
   photoLabel = (char **) malloc(sizeof(char *) * reactions);
   pparamID = (char **) malloc(sizeof(char *) * reactions);
+  for(int t = 0; t < photolytic; t++) {
+    paramNumID[0][t] = -1;
+    paramNumID[1][t] = -1;
+  }
 	for (int n = 0; n < photoparams; n++) {
 		photoLabel[n] = (char *) malloc(sizeof(char) * 100);
 		pparamID[n] = (char *) malloc(sizeof(char) * 50);
 		int status;
+    int setParam = 1;
 		
 		// Line #1
 
@@ -334,23 +339,213 @@ void Network::loadPhotolytic(const char *filename) {
 
   // Param Lines
   // for this polynomial coefficient (a_0,a_1, ... ,a_j)...
-  for (int j = 0; j < 7; j++) {
-      printf("params for a%d= ", j);
-  // ...save parameter for 7 interpolation altitudes.
-  	for (int i = 0; i < 7; i++)	{
-			#ifdef FERN_SINGLE
-				status = fscanf(file, "%e", &aparam[j][i][n]);
-				printf("%e, ", aparam[j][i][n]);
-			#else
-				status = fscanf(file, "%le", &aparam[j][i][n]);
-				printf("%le, ", aparam[j][i][n]);
-			#endif
-    }
-    printf("\n");
-	}
+    for (int j = 0; j < 7; j++) {
+      //printf("params for a%d= ", j);
+      // ...save parameter for 7 interpolation altitudes.
+  	  for (int i = 0; i < 7; i++)	{
+			  #ifdef FERN_SINGLE
+				  status = fscanf(file, "%e", &aparam[j][i][n]);
+  				//printf("%e, ", aparam[j][i][n]);
+	  		#else
+		  		status = fscanf(file, "%le", &aparam[j][i][n]);
+			  	//printf("%le, ", aparam[j][i][n]);
+  			#endif
+      }
+      //printf("\n");
+  	}
 
+    //connect photolysis params to corresponding reactions from loadReactions function
+    //based on pparamID, eg "fjo3a"
+    for(int i = 0; i < photolytic; i++) {
+      paramMult[0][i] = 1; //setting default first multiplier to 1
+      paramMult[1][i] = 0; //setting default second multiplier to 0
+      //set default photolytic parameter IDs to -1 so 0 is an applicable ID.
+      //-1 for both will imply that this photolytic reaction does not have a 
+      //corresponding parameter, and its reaction rate should be set to zero. 
+      //if only the second remains zero, this reaction only requires one 
+      //photolytic parameter.
+      //effect of strlen without the need for <string> library
+      int length = 0;
+      while(photoID[i][length] != '\0') {
+        length++;
+      }
+      //if length > 1, this reaction has at least one corresponding photolytic parameter  
+      if(length > 1) {
+        //check if photoID has a "+" in it, implying a combination of photolytic parameters (ie. fjno3a+fjno3b)
+        for(int j = 0; j < length; j++) {
+          if(photoID[i][j] == 43) {
+            //43 is the ascii code for "+"
+            char firstID[j];
+            char secondID[length-j];
+            for(int p = 0; p < j; p++) {
+              firstID[p] = 0;
+              firstID[p] = photoID[i][p];
+              printf("%c",firstID[p]);
+              if(firstID[p] == 42) {
+              //42 is the ascii code for "*"
+              //then this photolysis param has a special multiplier that will affect its rate
+              //reset paramMults, paramMult[1] is already 0, so just set first
+              paramMult[0][i] = 0;
+                //find decimal place
+                int decimalPlace = -1;
+                for(int x = 0; x < p; x++) {
+                  if(firstID[x] == 46) {
+                    decimalPlace = x;
+                  }
+                }
+                for(int x = 0; x < decimalPlace; x++) {
+                  //46 is the ascii code for "."
+                  paramMult[0][i] += (firstID[x] - 48)/pow(10, x - decimalPlace + 1);
+                }
+                for(int x = p - 1; x > decimalPlace; x--) {
+                  //coming down from location of "*" to "."
+                  paramMult[0][i] += (firstID[x] - 48)/pow(10, x - 1);
+                  //printf("p = %d, dec = %d, x = %d, mult = %f\n", p, decimalPlace, x, firstMult[n]); 
+                }//end "." multipliers
+
+                setParam = 1;
+                for(int w = p; w < j ; w++) {
+                  if(firstID[w] != pparamID[n][w]) {
+                    setParam = 0;
+                    break;
+                  } else {
+                   // printf("reacID: %c, paramID: %c, YEA\n", photoID[i][x], pparamID[n][x]);
+                  }
+                  if(setParam == 1) {
+                    //both the reaction[i] and the parameter[n] share the same parameter ID. Set paramNumID[i] = n;
+                    //thus we will use the parameters referenced from this paramID when calculating this reaction's rate.
+                    paramNumID[0][i] = n;
+                  }
+                }
+                
+              } // end "*" params
+              else {
+              //this reaction has no special multipliers, compare reaction param requirement
+              //and pair with necessary parameter for paramNumID[1][i]
+                setParam = 1;
+                for(int w = 0; w < j ; w++) {
+                  if(photoID[i][w] != pparamID[n][w]) {
+                    setParam = 0;
+                    break;
+                  } else {
+                   // printf("reacID: %c, paramID: %c, YEA\n", photoID[i][x], pparamID[n][x]);
+                  }
+                  if(setParam == 1) {
+                    //both the reaction[i] and the parameter[n] share the same parameter ID. Set paramNumID[i] = n;
+                    //thus we will use the parameters referenced from this paramID when calculating this reaction's rate.
+                    //paramNumID[0][i] = n;
+                  }
+                }
+              }
+            }
+            printf("\n");
+            for (int p = 0; p < length-j; p++) {
+              secondID[p] = 0;
+              secondID[p] = photoID[i][j+p+1];
+              printf("%c",secondID[p]);
+              if(secondID[p] == 42) {
+              //42 is the ascii code for "*"
+              //now p is the location of the "*"
+              //then this photolysis param has a special multiplier that will affect its rate
+                //find decimal place
+                int decimalPlace = -1;
+                for(int x = 0; x < p; x++) {
+                  if(secondID[x] == 46) {
+                    decimalPlace = x;
+                  }
+                }
+                for(int x = 0; x < decimalPlace; x++) {
+                  //46 is the ascii code for "."
+                  paramMult[1][i] += (secondID[x] - 48)/pow(10, x - decimalPlace + 1);
+                }
+                for(int x = p - 1; x > decimalPlace; x--) {
+                  //coming down from location of "*" to "."
+                  paramMult[1][i] += (secondID[x] - 48)/pow(10, x - 1);
+                }//end "." multipliers
+
+                setParam = 1;
+                for(int w = p; w < length-j ; w++) {
+                  if(secondID[w] != pparamID[n][w]) {
+                    setParam = 0;
+                    break;
+                  } else {
+                   // printf("reacID: %c, paramID: %c, YEA\n", photoID[i][x], pparamID[n][x]);
+                  }
+                  if(setParam == 1) {
+                    //both the reaction[i] and the parameter[n] share the same parameter ID. Set paramNumID[i] = n;
+                    //thus we will use the parameters referenced from this paramID when calculating this reaction's rate.
+                    paramNumID[1][i] = n;
+                  }
+                }
+                
+              } // end "*" params
+              else {
+              //this reaction has no special multipliers, compare reaction param requirement
+              //and pair with necessary parameter for paramNumID[1][i]
+                setParam = 1;
+                for(int w = 0; w < length-j ; w++) {
+                  if(photoID[i][w] != pparamID[n][w]) {
+                    setParam = 0;
+                    break;
+                  } else {
+                   // printf("reacID: %c, paramID: %c, YEA\n", photoID[i][x], pparamID[n][x]);
+                  }
+                  if(setParam == 1) {
+                    //both the reaction[i] and the parameter[n] share the same parameter ID. Set paramNumID[i] = n;
+                    //thus we will use the parameters referenced from this paramID when calculating this reaction's rate.
+                    paramNumID[1][i] = n;
+                  }
+                }
+              }
+            }
+            printf("\n1mult = %f\n", paramMult[0][i]); 
+            printf("2mult = %f\n", paramMult[1][i]); 
+            printf("\n\n");
+            //printf("first ID is: %s\n", firstID);
+            //printf("the secondID is: %s\n", secondID);
+          } // end "+" separator. All other reactions only have one param
+          else {
+            //this reaction does not have a "+", so only need
+            //to assign a single parameter(ID) to this reaction
+            setParam = paramNumID[0][i];
+            printf("setparam: %d\n", setParam);
+            for(int x = 0; x < length ; x++) {
+              if(photoID[i][x] == pparamID[n][x]) {
+                printf("ph:%c par:%c\n", photoID[i][x], pparamID[n][x]);
+                paramNumID[0][i] = n;
+                printf("newParam: %d", paramNumID[0][i]);
+              } else {
+                paramNumID[0][i] = setParam;
+                break;
+              }
+            }
+          }
+
+        } //end for each photolytic reaction
+      } //end check if this reaction needs a parameter (!= 1)
+/* else {
+        //if "1" then this reaction is photolytic, but does not have a companion photolytic parameter
+        //if "0" then this reaction is chemical, non-photolytic... fugeddabotit.
+        if(photoID[i][0] == 48) {
+          //48 is the ascii code for "0"
+          //printf("Chemical\n");
+        } else {
+          //printf("Photolytic, no designation\n");
+        }
+      } */
+    //if(str1.compare(str2) == 0) {
+      //printf("photoID: %s, pparamID: %s\n", photoID[i], pparamID[n]); 
+    //}
+    } //end cycle through all photolytic reactions, checking if needs param
+  } //end cycle through all photolytic parameters, picking up reactions to be connected
+
+
+  for(int i = 0; i < photolytic; i++) {
+    printf("PReaction[%d] needs param[0] = %d and param[1] = %d\n", i, paramNumID[0][i], paramNumID[1][i]);
   }
-}
+
+
+} //end loadPhotolytic
 
 void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	vec_4i *productZ, vec_4i *productN)
@@ -604,17 +799,21 @@ void Network::allocate()
   RGid = new int [numRG];
   ReacGroups = new int[reactions];
 
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 10; i++) {
     product[i] = new unsigned short[reactions];
-	
-	for (int i = 0; i < 10; i++)
 		reactant[i] = new unsigned short[reactions];
+  }
 
   for (int j = 0; j < 7; j++) {
   	for (int i = 0; i < 7; i++) {
   		aparam[j][i] = new fern_real[photoparams];
     }
 	}
+
+	for (int i = 0; i < 2; i++) {
+		paramNumID[i] = new int[photolytic];
+		paramMult[i] = new fern_real[photolytic];
+  }
 
   pEquil = new int [numRG];
 }
@@ -625,6 +824,8 @@ void Network::setSizes(const Network &source)
 	reactions = source.reactions;
 	totalFplus = source.totalFplus;
 	totalFminus = source.totalFminus;
+	photoparams = source.photoparams;
+	photolytic = source.photolytic;
 }
 
 void Network::print()

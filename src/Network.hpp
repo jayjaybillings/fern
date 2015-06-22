@@ -22,7 +22,6 @@ struct Network
   char **photoID; 
   char **photoLabel; 
   char **pparamID; 
-  char *paramTag; 
 	
 	fern_real *FplusFac; // [totalFplus]
 	fern_real *FminusFac; // [totalFminus]
@@ -47,7 +46,10 @@ struct Network
 	unsigned short *product[10]; // [reactions]
 
   // Photolysis data
-  fern_real *aparam[7][7];
+  fern_real *aparam[7][7]; //[photoparams]
+  // after parsing char IDs, assign numerical IDs to each parameter.
+  int *paramNumID[2]; //[photolytic]
+  fern_real *paramMult[2]; //[photolytic]
 
 	//Partial Equilibrium
   int *ReacGroups; //[reactions]
@@ -58,6 +60,7 @@ struct Network
   int *ReacParent; // [reactions] 
 	int numRG;
   int photoparams; 
+  int photolytic; 
 	int *pEquil; //[numRG]
 	int *RGid; //[numRG]
   int *RGclass; // [reactions]
