@@ -46,7 +46,7 @@ struct Network
 	unsigned short *product[10]; // [reactions]
 
   // Photolysis data
-  fern_real *aparam[7][7]; //[photoparams]
+  fern_real *aparam[49]; //[photoparams]
   // after parsing char IDs, assign numerical IDs to each parameter.
   int *paramNumID[2]; //[photolytic]
   fern_real *paramMult[2]; //[photolytic]

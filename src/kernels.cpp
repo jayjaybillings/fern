@@ -36,7 +36,8 @@ void integrateNetwork(
 	const unsigned short numberReactions = network.reactions;
 	const unsigned short totalFplus = network.totalFplus;
 	const unsigned short totalFminus = network.totalFminus;
-  
+	const unsigned short numberPhotoParams = network.photoparams;
+	const unsigned short numberPhotolytic = network.photolytic;
 
 	unsigned char *Z;
 	unsigned char *N;
@@ -145,36 +146,198 @@ void integrateNetwork(
 	   temperature and density, these only need be calculated once
 	   per GPU call.
 	*/
+	bool displayPhotodata = true;
 
   fern_real T = integrationData.T9;
   fern_real H2O = integrationData.H2O;
   fern_real M = integrationData.M;
   fern_real Patm = integrationData.Patm;
+  fern_real alt = integrationData.alt;
+  fern_real zenith = integrationData.zenith;
+  
+  fern_real cz = cos(zenith);//cosine of zenith angle
+  //calculate powers of cz
+  fern_real cz2 = cz*cz;
+  fern_real cz3 = cz2*cz;
+  fern_real cz4 = cz3*cz;
+  fern_real cz5 = cz4*cz;
+  fern_real cz6 = cz5*cz;
+  fern_real zalpha = 1.0;
+  int amin = 0;
+  int amax = 0;
 
-	for (int i = 0; i < network.reactions; i++)
-	{
-    
+  if(alt >= 12000) {
+    zalpha = 1.0;
+    amax = 7; 
+    amin = 7; 
+  } else if (alt < 12000 && alt >= 10000) {
+    zalpha = (12000 - alt)/2000;
+    amax = 7; 
+    amin = 6; 
+  } else if (alt < 10000 && alt >= 8000) {
+    zalpha = (10000 - alt)/2000;
+    amax = 6; 
+    amin = 5; 
+  } else if (alt < 8000 && alt >= 6000) {
+    zalpha = (8000 - alt)/2000;
+    amax = 5; 
+    amin = 4; 
+  } else if (alt < 6000 && alt >= 4000) {
+    zalpha = (6000 - alt)/2000;
+    amax = 4; 
+    amin = 3; 
+  } else if (alt < 4000 && alt >= 2000) {
+    zalpha = (4000 - alt)/2000;
+    amax = 3; 
+    amin = 2; 
+  } else if (alt < 2000) {
+    zalpha = (2000 - alt)/2000;
+    amax = 2; 
+    amin = 1; 
+  }
+
+  //calculate interpolation parameters
+  fern_real zfac = zalpha;
+  fern_real zfac1 = 1.0 - zalpha;
+
+  fern_real zpolyhigh;
+  fern_real zpolylow;
+  fern_real rateparam1;
+  fern_real rateparam2;
+  fern_real amin0 = 0;
+  fern_real amin1 = 0;
+  fern_real amin2 = 0;
+  fern_real amin3 = 0;
+  fern_real amin4 = 0;
+  fern_real amin5 = 0;
+  fern_real amin6 = 0;
+  fern_real amax0 = 0;
+  fern_real amax1 = 0;
+  fern_real amax2 = 0;
+  fern_real amax3 = 0;
+  fern_real amax4 = 0;
+  fern_real amax5 = 0;
+  fern_real amax6 = 0;
+
+	for (int i = 0; i < network.reactions; i++) {
     if(reacType[i] == 2) {
-/*******************************************************************************
-From Rick's Fortran Code
-CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
-              altitude and cosine(zenith angle).
-              Photolysis frequencies were generated from TUV 5.0
-              (Madronich, S. and S. Flocke, Theoretical estimation of 
-              biologically effective UV radiation at the Earth's surface, 
-              in Solar Ultraviolet Radiation - Modeling, Measurements and 
-              Effects (Zerefos, C., ed.). NATO ASI Series Vol. I52, 
-              Springer-Verlag, Berlin, 1997.) as a function of altitude 
-              above sea level and zenith angle.  For each photolysis reaction 
-              polynomial fits were created as a function of cosine(zenith 
-              angle) at seven altitudes.  At a given altitude, the 
-              photolysis frequency for each reaction is determined 
-              by interpolation between bounding altitudes. Frequencies are
-              valid from 0 to 12 km above mean sea level.
-*******************************************************************************/
+      rateparam1 = 0;
+      rateparam2 = 0;
+      /*******************************************************************************
+        From Rick's Fortran Code
+        CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
+        altitude and cosine(zenith angle).
+        Photolysis frequencies were generated from TUV 5.0
+        (Madronich, S. and S. Flocke, Theoretical estimation of 
+        biologically effective UV radiation at the Earth's surface, 
+        in Solar Ultraviolet Radiation - Modeling, Measurements and 
+        Effects (Zerefos, C., ed.). NATO ASI Series Vol. I52, 
+        Springer-Verlag, Berlin, 1997.) as a function of altitude 
+        above sea level and zenith angle.  For each photolysis reaction 
+        polynomial fits were created as a function of cosine(zenith 
+        angle) at seven altitudes.  At a given altitude, the 
+        photolysis frequency for each reaction is determined 
+        by interpolation between bounding altitudes. Frequencies are
+        valid from 0 to 12 km above mean sea level.
+      *******************************************************************************/
 
+      //begin interpolation
+      //calculate rateparam1 (eg in fjmacra+fjmacrb, fjmacra is param1, often rateparam2 will be 0)
+      amin0 = network.aparam[(amin-1)][network.paramNumID[0][i]];
+      amin1 = network.aparam[(amin+6)][network.paramNumID[0][i]];
+      amin2 = network.aparam[(amin+13)][network.paramNumID[0][i]];
+      amin3 = network.aparam[(amin+20)][network.paramNumID[0][i]];
+      amin4 = network.aparam[(amin+27)][network.paramNumID[0][i]];
+      amin5 = network.aparam[(amin+34)][network.paramNumID[0][i]];
+      amin6 = network.aparam[(amin+41)][network.paramNumID[0][i]];
+      amax0 = network.aparam[(amax-1)][network.paramNumID[0][i]];
+      amax1 = network.aparam[(amax+6)][network.paramNumID[0][i]];
+      amax2 = network.aparam[(amax+13)][network.paramNumID[0][i]];
+      amax3 = network.aparam[(amax+20)][network.paramNumID[0][i]];
+      amax4 = network.aparam[(amax+27)][network.paramNumID[0][i]];
+      amax5 = network.aparam[(amax+34)][network.paramNumID[0][i]];
+      amax6 = network.aparam[(amax+41)][network.paramNumID[0][i]];
 
-      //printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
+      zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
+      zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
+
+      rateparam1 = zfac1*zpolyhigh + zfac*zpolylow;
+
+      if(displayPhotodata) {
+        printf("FOR RATEPARAM1\namin0: %e\n", amin0);
+        printf("amin1: %e\n", amin1);
+        printf("amin2: %e\n", amin2);
+        printf("amin3: %e\n", amin3);
+        printf("amin4: %e\n", amin4);
+        printf("amin5: %e\n", amin5);
+        printf("amin6: %e\n", amin6);
+        printf("amax0: %e\n", amax0);
+        printf("amax1: %e\n", amax1);
+        printf("amax2: %e\n", amax2);
+        printf("amax3: %e\n", amax3);
+        printf("amax4: %e\n", amax4);
+        printf("amax5: %e\n", amax5);
+        printf("amax6: %e\n", amax6);
+        printf("zpolylow: %e\n", zpolylow);
+        printf("zpolyhigh: %e\n", zpolyhigh);
+      }
+      
+      if(network.paramNumID[1][i] >= 0) {
+      //calculate rateparam2
+        amin0 = network.aparam[(amin-1)][network.paramNumID[1][i]];
+        amin1 = network.aparam[(amin+6)][network.paramNumID[1][i]];
+        amin2 = network.aparam[(amin+13)][network.paramNumID[1][i]];
+        amin3 = network.aparam[(amin+20)][network.paramNumID[1][i]];
+        amin4 = network.aparam[(amin+27)][network.paramNumID[1][i]];
+        amin5 = network.aparam[(amin+34)][network.paramNumID[1][i]];
+        amin6 = network.aparam[(amin+41)][network.paramNumID[1][i]];
+        amax0 = network.aparam[(amax-1)][network.paramNumID[1][i]];
+        amax1 = network.aparam[(amax+6)][network.paramNumID[1][i]];
+        amax2 = network.aparam[(amax+13)][network.paramNumID[1][i]];
+        amax3 = network.aparam[(amax+20)][network.paramNumID[1][i]];
+        amax4 = network.aparam[(amax+27)][network.paramNumID[1][i]];
+        amax5 = network.aparam[(amax+34)][network.paramNumID[1][i]];
+        amax6 = network.aparam[(amax+41)][network.paramNumID[1][i]];
+
+        zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
+        zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
+
+        rateparam2 = zfac1*zpolyhigh + zfac*zpolylow;
+        
+        if(displayPhotodata) {
+          printf("\nFOR RATEPARAM2\namin0: %e\n", amin0);
+          printf("amin1: %e\n", amin1);
+          printf("amin2: %e\n", amin2);
+          printf("amin3: %e\n", amin3);
+          printf("amin4: %e\n", amin4);
+          printf("amin5: %e\n", amin5);
+          printf("amin6: %e\n", amin6);
+          printf("amax0: %e\n", amax0);
+          printf("amax1: %e\n", amax1);
+          printf("amax2: %e\n", amax2);
+          printf("amax3: %e\n", amax3);
+          printf("amax4: %e\n", amax4);
+          printf("amax5: %e\n", amax5);
+          printf("amax6: %e\n", amax6);
+          printf("zpolylow: %e\n", zpolylow);
+          printf("zpolyhigh: %e\n\n", zpolyhigh);
+        }
+      }
+
+      //bring it all together, calculate Rate using multipliers, rateparam1 and 2
+      Rate[i] = network.paramMult[0][i]*rateparam1 + network.paramMult[1][i]*rateparam2;
+
+      if(displayPhotodata) {
+        printf("altitude: %f\n", alt);
+        printf("cz: %f\n", cz);
+        printf("zfac: %e\n", zfac);
+        printf("zfac1: %e\n", zfac1);
+        printf("multiplier1: %e\n", network.paramMult[0][i]);
+        printf("multiplier2: %e\n", network.paramMult[1][i]);
+        printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
+        printf("\n");
+      }
+
     } else if(reacType[i] == 0) {
       fern_real A = network.P[0][i];
       fern_real B = network.P[1][i];
@@ -214,7 +377,8 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
       printf("%e + ((%f * (1 + %e * H2O * exp(%f/T)) * (%eexp(%f/T) * (%f + %f*M)+%eexp(%f/T)))/(%f + (%f * %eexp(%f/T) * (%f + %f*M)) * pow(%eexp(%f/T), %f))) + %e*pow(T,2)*exp(%f/T) + %e*(1+%fPatm)\n", 
         A, Q, B, a, C, b, v, w, E, d, t, u, C, b, v, w, D, c, x, F, e, G, R);
       */
-      //printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
+      if(displayPhotodata)
+        printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
     } else if(reacType[i] == 1) {
       fern_real A = network.P[0][i];
       fern_real B = network.P[1][i];
@@ -233,7 +397,8 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
         #endif
 
         Rate[i] = Rate[i-1]/p1;
-        //printf("Reverse MType[%d] = %e\n", i-25, Rate[i]);
+        if(displayPhotodata)
+          printf("Reverse MType[%d] = %e\n", i-25, Rate[i]);
       //Mtype Reaction
       } else {
 		    #ifdef FERN_SINGLE
@@ -250,7 +415,8 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
           fern_real p5 = powf(C, p4);
         #endif
         Rate[i] = (p1*M/(1+(p1*M/p2)))*p5;
-        //printf("Parent/Solo MType[%d] = %e\n", i-25, Rate[i]);
+        if(displayPhotodata)
+          printf("Parent/Solo MType[%d] = %e\n", i-25, Rate[i]);
       }
     }
 	}
@@ -358,8 +524,11 @@ CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
 	
 	while (t < integrationData.t_max)
 	{
-return;
-		if(plotOutput == 1 && log10(t) >= plotStartTime) {
+
+      //START PLOT INFO//
+      //TODO: Update to latest partial equilibrium code from fernPartialEq code.
+
+/*		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
 	            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
@@ -394,11 +563,17 @@ return;
 				outputCount++;
 			}
 		}
+*/
+
+
+
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		
 		for (int i = 0; i < numberSpecies; i++)
 		{
 			Yzero[i] = Y[i];
+      printf("Y0[%d]: %e\n", i, Yzero[i]);
+      return;
 		}
 		
 		

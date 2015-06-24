@@ -32,9 +32,9 @@ int main(int argc, char const *argv[])
     integrationData.M = 1.0;
     integrationData.Patm = 1.0;
     integrationData.zenith = 0.0; //0.0 indicates sun is overhead
-    integrationData.alt = 1000; //up to 12000m
+    integrationData.alt = 2000; //up to 12000m
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 1.0e-5;
+		integrationData.t_max = 1.0e20;
 		integrationData.dt_init = 1.23456789e-22;
 		integrationData.rho = 1.0;
 

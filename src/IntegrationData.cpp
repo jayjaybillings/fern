@@ -1,4 +1,3 @@
-
 #include "IntegrationData.hpp"
 #include "Network.hpp"
 #include <cstdio>
@@ -30,12 +29,12 @@ void IntegrationData::loadAbundances(const char *filename)
 		// Line #1
 		
 		#ifdef FERN_SINGLE
-			status = fscanf(file, "%s %d %d %d %f %f\n",
-				ignoredData, &ignoredInt, &ignoredInt,
+			status = fscanf(file, "%s %s %d %d %d %f %f\n",
+				ignoredData, ignoredData, &ignoredInt, &ignoredInt,
 				&ignoredInt, &Y[n], &ignoredDouble);
 		#else
-			status = fscanf(file, "%s %d %d %d %lf %lf\n",
-				ignoredData, &ignoredInt, &ignoredInt,
+			status = fscanf(file, "%s %s %d %d %d %lf %lf\n",
+				ignoredData, ignoredData, &ignoredInt, &ignoredInt,
 				&ignoredInt, &Y[n], &ignoredDouble);
 		#endif
 		
