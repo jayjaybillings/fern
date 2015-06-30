@@ -59,9 +59,9 @@ void integrateNetwork(
 	fern_real *Y;
 
 	//DSOUTPUT
-	const bool plotOutput = 1;
+	const bool plotOutput = 0;
 	const int numIntervals = 100;
-	int plotStartTime = -16;
+	int plotStartTime = -7;
 	fern_real intervalLogt;
   fern_real nextOutput;
   int outputCount = 0;
@@ -123,6 +123,8 @@ void integrateNetwork(
 	
 	fern_real sumXLast;
 
+
+
 	/* Compute the preFac vector. */
 	
 	for (int i = 0; i < network.reactions; i++)
@@ -146,14 +148,24 @@ void integrateNetwork(
 	   temperature and density, these only need be calculated once
 	   per GPU call.
 	*/
-	bool displayPhotodata = true;
+	bool displayPhotodata = false;
 
-  fern_real T = integrationData.T9;
+  fern_real T = integrationData.T;
   fern_real H2O = integrationData.H2O;
   fern_real M = integrationData.M;
   fern_real Patm = integrationData.Patm;
   fern_real alt = integrationData.alt;
   fern_real zenith = integrationData.zenith;
+  fern_real pmb = integrationData.pmb; //air pressure in millibar
+
+  //convert Y[i] from parts-per-billion to molecules/cm^3
+  //necessary for calculation using involved rates
+  fern_real cair = pmb*7.2428e+18/T; //concentration of air in molecules/cm^3
+  for(int i = 0; i < numberSpecies; i++) {
+//    printf("Y[%d](ppb): %e\n", i, Y[i]);
+    Y[i] = (Y[i]/1e9)*cair; //Y[i] in molecules/cm^3
+//    printf("Y[%d](m/cm^3): %e\n", i, Y[i]);
+  } 
   
   fern_real cz = cos(zenith);//cosine of zenith angle
   //calculate powers of cz
@@ -339,6 +351,7 @@ void integrateNetwork(
       }
 
     } else if(reacType[i] == 0) {
+      //then this is a regular chemical reaction (not M-type or Photolytic)
       fern_real A = network.P[0][i];
       fern_real B = network.P[1][i];
       fern_real C = network.P[2][i];
@@ -380,6 +393,7 @@ void integrateNetwork(
       if(displayPhotodata)
         printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
     } else if(reacType[i] == 1) {
+      //then this is an Mtype reaction
       fern_real A = network.P[0][i];
       fern_real B = network.P[1][i];
       fern_real C = network.P[2][i];
@@ -388,7 +402,8 @@ void integrateNetwork(
       fern_real x = network.P[5][i];
       fern_real y = network.P[6][i];
       //check if this reaction is a reverse M-type reaction of previous reaction
-      //Depents on Mtype RG members to be in sequence, forward then reverse as deemed by CHASER paper
+      //Depends on Mtype RG members to be in sequence, 
+      //forward then reverse as deemed by CHASER paper
       if(ReacParent[i] == ReacParent[i-1]) {
 		    #ifdef FERN_SINGLE
           fern_real p1 = A*exp(B/T);
@@ -442,51 +457,47 @@ void integrateNetwork(
                 printf("numReacting: %d, numProducts: %d\n", network.numReactingSpecies[i], network.PEnumProducts[i]);			
 				if(ReacGroups[i] == 1) {		
 					printf("Reactant SID: %d; Product SID: %d\n",network.reactant[0][i], network.product[0][i]);
-				} 
-				else if(ReacGroups[i] == 2) {
-                    printf("Reactant SID: %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i]);
-                }
-                else if(ReacGroups[i] == 3) {
-                    printf("Reactant SID: %d, %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.reactant[2][i], network.product[0][i]);
-                }
-                else if(ReacGroups[i] == 4) {
-                    printf("Reactant SID: %d, %d; Product SID: %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i]);
-                }
-                else if(ReacGroups[i] == 5) {
-                    printf("Reactant SID: %d, %d; Product SID: %d, %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i], network.product[2][i]);
-                }
+				} else if(ReacGroups[i] == 2) {
+            printf("Reactant SID: %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i]);
+        } else if(ReacGroups[i] == 3) {
+            printf("Reactant SID: %d, %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.reactant[2][i], network.product[0][i]);
+        } else if(ReacGroups[i] == 4) {
+            printf("Reactant SID: %d, %d; Product SID: %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i]);
+        } else if(ReacGroups[i] == 5) {
+            printf("Reactant SID: %d, %d; Product SID: %d, %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i], network.product[2][i]);
+        }
 				printf("-----\n|\n");
 			}				
 			if(displayRGdata)
 				printf("Reaction ID: %d\nRG Member ID: %d\nisReverseR: %d\nRate:%e\n|\n", i, RGmemberIndex[i], isReverseR[i], Rate[i]);
 
             //if RGmemberindex is greater (or equal for RGmemberindex[i] = RGmemberindex[i+1] = 0 than next one, then end of Reaction Group
-            if(RGmemberIndex[i] >= RGmemberIndex[i+1]) {
-                //get forward and reverse rates for all reactions within group, starting with i-network.RGmemberIndex[i], and ending with i.
-                kf = 0; //forward rate
-                kr = 0; //reverse rate
-                //iterate through each RGmember and calculate the total rate from forward and reverse reactions
-                for(int n = RGmemberIndex[i]; n >= 0; n--) {
-                    //add the rate to forward reaction
-                    if(isReverseR[i-n] == 1) {
-                        kr += Rate[i-n];
-                    } else {
-                    //add the rate to reverse reaction
-                        kf += Rate[i-n];
-                    }
-                }
-                final_k[0][countRG] = 0;
-                final_k[1][countRG] = 0;
-                final_k[0][countRG] = kf;
-                final_k[1][countRG] = kr;
-                if(displayRGdata) {
-                    printf("-----\n");
-                    printf("kf[RGID:%d] = %e \n", countRG, final_k[0][countRG]);
-                    printf("kr[RGID:%d] = %e \n", countRG, final_k[1][countRG]);
-                    printf("\n\n\n");
-                }
-				    countRG++;
-            }
+      if(RGmemberIndex[i] >= RGmemberIndex[i+1]) {
+        //get forward and reverse rates for all reactions within group, starting with i-network.RGmemberIndex[i], and ending with i.
+        kf = 0; //forward rate
+        kr = 0; //reverse rate
+        //iterate through each RGmember and calculate the total rate from forward and reverse reactions
+        for(int n = RGmemberIndex[i]; n >= 0; n--) {
+          //add the rate to forward reaction
+          if(isReverseR[i-n] == 1) {
+            kr += Rate[i-n];
+          } else {
+            //add the rate to reverse reaction
+            kf += Rate[i-n];
+          }
+        }
+        final_k[0][countRG] = 0;
+        final_k[1][countRG] = 0;
+        final_k[0][countRG] = kf;
+        final_k[1][countRG] = kr;
+        if(displayRGdata) {
+          printf("-----\n");
+          printf("kf[RGID:%d] = %e \n", countRG, final_k[0][countRG]);
+          printf("kr[RGID:%d] = %e \n", countRG, final_k[1][countRG]);
+          printf("\n\n\n");
+        }
+			  countRG++;
+      }
 		}
 	/*
 	   Begin the time integration from t=0 to tmax. Rather than t=0 we
@@ -508,27 +519,34 @@ void integrateNetwork(
 	fern_real massChecker;
 	
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
-	
+	fern_real totalY = 0.0;
 	for (int i = 0; i < numberSpecies; i++)
 	{
-		massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
+    //TODO: Check if this is correct. I'm replacing X[i] by Y[i]/totalY
+		//massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
 		/* Compute mass fraction X from abundance Y. */
-		X[i] = massNum[i] * Y[i];
+    totalY += Y[i];
+  }
+	for (int i = 0; i < numberSpecies; i++)
+	{ //continued from above. CHECK WITH DR GUIDRY
+		//X[i] = massNum[i] * Y[i];
+    X[i] = Y[i]/totalY;
+//    printf("totalY: %f,Y[i]: %f, X[%d}: %e\n", totalY, Y[i],i, X[i]);
 	}
 	
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
 	if(plotOutput == 1)
-		//printf("SO\n");//StartOutput
-	
+		printf("SO\n");//StartOutput
+	//holder for Y conversion back to ppb for plotting
+  fern_real Yppb = 0.0;
 	while (t < integrationData.t_max)
 	{
-
       //START PLOT INFO//
       //TODO: Update to latest partial equilibrium code from fernPartialEq code.
 
-/*		if(plotOutput == 1 && log10(t) >= plotStartTime) {
+		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
 	            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
@@ -537,13 +555,14 @@ void integrateNetwork(
 			}
 		//stdout to file > fernOut.txt for plottable output
 			if(log10(t) >= nextOutput) {
-			//	printf("OC\n");//OutputCount
+				printf("OC\n");//OutputCount
 				//renormalize nextOutput by compensating for overshooting last expected output time
 				nextOutput = intervalLogt+nextOutput;
 				asyCount = 0;
 				peCount = 0;
 				for(int m = 0; m < network.species; m++) {
-				//	printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
+          Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
+					printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], Fplus[m], Fminus[m]);
 
 					if(checkAsy(FminusSum[m], Y[m], dt))
 						asyCount++;	
@@ -559,11 +578,11 @@ void integrateNetwork(
 				}
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
-				//printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T9, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
 				outputCount++;
 			}
 		}
-*/
+
 
 
 
@@ -572,8 +591,8 @@ void integrateNetwork(
 		for (int i = 0; i < numberSpecies; i++)
 		{
 			Yzero[i] = Y[i];
-      printf("Y0[%d]: %e\n", i, Yzero[i]);
-      return;
+     // printf("Y0[%d]: %e\n", i, Yzero[i]);
+      //return;
 		}
 		
 		
@@ -674,13 +693,26 @@ void integrateNetwork(
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		/* Compute sum of mass fractions sumX for all species. */
+    //TODO: AGAIN, check with Dr. Guidry if this is the best approach for
+    //considering mass fraction with this new definition of Y[i]. Here, Y ≠ X/A
+    //as it did in nucleosynthesis case. See ~line 513
 		
+    totalY = 0;
+		for (int i = 0; i < numberSpecies; i++)
+		{
+      //Recalculate sum of abundances for calculating mass fraction.
+      totalY += Y[i];
+    }
 		for (int i = 0; i < numberSpecies; i++)
 		{
 			/* Compute mass fraction X from abundance Y. */
-			X[i] = massNum[i] * Y[i];
+      //REMOVED UNTIL I TALK WITH DR. GUIDRY ABOUT NEW WAY OF CALCULATING X
+		  //X[i] = massNum[i] * Y[i];
+		  X[i] = (Y[i]/totalY);
+   // printf("totalY: %f,Y[i]: %e, X[%d}: %e\n", totalY, Y[i],i, X[i]);
 		}
 		
+      
 		sumX = NDreduceSum(X, numberSpecies);
 		
 		
@@ -696,6 +728,7 @@ void integrateNetwork(
 			fern_real test2 = fabsf(sumX - 1.0);
 			massChecker = fabsf(sumXLast - sumX);
 
+
 			if (test2 > test1 && massChecker > massTol)
 			{
 				dt *= fmaxf(massTol / fmaxf(massChecker, (fern_real) 1.0e-16), downbumper);
@@ -708,11 +741,13 @@ void integrateNetwork(
 			fern_real test1 = fabs(sumXLast - 1.0);
 			fern_real test2 = fabs(sumX - 1.0);
 			massChecker = fabs(sumXLast - sumX);
+      //printf("sumxlast: %f, sumx: %f, masschecker: %f\n",sumXLast, sumX, massChecker);
 
 			if (test2 > test1 && massChecker > massTol)
 			{
 				dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
 			}
+      
 			else if (massChecker < massTolUp)
 			{
 				dt *= (massTol / (fmax(massChecker, upbumper)));
@@ -755,12 +790,20 @@ void integrateNetwork(
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 		
 		/* Now that final dt is set, compute final sum of mass fractions sumX. */
-		
-		for (int i = 0; i < numberSpecies; i++)
-		{
-			/* Compute mass fraction X from abundance Y. */
-			X[i] = massNum[i] * Y[i];
-		}
+  totalY = 0;		
+	for (int i = 0; i < numberSpecies; i++)
+	{
+    //TODO: Check if this is correct. I'm replacing X[i] by Y[i]/totalY
+		//massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
+		/* Compute mass fraction X from abundance Y. */
+    totalY += Y[i];
+  }
+	for (int i = 0; i < numberSpecies; i++)
+	{ //continued from above. CHECK WITH DR GUIDRY
+		//X[i] = massNum[i] * Y[i];
+    X[i] = Y[i]/totalY;
+//    printf("totalY: %f,Y[i]: %f, X[%d}: %e\n", totalY, Y[i],i, X[i]);
+	}
 		
 		sumX = NDreduceSum(X, numberSpecies);
 		
@@ -771,7 +814,10 @@ void integrateNetwork(
 		timesteps++;
 		
 		sumXLast = sumX;
+   // printf("sumxlast: %f, sumX: %f\n",sumXLast, sumX);
 	}
+  if(plotOutput == 1)
+    printf("EO\n");//EndOutput
 }
 
 
@@ -862,6 +908,7 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	for (int i = 0; i < totalFsign; i++)
 	{
 		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
+//    printf("Fsign[%d]: %e\n", i, Fsign[i]);
 	}
 }
 
@@ -886,7 +933,7 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 }
 
 /* Checks for partial equilibrium between reaction groups */
-void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups, unsigned short **reactant, unsigned short **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq)
+void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups, int **reactant, int **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq)
 {
 	fern_real y_a;
 	fern_real y_b;

@@ -9,7 +9,8 @@ struct Network;
 struct IntegrationData
 {
 	unsigned short species;
-	fern_real T9;
+	fern_real T;
+	fern_real pmb;
 	fern_real H2O;
 	fern_real M;
 	fern_real Patm;

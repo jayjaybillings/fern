@@ -42,8 +42,8 @@ struct Network
 	
 	fern_real *statFac; // [reactions]
 	fern_real *Q; // [reactions]
-	unsigned short *reactant[10]; // [reactions]
-	unsigned short *product[10]; // [reactions]
+	int *reactant[10]; // [reactions]
+	int *product[10]; // [reactions]
 
   // Photolysis data
   fern_real *aparam[49]; //[photoparams]
@@ -124,15 +124,14 @@ struct Network
 	// Define vec_4i as the type int[4]
 	// This is bad and should probably be changed during
 	// a revision to parseFlux().
-	typedef int vec_4i[4];
+	typedef int vec_4i[10];
 	
 	/**	Finds the contributions to F+ and F- of each reaction for each isotope
 		
 		This should be executed only once at the beginning of the entire
 		calculation to determine the structure of the network.
 	*/
-	void parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
-		vec_4i *productZ, vec_4i *productN);
+	void parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,	int **product, vec_4i *productN);
 	
 	/**	Allocates vectors on the host
 		

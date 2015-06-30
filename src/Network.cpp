@@ -48,7 +48,7 @@ void Network::loadNetwork(const char *filename)
 			status = fscanf(file, "%s %s %hu %hhu %hhu %lf %lf\n",
 				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
-      printf("Y[%d]: %s %e\n", n, speciesLabel[n], Y);
+      //printf("Y[%d]: %s %e\n", n, speciesLabel[n], Y);
 		if (status == EOF)
 			break;
 		
@@ -183,7 +183,7 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
-			status = fscanf(file, "%hu", &reactant[mm][n]);
+			status = fscanf(file, "%d", &reactant[mm][n]);
       //"subtract" reactants from reacVector (PE)
       for(int i = 0; i < species; i++) {
         if(i==reactant[mm][n]){
@@ -198,7 +198,7 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
-			status = fscanf(file, "%hu", &product[mm][n]);
+			status = fscanf(file, "%d", &product[mm][n]);
       //"add" products to reacVector (PE)
       for(int i = 0; i < species; i++) {
         if(i==product[mm][n]){
@@ -228,15 +228,6 @@ void Network::loadReactions(const char *filename)
   for(int j = 0; j < reactions; j++) {
     //if this reaction doesn't yet have an RG home of its own...
     if(reacPlaced[j] == 0) {
-
-      /* //to be used for parsing photoID to hook up to photolysis
-      int i = 0;
-      while(photoID[j][i] > 0) {
-        printf("PhotoID piece: %c\n",photoID[j][i]);
-      i++;
-      }
-      */
-
       RGmemberID = 0;
       RGmemID[j] = RGmemberID;
       ReacParent[j] = j;
@@ -293,7 +284,7 @@ void Network::loadReactions(const char *filename)
 	// We're not done yet.
 	// Finally parse the flux
 	
-	parseFlux(numProducts, reactantZ, reactantN, productZ, productN);
+	parseFlux(numProducts, reactant, reactantN, product, productN);
 	
 	
 	// Cleanup dynamic memory
@@ -516,10 +507,10 @@ void Network::loadPhotolytic(const char *filename) {
 
 } //end loadPhotolytic
 
-void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
-	vec_4i *productZ, vec_4i *productN)
+void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,
+	int **product, vec_4i *productN)
 {
-	const static bool showParsing = false;
+	const static bool showParsing = true;
 	
 	// These tempInt blocks will become MapFPlus and MapFMinus eventually.
 	size_t tempIntSize = species * reactions / 2;
@@ -562,14 +553,15 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 			// Loop over reactants for this reaction
 			for (int k = 0; k < numReactingSpecies[j]; k++)
 			{
-				if (Z[i] == reactantZ[j][k] && N[i] == reactantN[j][k])
+//        printf("reactant[%d][%d]: %d, species[%d]\n", k, j, reactant[k][j], i);
+				if (i == reactant[k][j])
 					totalL++;
 			}
 			
 			// Loop over products for this reaction
 			for (int k = 0; k < numProducts[j]; k++)
 			{
-				if (Z[i] == productZ[j][k] && N[i] == productN[j][k])
+				if (i == product[k][j])
 					totalR++;
 			}
 			
@@ -580,20 +572,21 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 				numFminus++;
 				reacMask[i + species * j] = -total;
 				tempInt2[incrementMinus + numFminus - 1] = j;
-				// if (showParsing)
-				// 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F-\n",
-				// 		   isoLabel[i], j, reacLabel[j], NumReactingSpecies[j], NumProducts[j], totalL,
-				// 		   totalR, total);
+				 if (showParsing)
+				 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F-\n",
+				 		   speciesLabel[i], j, reactionLabel[j], numReactingSpecies[j], numProducts[j], totalL,
+				 		   totalR, total);
 			}
 			else if (total < 0)  // Contributes to F+ for this isotope
 			{
 				numFplus++;
 				reacMask[i + species * j] = -total;
+//        printf("reacMask[%d + %d * %d] = %d\n", i, species, j, reacMask[i+species*j]);
 				tempInt1[incrementPlus + numFplus - 1] = j;
-				// if (showParsing)
-				// 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F+\n",
-				// 		   isoLabel[i], j, reacLabel[j], NumReactingSpecies[j], NumProducts[j], totalL,
-				// 		   totalR, total);
+				 if (showParsing)
+				 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F+\n",
+				 		   speciesLabel[i], j, reactionLabel[j], numReactingSpecies[j], numProducts[j], totalL,
+				 		   totalR, total);
 			}
 			else                 // Does not contribute to flux for this isotope
 			{
@@ -611,8 +604,8 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 		incrementPlus += numFplus;
 		incrementMinus += numFminus;
 		
-		// if (showParsing == 1)
-		// 	printf("%d %s numF+ = %d numF- = %d\n", i, isoLabel[i], numFplus, numFminus);
+		if (showParsing == 1)
+		 	printf("%d %s numF+ = %d numF- = %d\n", i, speciesLabel[i], numFplus, numFminus);
 	}
 	
 	// Display some cases
@@ -647,54 +640,136 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	
 	FplusIsotopeCut[0] = numFluxPlus[0];
 	FminusIsotopeCut[0] = numFluxMinus[0];
+  //check how many species have no Fplus between the last one that did and current one.
+  int checkNumSinceNonZeroPlus = 0;
+  int checkNumSinceNonZeroMinus = 0;
 	for (int i = 1; i < species; i++)
 	{
-		FplusIsotopeCut[i] = numFluxPlus[i] + FplusIsotopeCut[i - 1];
-		FminusIsotopeCut[i] = numFluxMinus[i] + FminusIsotopeCut[i - 1];
+    if(numFluxPlus[i] != 0) {
+  		FplusIsotopeCut[i] = numFluxPlus[i] + FplusIsotopeCut[i - checkNumSinceNonZeroPlus - 1];
+    } else {
+      FplusIsotopeCut[i] = 0;
+    }
+
+    if(numFluxMinus[i] != 0) {
+  		FminusIsotopeCut[i] = numFluxMinus[i] + FminusIsotopeCut[i - checkNumSinceNonZeroMinus - 1];
+    } else {
+      FminusIsotopeCut[i] = 0;
+    }
+
+    if(numFluxPlus[i] == 0) {
+      checkNumSinceNonZeroPlus++;
+    } else {
+      checkNumSinceNonZeroPlus = 0;
+    }
+
+    if(numFluxMinus[i] == 0) {
+      checkNumSinceNonZeroMinus++;
+    } else {
+      checkNumSinceNonZeroMinus = 0;
+    }
+
+ //   printf("Starting Position for isotope[%d] in Fplus:%d, Fminus: %d, Cplus:%d Cminus:%d lastPlus:%d lastMinus:%d\n",i, FplusIsotopeCut[i], FminusIsotopeCut[i], checkNumSinceNonZeroPlus, checkNumSinceNonZeroMinus, i - checkNumSinceNonZeroMinus,i - checkNumSinceNonZeroMinus);
 	}
 	
 	int currentIso = 0;
-	for (int i = 0; i < totalFplus; i++)
+  int lastIsoWFplus = 0;
+  int lastIsoWFminus = 0;
+  int setj = 0;
+	for (int i = 0; i < species; i++)
 	{
-		FplusIsotopeIndex[i] = currentIso;
-		if (i == (FplusIsotopeCut[currentIso] - 1)) currentIso ++;
-	}
-	
-	currentIso = 0;
-	for (int i = 0; i < totalFminus; i++)
-	{
-		FminusIsotopeIndex[i] = currentIso;
-		if (i == (FminusIsotopeCut[currentIso] - 1)) currentIso ++;
+    //must compensate for isotopes that have no flux, only include those that do. 
+    if(FplusIsotopeCut[i] != 0) {
+      //then this isotope has some Fplus's, Set those Fplus's to this isotope
+      if(i == 0) {
+        setj = 0;
+      }
+      else {
+        setj = FplusIsotopeCut[lastIsoWFplus];
+      }
+      for(int j = setj; j < FplusIsotopeCut[i]; j++) {
+        FplusIsotopeIndex[j] = i;
+        //printf("This species[%d] ends its Fplus's at Fplus[%d], Setting Fplus[%d] to species[%d], lastIso: %d\n", i, FplusIsotopeCut[i], j, FplusIsotopeIndex[j], lastIsoWFplus);
+      }
+      lastIsoWFplus = i;
+    }
+    if(FminusIsotopeCut[i] != 0) {
+      //then this isotope has some Fplus's, Set those Fplus's to this isotope
+      if(i == 0) {
+        setj = 0;
+      }
+      else {
+        setj = FminusIsotopeCut[lastIsoWFminus];
+      }
+      for(int j = setj; j < FminusIsotopeCut[i]; j++) {
+        FminusIsotopeIndex[j] = i;
+        //printf("This species[%d] ends its Fminus's at Fminus[%d], Setting Fminus[%d] to species[%d], lastIso: %d\n", i, FminusIsotopeCut[i], j, FminusIsotopeIndex[j], lastIsoWFminus);
+      }
+      lastIsoWFminus = i;
+    }
+//  printf("This Fplus %d corresponds to this speices %d\n", i, FplusIsotopeIndex[i]);
 	}
 	
 	for (int i = 0; i < totalFplus; i++)
 	{
 		MapFplus[i] = tempInt1[i];
+//    printf("This Fplus[%d] was caused by this reac[%d]\n", i, MapFplus[i]);
 	}
 	
 	for (int i = 0; i < totalFminus; i++)
 	{
 		MapFminus[i] = tempInt2[i];
+//    printf("This Fminus[%d] was caused by this reac[%d]\n", i, MapFminus[i]);
 	}
 	
 	// Populate the FplusMin and FplusMax arrays
 	unsigned short *FplusMin = new unsigned short [species];
 	unsigned short *FminusMin = new unsigned short [species];
 	
-	FplusMin[0] = 0;
-	FplusMax[0] = numFluxPlus[0] - 1;
+  //compensate for possible zero fluxes, if a species has no +/- flux
+  lastIsoWFplus = 0;
+  lastIsoWFminus = 0;
+  if(numFluxPlus[0] !=0) {
+  	FplusMin[0] = 0;
+	  FplusMax[0] = numFluxPlus[0] - 1;
+    //printf("Species[%d]'s Fplus's can be found starting with Fplus[%d] and ending with Fplus[%d], numFluxplus: %d, lastFplus: %d\n", 0, FplusMin[0], FplusMax[0], numFluxPlus[0], lastIsoWFplus);
+  } else {
+  	FplusMin[0] = 0;
+	  FplusMax[0] = 0;
+  }
 	for (int i = 1; i < species; i++)
 	{
-		FplusMin[i] = FplusMax[i - 1] + 1;
-		FplusMax[i] = FplusMin[i] + numFluxPlus[i] - 1 ;
+    if(numFluxPlus[i] !=0) {
+		  FplusMin[i] = FplusMax[lastIsoWFplus] + 1;
+  		FplusMax[i] = FplusMin[i] + numFluxPlus[i] - 1 ;
+      lastIsoWFplus = i;
+    } else {
+      //give this species nothing to iterate over
+  	  FplusMin[i] = 0;
+  	  FplusMax[i] = 0;
+    }
+      //printf("Species[%d]'s Fplus's can be found starting with Fplus[%d] and ending with Fplus[%d], numFluxPlus: %d, lastFplus: %d\n", i, FplusMin[i], FplusMax[i], numFluxPlus[i], lastIsoWFplus);
 	}
 	// Populate the FminusMin and FminusMax arrays
-	FminusMin[0] = 0;
-	FminusMax[0] = numFluxMinus[0] - 1;
+  if(numFluxMinus[0] !=0) {
+	  FminusMin[0] = 0;
+  	FminusMax[0] = numFluxMinus[0] - 1;
+    //printf("Species[%d]'s Fminus's can be found starting with Fminus[%d] and ending with Fminus[%d], numFluxminus: %d, lastFminus: %d\n", 0, FminusMin[0], FminusMax[0], numFluxMinus[0], lastIsoWFminus);
+  } else {
+  	FminusMin[0] = 0;
+    FminusMax[0] = 0;
+  }
 	for (int i = 1; i < species; i++)
 	{
-		FminusMin[i] = FminusMax[i - 1] + 1;
-		FminusMax[i] = FminusMin[i] + numFluxMinus[i] - 1 ;
+    if(numFluxMinus[i] !=0) {
+  		FminusMin[i] = FminusMax[lastIsoWFminus] + 1;
+	  	FminusMax[i] = FminusMin[i] + numFluxMinus[i] - 1 ;
+      lastIsoWFminus = i;
+    } else {
+  	  FminusMin[i] = 0;
+  	  FminusMax[i] = 0;
+    }
+    //printf("Species[%d]'s Fminus's can be found starting with Fminus[%d] and ending with Fminus[%d], numFluxMinus: %d, lastFminus: %d\n", i, FminusMin[i], FminusMax[i], numFluxMinus[i], lastIsoWFminus);
 	}
 	
 	// Populate the FplusFac and FminusFac arrays that hold the factors counting the
@@ -709,7 +784,9 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 		{
 			if (reacMask[i + species * j] > 0)
 			{
+        //printf("reacmask[%d+%d*%d] = %d\n", i, species, j, reacMask[i + species * j]);
 				FplusFac[tempCountPlus] = (fern_real)reacMask[i + species * j];
+        //printf("FplusFac[%d] (i=%d, species=%d, j=%d): %f\n", tempCountPlus, i, species, j, FplusFac[tempCountPlus]);
 				tempCountPlus++;
 			}
 			else if (reacMask[i + species * j] < 0)
@@ -769,8 +846,8 @@ void Network::allocate()
   ReacGroups = new int[reactions];
 
   for (int i = 0; i < 10; i++) {
-    product[i] = new unsigned short[reactions];
-		reactant[i] = new unsigned short[reactions];
+    product[i] = new int[reactions];
+		reactant[i] = new int[reactions];
   }
 
   for (int j = 0; j < 49; j++) {

@@ -65,7 +65,7 @@ void IntegrationData::print()
 {
 	printf("species: %d\n", species);
 	
-	printf("T9: %e\n", T9);
+	printf("T9: %e\n", T);
   printf("M: %e\n", M);
   printf("H2O: %e\n", H2O);
   printf("Patm: %e\n", Patm);
@@ -75,6 +75,10 @@ void IntegrationData::print()
 	printf("rho: %e\n", rho);
 	
 	printf("Y: ");
-	for (unsigned short i = 0; i < species; i++)
-		printf("%d: %e\n", i, Y[i]);
+  fern_real Yppb = 0;
+	for (unsigned short i = 0; i < species; i++){
+    //convert back to ppb
+    Yppb = (Y[i]*1e9)/(pmb*7.2428e+18/T); //Y[i] in ppb  
+		printf("%d: %e\n", i, Yppb);
+  }
 }
