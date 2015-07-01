@@ -31,6 +31,8 @@ struct Network
 	
 	unsigned short *FplusMax; // [species]
 	unsigned short *FminusMax; // [species]
+	unsigned short *FplusMin; // [species]
+	unsigned short *FminusMin; // [species]
 	
 	fern_real massTol;
 	fern_real fluxFrac;

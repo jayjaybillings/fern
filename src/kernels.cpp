@@ -50,6 +50,8 @@ void integrateNetwork(
 
 	unsigned short *FplusMax;
 	unsigned short *FminusMax;
+	unsigned short *FplusMin;
+	unsigned short *FminusMin;
 
 	const fern_real massTol = network.massTol;
 	const fern_real fluxFrac = network.fluxFrac;
@@ -63,7 +65,7 @@ void integrateNetwork(
 	const int numIntervals = 100;
 	int plotStartTime = -7;
 	fern_real intervalLogt;
-  fern_real nextOutput;
+  fern_real nextOutput = 0.0;
   int outputCount = 0;
 	int setNextOut = 0;
 	fern_real asyCount = 0;
@@ -110,13 +112,15 @@ void integrateNetwork(
 	MapFminus = network.MapFminus;
 	FplusMax = network.FplusMax;
 	FminusMax = network.FminusMax;
+	FplusMin = network.FplusMin;
+	FminusMin = network.FminusMin;
 
 	/* Assign IntegrationData pointers. */
 	
 	Y = integrationData.Y;
 
 	fern_real maxFlux;
-	fern_real sumX;
+	fern_real sumX = 0.0;
 	fern_real t;
 	fern_real dt;
 	unsigned int timesteps;
@@ -522,6 +526,7 @@ void integrateNetwork(
 	fern_real totalY = 0.0;
 	for (int i = 0; i < numberSpecies; i++)
 	{
+    printf("Y[%d] = %e\n", i, Y[i]);
     //TODO: Check if this is correct. I'm replacing X[i] by Y[i]/totalY
 		//massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
 		/* Compute mass fraction X from abundance Y. */
@@ -562,7 +567,7 @@ void integrateNetwork(
 				peCount = 0;
 				for(int m = 0; m < network.species; m++) {
           Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
-					printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], Fplus[m], Fminus[m]);
+					printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
 
 					if(checkAsy(FminusSum[m], Y[m], dt))
 						asyCount++;	
@@ -591,7 +596,7 @@ void integrateNetwork(
 		for (int i = 0; i < numberSpecies; i++)
 		{
 			Yzero[i] = Y[i];
-     // printf("Y0[%d]: %e\n", i, Yzero[i]);
+      //printf("Y0[%d]: %e\n", i, Yzero[i]);
       //return;
 		}
 		
@@ -604,20 +609,22 @@ void integrateNetwork(
 		{
 			int nr = network.numReactingSpecies[i];
 			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
-			
+      //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(first-body)\n", i, Flux[i], network.reactant[0][i], Y[network.reactant[0][i]]);
 			switch (nr)
 			{
 			case 3:
 				/* 3-body; flux = rate x Y x Y x Y */
 				Flux[i] *= Y[network.reactant[2][i]];
+				Flux[i] *= Y[network.reactant[1][i]];
+        //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(second) and species[%d]: %e(third-body)\n", i, Flux[i], network.reactant[1][i], Y[network.reactant[2][i]], network.reactant[2][i], Y[network.reactant[2][i]]);
 				
 			case 2:
 				/* 2-body; flux = rate x Y x Y */
 				Flux[i] *= Y[network.reactant[1][i]];
+        //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(second-body)\n", i, Flux[i], network.reactant[1][i], Y[network.reactant[1][i]]);
 				break;
 			}
 		}
-		
 		
 		/* Populate the F+ and F- arrays in parallel from the master Flux array. */
 		
@@ -637,24 +644,42 @@ void integrateNetwork(
 		*/
 		
 		int minny;
-		
+    int lastIsoWFplus = 0;
+    int lastIsoWFminus = 0;
 		for (int i = 0; i < numberSpecies; i++)
 		{
-            minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
-			/* Serially sum secction of F+. */
-			FplusSum[i] = 0.0;
-			for (int j = minny; j <= FplusMax[i]; j++)
-			{
-				FplusSum[i] += Fplus[j];
-			}
+      if(i > 0 && FplusMax[i] == 0){
+        FplusSum[i] = 0.0;
+        //printf("Sorry, species[%d] has no F+'s, therefore its FplusSum is: %e\n", i, FplusSum[i]);
+      } else {
+        minny = (i > 0) ? FplusMax[lastIsoWFplus] + 1 : 0;
+	  		/* Serially sum secction of F+. */
+  			FplusSum[i] = 0.0;
+			  for (int j = minny; j <= FplusMax[i]; j++)
+		  	{
+	  			FplusSum[i] += Fplus[j];
+          //printf("Species[%d] will include Fplus[%d]: %e\n", i, j, Fplus[j]);
+  			}
+        
+        //printf("species[%d]'s Fplus's start at %d and ends at %d, This species has an FplusSum: %e\n", i, minny, FplusMax[i], FplusSum[i]);
+        lastIsoWFplus = i;
+      }
 
 			/* Serially sum section of F-. */
-           	minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
-			FminusSum[i] = 0.0;
-			for (int j = minny; j <= FminusMax[i]; j++)
-			{
-				FminusSum[i] += Fminus[j];
-			}
+      if(i > 0 && FminusMax[i] == 0){
+        FminusSum[i] = 0.0;
+        //printf("Sorry, species[%d] has no F-'s, thus, its FminusSum is: %e\n", i, FminusSum[i]);
+      } else {
+       	minny = (i > 0) ? FminusMax[lastIsoWFminus] + 1 : 0;
+			  FminusSum[i] = 0.0;
+  			for (int j = minny; j <= FminusMax[i]; j++)
+	  		{
+		  		FminusSum[i] += Fminus[j];
+          //printf("Species[%d] will include Fminus[%d]: %e\n", i, j, Fminus[j]);
+			  }
+        //printf("species[%d]'s Fminus's start at %d and ends at %d, This species has an FminusSum: %e\n", i, minny, FminusMax[i], FminusSum[i]);
+        lastIsoWFminus = i;
+      }
 		}
 		
 		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
@@ -815,6 +840,9 @@ void integrateNetwork(
 		
 		sumXLast = sumX;
    // printf("sumxlast: %f, sumX: %f\n",sumXLast, sumX);
+  /*for(int i = 0; i < numberSpecies; i++) {
+    printf("updated Y[%d] for t: %e = %e\n", i, t, Y[i]);
+  }*/
 	}
   if(plotOutput == 1)
     printf("EO\n");//EndOutput
@@ -844,10 +872,10 @@ inline bool checkAsy(fern_real Fminus, fern_real Y, fern_real dt)
 
 /* Returns the updated Y using the asymptotic formula */
 
-inline fern_real asymptoticUpdate(fern_real Fplus, fern_real Fminus, fern_real Y, fern_real dt)
+inline fern_real asymptoticUpdate(fern_real FplusSum, fern_real FminusSum, fern_real Y, fern_real dt)
 {
 	/* Sophia He formula */
-	return (Y + Fplus * dt) / (1.0 + Fminus * dt / Y);
+	return (Y + FplusSum * dt) / (1.0 + FminusSum * dt / Y);
 }
 
 
@@ -908,7 +936,7 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	for (int i = 0; i < totalFsign; i++)
 	{
 		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
-//    printf("Fsign[%d]: %e\n", i, Fsign[i]);
+    //printf("Fsign[%d]: %e\n", i, Fsign[i]);
 	}
 }
 
@@ -927,7 +955,9 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 		}
 		else
 		{
+      printf("Before Euler, Species[%d]'s old abundance is Y: %e, updated with F+: %e, F-: %e, dt: %e\n", i, Y[i], FplusSum[i], FminusSum[i], dt);
 			Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
+      printf("by Euler, Species[%d]'s new abundance is Y: %e, updated with F+: %e, F-: %e, dt: %e\n", i, Y[i], FplusSum[i], FminusSum[i], dt);
 		}
 	}
 }

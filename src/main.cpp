@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 	{
 		IntegrationData integrationData;
 		integrationData.allocate(integrator.network.species);
-		integrationData.loadAbundances("AtmSpec_polluted.inp");
+		integrationData.loadAbundances("newAtmSpec_polluted.inp");
 		
 		integrationData.T = 290; //temp in Kelvin
     integrationData.H2O = 1.0; //water vapor density (cm^-3)
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
     integrationData.zenith = 0.0; //0.0 indicates sun is overhead
     integrationData.alt = 2000; //up to 12000m
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 3.0e-5;
+		integrationData.t_max = 3.0e-8;
 		integrationData.dt_init = 1.23456789e-22;
 		integrationData.rho = 1.0;
 

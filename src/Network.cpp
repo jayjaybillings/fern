@@ -48,12 +48,11 @@ void Network::loadNetwork(const char *filename)
 			status = fscanf(file, "%s %s %hu %hhu %hhu %lf %lf\n",
 				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
-      //printf("Y[%d]: %s %e\n", n, speciesLabel[n], Y);
-		if (status == EOF)
+    //  printf("Y[%d]: %s %e %d %d\n", n, speciesLabel[n], Y, Z[n], N[n]);
+		if(status == EOF)
 			break;
 		
 		// Line #2...4
-		
 		for (int i = 0; i < 8 * 3; i++)
 		{
 			#ifdef FERN_SINGLE
@@ -510,7 +509,7 @@ void Network::loadPhotolytic(const char *filename) {
 void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,
 	int **product, vec_4i *productN)
 {
-	const static bool showParsing = true;
+	const static bool showParsing = false;
 	
 	// These tempInt blocks will become MapFPlus and MapFMinus eventually.
 	size_t tempIntSize = species * reactions / 2;
@@ -722,9 +721,6 @@ void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,
 //    printf("This Fminus[%d] was caused by this reac[%d]\n", i, MapFminus[i]);
 	}
 	
-	// Populate the FplusMin and FplusMax arrays
-	unsigned short *FplusMin = new unsigned short [species];
-	unsigned short *FminusMin = new unsigned short [species];
 	
   //compensate for possible zero fluxes, if a species has no +/- flux
   lastIsoWFplus = 0;
@@ -813,8 +809,6 @@ void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,
 	delete [] numFluxPlus;
 	delete [] numFluxMinus;
 	
-	delete [] FplusMin;
-	delete [] FminusMin;
 }
 
 
@@ -827,6 +821,8 @@ void Network::allocate()
 	
 	FplusMax = new unsigned short [species];
 	FminusMax = new unsigned short [species];
+	FplusMin = new unsigned short [species];
+	FminusMin = new unsigned short [species];
 	
 	
 	// Allocate the reaction data
