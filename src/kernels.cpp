@@ -61,7 +61,7 @@ void integrateNetwork(
 	fern_real *Y;
 
 	//DSOUTPUT
-	const bool plotOutput = 0;
+	const bool plotOutput = 1;
 	const int numIntervals = 100;
 	int plotStartTime = -7;
 	fern_real intervalLogt;
@@ -526,7 +526,7 @@ void integrateNetwork(
 	fern_real totalY = 0.0;
 	for (int i = 0; i < numberSpecies; i++)
 	{
-    printf("Y[%d] = %e\n", i, Y[i]);
+    //printf("Y[%d] = %e\n", i, Y[i]);
     //TODO: Check if this is correct. I'm replacing X[i] by Y[i]/totalY
 		//massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
 		/* Compute mass fraction X from abundance Y. */
@@ -542,8 +542,9 @@ void integrateNetwork(
 	sumXLast = NDreduceSum(X, numberSpecies);
 	
 	/* Main time integration loop */
-	if(plotOutput == 1)
-		printf("SO\n");//StartOutput
+	if(plotOutput == 1) {
+		//printf("SO\n");//StartOutput
+  }
 	//holder for Y conversion back to ppb for plotting
   fern_real Yppb = 0.0;
 	while (t < integrationData.t_max)
@@ -554,24 +555,32 @@ void integrateNetwork(
 		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
-	            intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
+	      intervalLogt = (log10(integrationData.t_max)-log10(t))/numIntervals;
 				nextOutput = log10(t);
 				setNextOut = 1;
 			}
 		//stdout to file > fernOut.txt for plottable output
 			if(log10(t) >= nextOutput) {
-				printf("OC\n");//OutputCount
+        printf("%e ", t);
+			//	printf("OC\n");//OutputCount
 				//renormalize nextOutput by compensating for overshooting last expected output time
 				nextOutput = intervalLogt+nextOutput;
 				asyCount = 0;
 				peCount = 0;
 				for(int m = 0; m < network.species; m++) {
           Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
-					printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
+		//			printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
 
+          //allnonzero:
+          //if(m == 0 || m == 2 || m == 3 || (m >= 5 && m <= 14) || m == 16 || (m >= 18 && m <= 35) || m == 37 || (m >= 75 && m <= 85) || (m >= 95 && m <= 97) || m == 99 || m == 101)
+        
+          //important species
+          if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
+            printf("%e ", Yppb);
 					if(checkAsy(FminusSum[m], Y[m], dt))
 						asyCount++;	
 				}
+        printf("\n");
         //check frac RG PartialEq
         
 
@@ -583,7 +592,7 @@ void integrateNetwork(
 				}
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
-				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+				//printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
 				outputCount++;
 			}
 		}
@@ -780,6 +789,8 @@ void integrateNetwork(
 		#endif
 		
 		
+    dt = .0001;  
+
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		
@@ -955,9 +966,9 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 		}
 		else
 		{
-      printf("Before Euler, Species[%d]'s old abundance is Y: %e, updated with F+: %e, F-: %e, dt: %e\n", i, Y[i], FplusSum[i], FminusSum[i], dt);
+      //printf("Before Euler, Species[%d]'s old abundance is Y: %e, updated with F+: %e, F-: %e, dt: %e\n", i, Y[i], FplusSum[i], FminusSum[i], dt);
 			Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
-      printf("by Euler, Species[%d]'s new abundance is Y: %e, updated with F+: %e, F-: %e, dt: %e\n", i, Y[i], FplusSum[i], FminusSum[i], dt);
+      //printf("by Euler, Species[%d]'s new abundance is Y: %e, updated with F+: %e, F-: %e, dt: %e\n", i, Y[i], FplusSum[i], FminusSum[i], dt);
 		}
 	}
 }

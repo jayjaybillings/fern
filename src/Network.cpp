@@ -33,6 +33,7 @@ void Network::loadNetwork(const char *filename)
 	// Read 4 lines at a time
 	speciesLabel = (char **) malloc(sizeof(char *) * species);
 	speciesFamily = (char **) malloc(sizeof(char *) * species);
+  
 	for (int n = 0; n < species; n++)
 	{
 		speciesLabel[n] = (char *) malloc(sizeof(char) * 10);
@@ -51,7 +52,13 @@ void Network::loadNetwork(const char *filename)
     //  printf("Y[%d]: %s %e %d %d\n", n, speciesLabel[n], Y, Z[n], N[n]);
 		if(status == EOF)
 			break;
-		
+    
+		// all nonzero abundances
+    //if(n == 0 || n == 2 || n == 3 || (n >= 5 && n <= 14) || n == 16 || (n >= 18 && n <= 35) || n == 37 || (n >= 75 && n <= 85) || (n >= 95 && n <= 97) || n == 99 || n == 101) {
+    // important nonzero abundances
+    if(n == 0 || n == 2 || n == 3 || n == 6 || n == 7 || (n >= 12 && n <= 16) || n == 18 || n == 19 || n == 22 || n == 27 || (n >= 75 && n <= 77) || n == 80 || n == 85 || (n >= 95 && n <= 97) || n == 99 || n == 101) {
+      printf("%s ", speciesLabel[n]);
+    }
 		// Line #2...4
 		for (int i = 0; i < 8 * 3; i++)
 		{

@@ -35,8 +35,8 @@ int main(int argc, char const *argv[])
     integrationData.zenith = 0.0; //0.0 indicates sun is overhead
     integrationData.alt = 2000; //up to 12000m
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 3.0e-8;
-		integrationData.dt_init = 1.23456789e-22;
+		integrationData.t_max = 3.0e+2;
+		integrationData.dt_init = 0.0001;
 		integrationData.rho = 1.0;
 
 		// Launch the integrator
