@@ -3,7 +3,7 @@
 label_color = "#867961"
 tic_color = "#383838"
 title_color = "#383838"
-myblue_color = "#5ea2c6
+myblue_color = "#5ea2c6"
 myred_color = "#bb6255"
 mygreen_color = "#668874"
 
@@ -33,14 +33,26 @@ set style line 23 lw 3 lt rgb "#87CEFA"
 set style line 24 lw 3 lt rgb "#B22222"
 
 set terminal pngcairo background "#ffffff" size 1700, 1010
-datafile = 'atm_pollutedout2.dat'
-#datafile = 'atm_remotropout.dat'
-#datafile = 'atm_ruralout.dat'
+#datafile = 'polluted_dt1e-4.dat'
+datafile = 'polluted_dt1e-5.dat'
+#datafile = 'polluted_dt1e-3.dat'
+#datafile = 'rural_dt1e-4.dat'
+#datafile = 'rural_dt1e-5.dat'
+#datafile = 'rural_dt1e-3.dat'
+#datafile = 'remotetropo_dt1e-4.dat'
+#datafile = 'remotetropo_dt1e-5.dat'
+#datafile = 'remotetropo_dt1e-3.dat'
 set key autotitle columnheader
 set key outside
-set title "CHASER Polluted Atm, t_m_a_x=300s" font "helvetica,18"
-#set title "CHASER Rural Atm, t_m_a_x=300s" font "helvetica,18"
-#set title "CHASER Remote Troposhpere, t_m_a_x=300s" font "helvetica,18"
+#set title "CHASER Moderately Polluted, t_m_a_x=300s, dt=1e-4" font "helvetica,18"
+set title "CHASER Moderately Polluted, t_m_a_x=300s, dt=1e-5" font "helvetica,18"
+#set title "CHASER Moderately Polluted, t_m_a_x=300s, dt=1e-3" font "helvetica,18"
+#set title "CHASER Rural Continental, t_m_a_x=300s, dt=1e-4" font "helvetica,18"
+#set title "CHASER Rural Continental, t_m_a_x=300s, dt=1e-5" font "helvetica,18"
+#set title "CHASER Rural Continental, t_m_a_x=300s, dt=1e-3" font "helvetica,18"
+#set title "CHASER Remote Troposphere, t_m_a_x=300s, dt=1e-4" font "helvetica,18"
+#set title "CHASER Remote Troposphere, t_m_a_x=300s, dt=1e-5" font "helvetica,18"
+#set title "CHASER Remote Troposphere, t_m_a_x=300s, dt=1e-3" font "helvetica,18"
 set xlabel "log(t)"
 set ylabel "Y(ppb)"
 set yrange [5e-13:1e3]
@@ -48,34 +60,90 @@ set xrange [5e-2:5e2]
 set logscale
 set format xy "10^{%L}"
 set output "~/Desktop/Research/gnuplotScripts/plot.png"
+
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
+#datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 5,.2 notitle, \
+#datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 3,-.2 notitle, \
+#datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 6,-.1 notitle, \
+#datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 6,.1 notitle, \
+#datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 4 notitle, \
+#datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,-.3 notitle, \
+#datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7 notitle, \
+#datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 5,.2 notitle
+#Polluted (dt=1e-4) label placement ^^^
+
+#Polluted (dt=1e-3) label placement:
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
+#datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 6,-.6 notitle, \
+#datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 7 notitle, \
+#datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2,-.7 notitle, \
+#datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 3,.3 notitle, \
+#datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 4 notitle, \
+#datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 3,-.2 notitle, \
+#datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,-.4 notitle, \
+#datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,.1 notitle, \
+#datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 6 notitle
+
+#Polluted (dt=1e-5) label placement:
 plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
 datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
 datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
 datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2 notitle, \
-datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2 notitle, \
+datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2,.1 notitle, \
 datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
 datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
 datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
 datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 2 notitle, \
 datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2 notitle, \
-datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 5,.2 notitle, \
+datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 6 notitle, \
 datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2 notitle, \
-datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 3,-.2 notitle, \
-datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 6,-.1 notitle, \
-datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 6,.1 notitle, \
+datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 7 notitle, \
+datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 7 notitle, \
+datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 2,-.5 notitle, \
 datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
-datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2 notitle, \
-datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 6 notitle, \
-datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 2 notitle, \
-datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 4 notitle, \
-datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,-.3 notitle, \
-datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.2 notitle, \
-datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,.2 notitle, \
-datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7 notitle, \
-datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 5,.2 notitle
-#Polluted label placement ^^^
+datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2,-.7 notitle, \
+datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 3,.5 notitle, \
+datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 4 notitle, \
+datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 3,-.2 notitle, \
+datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,.1 notitle, \
+datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,-.2 notitle, \
+datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,-.1 notitle, \
+datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,.1 notitle, \
+datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 6 notitle
 
-#Rural label placement:
+
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
 #datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
 #datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
 #datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2 notitle, \
@@ -100,13 +168,67 @@ datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 5,.2
 #datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,-.4 notitle, \
 #datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7 notitle, \
 #datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 6 notitle
+#Rural (dt=1e-4) label placement^^^
+
+#----Rural (dt=1e-5)
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
+#datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 6,-.6 notitle, \
+#datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 7 notitle, \
+#datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2,-.7 notitle, \
+#datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 3,.3 notitle, \
+#datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 4 notitle, \
+#datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 3,-.2 notitle, \
+#datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,-.4 notitle, \
+#datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,.1 notitle, \
+#datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 6 notitle
+
+#----Rural (dt=1e-3)
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
+#datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.3 notitle, \
+#datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2,-.4 notitle, \
+#datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 6,-.6 notitle, \
+#datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2,.3 notitle, \
+#datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 6,-.5 notitle, \
+#datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 7 notitle, \
+#datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2,-.7 notitle, \
+#datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 3,.3 notitle, \
+#datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 4 notitle, \
+#datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 3,-.2 notitle, \
+#datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,-.4 notitle, \
+#datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,.1 notitle, \
+#datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 6 notitle
 
 
-#datafile index 1 u 1:2 w labels notitle
-#plot datafile u 1:2 w lines, \
-#datafile u 1:3 w lines
 
 
+
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
 #datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
 #datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
 #datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2,-.1 notitle, \
@@ -131,4 +253,66 @@ datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 5,.2
 #datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,.2 notitle, \
 #datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,-.3 notitle, \
 #datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 7,.5 notitle
-#Remote Troposphere label placement ^^^
+#Remote Troposphere (dt=1e-4)  label placement ^^^
+
+
+
+#----- dt = 1e-5
+#Remote Troposphere (dt = 1e-5) label placement:
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
+#datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2,-.1 notitle, \
+#datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2,-.5 notitle, \
+#datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 6,-.7 notitle, \
+#datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 7 notitle, \
+#datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 2.3,.3 notitle, \
+#datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 4 notitle, \
+#datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 3,-.2 notitle, \
+#datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.4 notitle, \
+#datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,-.3 notitle, \
+#datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 7,.5 notitle
+#so far didn't have to change this from dt=1e-4 case.
+
+#----- dt = 1e-3
+#Remote Troposphere (dt = 1e-3) label placement:
+#plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
+#datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:3:("O2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:4:("O1D") with labels font "arial,10" offset 2,-.1 notitle, \
+#datafile every ::99::99 u 1:5:("NO2") with labels font "arial,10" offset 2,.1 notitle, \
+#datafile every ::99::99 u 1:6:("NO3") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:7:("CO") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:8:("C2H6") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:9:("C3H8") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:10:("C2H4") with labels font "arial,10" offset 2,-.5 notitle, \
+#datafile every ::99::99 u 1:11:("C3H6") with labels font "arial,10" offset 6,-.7 notitle, \
+#datafile every ::99::99 u 1:12:("C5H8") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:13:("C10H16") with labels font "arial,10" offset 6 notitle, \
+#datafile every ::99::99 u 1:14:("CH3CHO") with labels font "arial,10" offset 7 notitle, \
+#datafile every ::99::99 u 1:15:("MACR") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:16:("OH") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:17:("HO2") with labels font "arial,10" offset 2 notitle, \
+#datafile every ::99::99 u 1:18:("CH3O2") with labels font "arial,10" offset 2.3,.3 notitle, \
+#datafile every ::99::99 u 1:19:("CH3COO2") with labels font "arial,10" offset 4 notitle, \
+#datafile every ::99::99 u 1:20:("MACRO2") with labels font "arial,10" offset 3,-.2 notitle, \
+#datafile every ::99::99 u 1:21:("H2O") with labels font "arial,10" offset 2,-.2 notitle, \
+#datafile every ::99::99 u 1:22:("CO2") with labels font "arial,10" offset 2,.4 notitle, \
+#datafile every ::99::99 u 1:23:("H2") with labels font "arial,10" offset 2,.2 notitle, \
+#datafile every ::99::99 u 1:24:("CH3COOH") with labels font "arial,10" offset 7,-.3 notitle, \
+#datafile every ::99::99 u 1:25:("HCOOH") with labels font "arial,10" offset 7,.5 notitle
+
+
+

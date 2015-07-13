@@ -394,6 +394,37 @@ void integrateNetwork(
       printf("%e + ((%f * (1 + %e * H2O * exp(%f/T)) * (%eexp(%f/T) * (%f + %f*M)+%eexp(%f/T)))/(%f + (%f * %eexp(%f/T) * (%f + %f*M)) * pow(%eexp(%f/T), %f))) + %e*pow(T,2)*exp(%f/T) + %e*(1+%fPatm)\n", 
         A, Q, B, a, C, b, v, w, E, d, t, u, C, b, v, w, D, c, x, F, e, G, R);
       */
+
+      /***** FOR GRAPHING REACTION RATES VS TEMP IN GNUPLOT *****/
+      //to graph reactions that contain any but only of these species
+      //int isInReac = 1;
+      //to graph reactions that contain any of these species
+      int isInReac = 0;
+      for(int j = 0; j < network.numReactingSpecies[i]; j++) {
+        int m = network.reactant[j][i];
+        //if((m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101) && (B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
+        //plot single species' reaction rates
+        if((m == 0) && (B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
+          isInReac = 1;
+        } else {
+          //to graph reactions that contain any but only of these species
+          //isInReac = 0;
+          break;
+        }
+      }
+
+      if(isInReac == 1) {
+        if(B>0) {
+          printf("(1+%e*%e*exp(%e/x))*(%e*%e*exp(%e/x)+%e*exp(%e/x))", B, H2O, a, C, M, b, E, d);
+        } else {
+          printf("((%e*(%e*expf(%e/x)*(%e+%e*%e)+%e*expf(%e/x)))/(%e+(%e*%e*expf(%e/x)*(%e+%e*%e)*(%e*exp(%e/x))^%e)))+(%e*(x^2)*exp(%e/x))",Q,C,b,v,w,M,E,d,t,u,C,b,v,w,M,D,c,x,F,e);
+        } 
+//        printf(" title 'K[%d]', \\\n",i-25);
+      }
+
+      /***** END FOR GRAPHING REACTION RATES VS TEMP IN GNUPLOT *****/
+
+
       if(displayPhotodata)
         printf("Chemical Rate[%d] = %e\n", i-25, Rate[i]);
     } else if(reacType[i] == 1) {
@@ -561,7 +592,11 @@ void integrateNetwork(
 			}
 		//stdout to file > fernOut.txt for plottable output
 			if(log10(t) >= nextOutput) {
-        printf("%e ", t);
+        
+        //For gnuplot Output
+        //printf("%e ", t);
+
+
 			//	printf("OC\n");//OutputCount
 				//renormalize nextOutput by compensating for overshooting last expected output time
 				nextOutput = intervalLogt+nextOutput;
@@ -571,16 +606,23 @@ void integrateNetwork(
           Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
 		//			printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
 
+
+          /***** FOR GNUPLOT *****/
           //allnonzero:
           //if(m == 0 || m == 2 || m == 3 || (m >= 5 && m <= 14) || m == 16 || (m >= 18 && m <= 35) || m == 37 || (m >= 75 && m <= 85) || (m >= 95 && m <= 97) || m == 99 || m == 101)
         
           //important species
-          if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
-            printf("%e ", Yppb);
+  /*        if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
+            printf("%e ", Yppb);*/
+          /***** END FOR GNUPLOT *****/
+
 					if(checkAsy(FminusSum[m], Y[m], dt))
 						asyCount++;	
 				}
-        printf("\n");
+
+          /***** FOR GNUPLOT *****/
+          //printf("\n");
+          /***** END FOR GNUPLOT *****/
         //check frac RG PartialEq
         
 
@@ -789,7 +831,7 @@ void integrateNetwork(
 		#endif
 		
 		
-    dt = .0001;  
+    dt = 0.0001;  
 
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		

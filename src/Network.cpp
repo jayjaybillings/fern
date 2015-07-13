@@ -49,7 +49,7 @@ void Network::loadNetwork(const char *filename)
 			status = fscanf(file, "%s %s %hu %hhu %hhu %lf %lf\n",
 				speciesLabel[n], speciesFamily[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
-    //  printf("Y[%d]: %s %e %d %d\n", n, speciesLabel[n], Y, Z[n], N[n]);
+      //printf("Y[%d]: %s %e %d %d\n", n, speciesLabel[n], Y, Z[n], N[n]);
 		if(status == EOF)
 			break;
     
@@ -86,9 +86,9 @@ void Network::loadReactions(const char *filename)
   int *RGclass = new int [reactions];
 	
 	// Each element of these dynamic arrays are pointers to static arrays of size 4.
-	vec_4i *reactantZ = new vec_4i [reactions]; // [reactions]
+	vec_4i *reactantC = new vec_4i [reactions]; // [reactions]
 	vec_4i *reactantN = new vec_4i [reactions]; // [reactions]
-	vec_4i *productZ = new vec_4i [reactions]; // [reactions]
+	vec_4i *productC = new vec_4i [reactions]; // [reactions]
 	vec_4i *productN = new vec_4i [reactions]; // [reactions]
 	
 	
@@ -164,25 +164,23 @@ void Network::loadReactions(const char *filename)
 			printf("}\n");
 		
 		// Line #3
-	  // TODO: CHANGE THIS TO reactant and product COEFFICIENTS!!! 
-    // and accommodate throughout the code... Some places 
-    // require reactantZ and productZ for certain stuffs	
+    //scan the reactant coefficients
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
-			status = fscanf(file, "%d", &reactantZ[n][mm]);
+			status = fscanf(file, "%f", &reactantC[n][mm]);
 			
 			if (displayInput)
-				printf("\tReactant[%d]: Coeff=%d\n", mm, reactantZ[n][mm]);
+				printf("\tReactant[%d]: Coeff=%f\n", mm, reactantC[n][mm]);
 		}
 		
 		// Line #4
-		
+    //scan the product coefficients which will alter the generated abundances from this reaction.
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
-			status = fscanf(file, "%d", &productZ[n][mm]);
+			status = fscanf(file, "%f", &productC[n][mm]);
 			
 			if (displayInput)
-				printf("\tProduct[%d]: Coeff=%d\n", mm, productZ[n][mm]);
+				printf("\tProduct[%d]: Coeff=%f\n", mm, productC[n][mm]);
 		}
 		
 		// Line #5
@@ -290,15 +288,15 @@ void Network::loadReactions(const char *filename)
 	// We're not done yet.
 	// Finally parse the flux
 	
-	parseFlux(numProducts, reactant, reactantN, product, productN);
+	parseFlux(numProducts, reactant, reactantC, product, productC);
 	
 	
 	// Cleanup dynamic memory
 	
 	delete [] numProducts;
-	delete [] reactantZ;
+	delete [] reactantC;
 	delete [] reactantN;
-	delete [] productZ;
+	delete [] productC;
 	delete [] productN;
 } //end loadReactions
 
@@ -513,8 +511,8 @@ void Network::loadPhotolytic(const char *filename) {
 
 } //end loadPhotolytic
 
-void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,
-	int **product, vec_4i *productN)
+void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantC,
+	int **product, vec_4i *productC)
 {
 	const static bool showParsing = false;
 	
@@ -785,16 +783,33 @@ void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,
 	{
 		for (int j = 0; j < reactions; j++)
 		{
+      //generate multiplying factor for fractional coefficients of this species in this reaction
+      fern_real fracCoeff = 1.0;
+      //multiply coefficients from reactants
+      for(int k = 0; k < numReactingSpecies[j]; k++) {
+        if(reactant[k][j] == i) {
+          fracCoeff *= reactantC[j][k]; 
+        }
+      }
+      for(int k = 0; k < numProducts[j]; k++) {
+        if(product[k][j] == i) {
+          fracCoeff *= productC[j][k]; 
+        }
+      }
+       //printf("FracCoeff for species[%d] due to reaction[%d] is %f\n", i, j, fracCoeff);
+
 			if (reacMask[i + species * j] > 0)
 			{
         //printf("reacmask[%d+%d*%d] = %d\n", i, species, j, reacMask[i + species * j]);
-				FplusFac[tempCountPlus] = (fern_real)reacMask[i + species * j];
+        //multiplying fracCoeff for fractional coefficients of species in certain reactions. Most = 1.0
+				FplusFac[tempCountPlus] = (fern_real)reacMask[i + species * j] * fracCoeff;
         //printf("FplusFac[%d] (i=%d, species=%d, j=%d): %f\n", tempCountPlus, i, species, j, FplusFac[tempCountPlus]);
 				tempCountPlus++;
 			}
 			else if (reacMask[i + species * j] < 0)
 			{
-				FminusFac[tempCountMinus] = -(fern_real) reacMask[i + species * j];
+        //multiplying fracCoeff for fractional coefficients of species in certain reactions. Most = 1.0
+				FminusFac[tempCountMinus] = -(fern_real) reacMask[i + species * j] * fracCoeff;
 				tempCountMinus++;
 			}
 		}

@@ -126,14 +126,14 @@ struct Network
 	// Define vec_4i as the type int[4]
 	// This is bad and should probably be changed during
 	// a revision to parseFlux().
-	typedef int vec_4i[10];
+	typedef float vec_4i[10];
 	
 	/**	Finds the contributions to F+ and F- of each reaction for each isotope
 		
 		This should be executed only once at the beginning of the entire
 		calculation to determine the structure of the network.
 	*/
-	void parseFlux(int *numProducts, int **reactant, vec_4i *reactantN,	int **product, vec_4i *productN);
+	void parseFlux(int *numProducts, int **reactant, vec_4i *reactantC,	int **product, vec_4i *productC);
 	
 	/**	Allocates vectors on the host
 		
