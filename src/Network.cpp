@@ -781,6 +781,7 @@ void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantC,
 	int tempCountMinus = 0;
 	for (int i = 0; i < species; i++)
 	{
+    //printf("species: %d\n", i);
 		for (int j = 0; j < reactions; j++)
 		{
       //generate multiplying factor for fractional coefficients of this species in this reaction
@@ -803,13 +804,15 @@ void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantC,
         //printf("reacmask[%d+%d*%d] = %d\n", i, species, j, reacMask[i + species * j]);
         //multiplying fracCoeff for fractional coefficients of species in certain reactions. Most = 1.0
 				FplusFac[tempCountPlus] = (fern_real)reacMask[i + species * j] * fracCoeff;
-        //printf("FplusFac[%d] (i=%d, species=%d, j=%d): %f\n", tempCountPlus, i, species, j, FplusFac[tempCountPlus]);
+        //printf("FplusFac[%d] (spec=%d, reac=%d): %f\n", tempCountPlus, i, j, FplusFac[tempCountPlus]);
 				tempCountPlus++;
 			}
 			else if (reacMask[i + species * j] < 0)
 			{
         //multiplying fracCoeff for fractional coefficients of species in certain reactions. Most = 1.0
-				FminusFac[tempCountMinus] = -(fern_real) reacMask[i + species * j] * fracCoeff;
+        //printf("reacminusmask[%d+%d*%d] = %d\n", i, species, j, reacMask[i + species * j]);
+				FminusFac[tempCountMinus] = -(fern_real)reacMask[i + species * j];
+        //printf("FMinusFac[%d] (spec=%d, reac=%d): %f\n", tempCountPlus, i, j, FminusFac[tempCountMinus]);
 				tempCountMinus++;
 			}
 		}
