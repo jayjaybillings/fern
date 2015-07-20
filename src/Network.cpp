@@ -811,7 +811,7 @@ void Network::parseFlux(int *numProducts, int **reactant, vec_4i *reactantC,
 			{
         //multiplying fracCoeff for fractional coefficients of species in certain reactions. Most = 1.0
         //printf("reacminusmask[%d+%d*%d] = %d\n", i, species, j, reacMask[i + species * j]);
-				FminusFac[tempCountMinus] = -(fern_real)reacMask[i + species * j];
+				FminusFac[tempCountMinus] = -(fern_real)reacMask[i + species * j] * fracCoeff;
         //printf("FMinusFac[%d] (spec=%d, reac=%d): %f\n", tempCountPlus, i, j, FminusFac[tempCountMinus]);
 				tempCountMinus++;
 			}

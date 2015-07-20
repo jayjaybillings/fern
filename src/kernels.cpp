@@ -63,9 +63,10 @@ void integrateNetwork(
 	//DSOUTPUT
 	const bool plotOutput = 1;
 	const int numIntervals = 100;
-	int plotStartTime = -7;
+	int plotStartTime = -4;
 	fern_real intervalLogt;
   fern_real nextOutput = 0.0;
+  int chooseyourSpecies = 80; //for GNUplotting of rates and fluxes by species
   int outputCount = 0;
 	int setNextOut = 0;
 	fern_real asyCount = 0;
@@ -361,7 +362,7 @@ void integrateNetwork(
         //printf("Reaction[%d], with numreacspec[%d] uses species[%d]\n", i, network.numReactingSpecies[i], network.reactant[j][i]);
         //if((m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101) && (B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
         //plot single species' reaction rates
-        if(m == 96) {
+        if(m == chooseyourSpecies) {
           isReactant = 1;
         } else {
           //to graph reactions that contain any but only of these species
@@ -375,7 +376,7 @@ void integrateNetwork(
         //printf("Reaction[%d], with numProducts[%d] generates species[%d]\n", i, network.PEnumProducts[i], network.product[j][i]);
         //if((m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101) && (B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
         //plot single species' reaction rates
-        if(m == 96) {
+        if(m == chooseyourSpecies) {
           isProduct = 1;
         } else {
           //to graph reactions that contain any but only of these species
@@ -385,12 +386,12 @@ void integrateNetwork(
 
       //GNUPLOT RATES V TEMP
       if(isReactant == 1 || isProduct == 1) {
-        //printf("%e ", Rate[i]);
+        printf("%e ", Rate[i]);
       } 
         if(isReactant == 1 && isProduct == 0) {
-//          printf(" title 'J[%d]' w linespoints lt rgb 'green', \\\n",i);
+          printf(" title 'J[%d]' w linespoints lt rgb 'green', \\\n",i);
         } else if (isReactant == 0 && isProduct == 1) {
-//          printf(" title 'J[%d]' w linespoints lt rgb 'purple', \\\n",i);
+          printf(" title 'J[%d]' w linespoints lt rgb 'purple', \\\n",i);
         }
 
       /***** END FOR GRAPHING REACTION RATES VS TEMP IN GNUPLOT *****/
@@ -458,7 +459,7 @@ void integrateNetwork(
         //printf("Reaction[%d], with numreacspec[%d] uses species[%d]\n", i, network.numReactingSpecies[i], network.reactant[j][i]);
         //if((m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101) && (B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
         //plot single species' reaction rates
-        if((m == 96) && (A > 0 || B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
+        if((m == chooseyourSpecies) && (A > 0 || B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
           isReactant = 1;
         } else {
           //to graph reactions that contain any but only of these species
@@ -472,7 +473,7 @@ void integrateNetwork(
         //printf("Reaction[%d], with numProducts[%d] generates species[%d]\n", i, network.PEnumProducts[i], network.product[j][i]);
         //if((m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101) && (B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
         //plot single species' reaction rates
-        if((m == 96) && (A > 0 || B > 0 || C > 0 || D > 0 || E > 0 || F > 0)) {
+        if((m == chooseyourSpecies) && (A > 0 || B > 0 || C > 0 || D > 0 || E > 0 || F > 0 || G > 0)) {
           isProduct = 1;
         } else {
           //to graph reactions that contain any but only of these species
@@ -483,14 +484,14 @@ void integrateNetwork(
       //GNUPLOT RATES V TEMP
       if(isReactant == 1 || isProduct == 1) {
         if(B>0) {
-      //    printf("(1+%e*%e*exp(%e/x))*(%e*%e*exp(%e/x)+%e*exp(%e/x))", B, H2O, a, C, M, b, E, d);
+          printf("(1+%e*%e*exp(%e/x))*(%e*%e*exp(%e/x)+%e*exp(%e/x))", B, H2O, a, C, M, b, E, d);
         } else {
-      //    printf("%e+((%e*(%e*exp(%e/x)*(%e+%e*%e)+%e*exp(%e/x)))/(%e+(%e*%e*exp(%e/x)*(%e+%e*%e)*(%e*exp(%e/x))**%e)))+(%e*(x**2)*exp(%e/x))",A,Q,C,b,v,w,M,E,d,t,u,C,b,v,w,M,D,c,x,F,e);
+          printf("%e+((%e*(%e*exp(%e/x)*(%e+%e*%e)+%e*exp(%e/x)))/(%e+(%e*%e*exp(%e/x)*(%e+%e*%e)*(%e*exp(%e/x))**%e)))+(%e*(x**2)*exp(%e/x))+(%e*(1+%e*%e))",A,Q,C,b,v,w,M,E,d,t,u,C,b,v,w,M,D,c,x,F,e,G,R,Patm);
         } 
         if(isReactant == 1 && isProduct == 0) {
-          //printf(" title 'K[%d]' w linespoints lt rgb 'red', \\\n",i-25);
+          printf(" title 'K[%d]' w linespoints lt rgb 'red', \\\n",i-25);
         } else if (isReactant == 0 && isProduct == 1) {
-          //printf(" title 'K[%d]' w linespoints lt rgb 'blue', \\\n",i-25);
+          printf(" title 'K[%d]' w linespoints lt rgb 'blue', \\\n",i-25);
         }
       }
 
@@ -668,52 +669,54 @@ void integrateNetwork(
         //For GNUplot Output
         printf("%e ", t);
 
+    //REPEAT Flux loops to print for GNUPLOT at proper intervals
+		int minny;
+    int lastIsoWFplus = 0;
+    int lastIsoWFminus = 0;
+		for (int i = 0; i < numberSpecies; i++)
+		{
+      if(i > 0 && FplusMax[i] == 0){
+        //printf("Sorry, species[%d] has no F+'s, therefore its FplusSum is: %e\n", i, FplusSum[i]);
+      } else {
+        minny = (i > 0) ? FplusMax[lastIsoWFplus] + 1 : 0;
+	  		/* Serially sum secction of F+. */
+			  for (int j = minny; j <= FplusMax[i]; j++)
+		  	{
+          //printf("Species[%d] will include Fplus[%d]: %e, due to reaaction[%d]\n", i, j, Fplus[j], MapFplus[j]);
+          //FOR GNUPLOT OF FLUXES
+          if(i == chooseyourSpecies) { //select the species you wish to print fluxes for.. 96=CO2
+            //printf("R:%d,  %e ",MapFplus[j],Fplus[j]);
+            printf("%e ", Fplus[j]);
+          }
+  			}
+        
+        //printf("species[%d]'s Fplus's start at %d and ends at %d, This species has an FplusSum: %e\n", i, minny, FplusMax[i], FplusSum[i]);
+        lastIsoWFplus = i;
+      }
 
-        //REPEAT of flux calculation on line 772, this one for printing fluxes at intervals for plotting to compare rates to abundance evolution for specific species.
-/*		    for (int i = 0; i < numberReactions; i++)
-    		{
-		    	int nr = network.numReactingSpecies[i];
-    			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
-          //choose one species. start with O1D(3), CO2(96), O3(0), OH(75), MACR(27), H2O(95)
-          int isSpecies = 0;
-          for(int j = 0; j < nr; j++) {
-            if(network.reactant[j][i] == 5) { 
-              isSpecies = 1;
-            }
-          } 
-          for(int j = 0; j < network.PEnumProducts[i]; j++) {
-            if(network.product[j][i] == 5) { 
-              isSpecies = 1;
-            }
+			/* Serially sum section of F-. */
+      if(i > 0 && FminusMax[i] == 0){
+        //printf("Sorry, species[%d] has no F-'s, thus, its FminusSum is: %e\n", i, FminusSum[i]);
+      } else {
+       	minny = (i > 0) ? FminusMax[lastIsoWFminus] + 1 : 0;
+  			for (int j = minny; j <= FminusMax[i]; j++)
+	  		{
+          //printf("Species[%d] will include Fminus[%d]: %e\n", i, j, Fminus[j]);
+          if(i == chooseyourSpecies) { //select the species you wish to print fluxes for.. 96=CO2
+            //printf("R:%d, %e ",MapFminus[j],Fminus[j]);
+            printf("%e ", Fminus[j]);
           }
-          if(isSpecies == 1) {
-//            printf("reaction[%d] with rate %e causes a flux of %e because we some abundance of species[%d]: %e(first-body)\n", i, Rate[i], Flux[i], network.reactant[0][i], Y[network.reactant[0][i]]);
-          }
-		    	switch (nr)
-    			{
-		    	case 3:
-				    // 3-body; flux = rate x Y x Y x Y 
-    				Flux[i] *= Y[network.reactant[2][i]];
-		    		Flux[i] *= Y[network.reactant[1][i]];
-            if(isSpecies == 1) {
-              //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(second) and species[%d]: %e(third-body)\n", i, Flux[i], network.reactant[1][i], Y[network.reactant[2][i]], network.reactant[2][i], Y[network.reactant[2][i]]);
-            }
-				
-    			case 2:
-		    		// 2-body; flux = rate x Y x Y 
-    				Flux[i] *= Y[network.reactant[1][i]];
-            if(isSpecies == 1) {
-//              printf("reaction[%d] with rate %e causes a flux of %e because we some abundance of species[%d]: %e(second-body)\n", i, Rate[i], Flux[i], network.reactant[1][i], Y[network.reactant[1][i]]);
-            }
-		    		break;
-    			}
+			  }
+        //printf("species[%d]'s Fminus's start at %d and ends at %d, This species has an FminusSum: %e\n", i, minny, FminusMax[i], FminusSum[i]);
+        lastIsoWFminus = i;
+      }
+      //FOR GNUPLOT of fluxes
+		}
+      printf("\n");
+      //END GNUPLOT for FLUXES
 
-          if(isSpecies == 1) {
- //           printf("%e ",Flux[i]);
-          }
-    		}
-        //printf("\n");
-*/
+
+
 
 			//	printf("OC\n");//OutputCount
 				//renormalize nextOutput by compensating for overshooting last expected output time
@@ -731,8 +734,8 @@ void integrateNetwork(
           //if(m == 0 || m == 2 || m == 3 || (m >= 5 && m <= 14) || m == 16 || (m >= 18 && m <= 35) || m == 37 || (m >= 75 && m <= 85) || (m >= 95 && m <= 97) || m == 99 || m == 101)
         
           //important species
-          if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
-            printf("%e ", Yppb);
+          //if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
+          //  printf("%e ", Yppb);
           /***** END FOR GNUPLOT *****/
 
 					if(checkAsy(FminusSum[m], Y[m], dt))
@@ -740,7 +743,7 @@ void integrateNetwork(
 				}
 
           /***** FOR GNUPLOT *****/
-          printf("\n");
+          //printf("\n");
           /***** END FOR GNUPLOT *****/
 
 
@@ -828,7 +831,7 @@ void integrateNetwork(
 			  for (int j = minny; j <= FplusMax[i]; j++)
 		  	{
 	  			FplusSum[i] += Fplus[j];
-          //printf("Species[%d] will include Fplus[%d]: %e\n", i, j, Fplus[j]);
+          //printf("Species[%d] will include Fplus[%d]: %e, due to reaaction[%d]\n", i, j, Fplus[j], MapFplus[j]);
   			}
         
         //printf("species[%d]'s Fplus's start at %d and ends at %d, This species has an FplusSum: %e\n", i, minny, FplusMax[i], FplusSum[i]);
@@ -1022,8 +1025,8 @@ void integrateNetwork(
     printf("updated Y[%d] for t: %e = %e\n", i, t, Y[i]);
   }*/
 	}
-  if(plotOutput == 1)
-    printf("EO\n");//EndOutput
+//  if(plotOutput == 1)
+//    printf("EO\n");//EndOutput
 }
 
 
@@ -1114,6 +1117,7 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 {
 	for (int i = 0; i < totalFsign; i++)
 	{
+    //includes fracCoeff for each species within the reaction
 		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
   //  printf("Fsign[%d] due to Reaction[%d] with Fac[%e]: %e\n", i, MapFsign[i], FsignFac[i], Fsign[i]);
 	}
