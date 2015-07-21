@@ -97,7 +97,6 @@ void Network::loadReactions(const char *filename)
   numRG = 0;
   reactionLabel = (char **) malloc(sizeof(char *) * reactions);
   reacVector = (int **) malloc(sizeof(int *) * reactions);
-	int RGParent = 0;
 	for (int n = 0; n < reactions; n++)
 	{
 		reactionLabel[n] = (char *) malloc(sizeof(char) * 50);
@@ -232,8 +231,7 @@ void Network::loadReactions(const char *filename)
   //and group them if the absolute value of their reaction vectors are equivalent.
   int isRGmember = 0;
   int RGmemberID = 0;
-  //each reaction's home RGid
-  int *reactionRG = new int [reactions];
+  //each reaction's home RGParent
   int *reacPlaced = new int [reactions];
   // initialize reacPlaced for logic below. This indicates whether a reaction has been placed into a reaction group yet... If not, it will be the parent of a new RG.
   for (int i = 0; i < reactions; i++) {
@@ -249,8 +247,9 @@ void Network::loadReactions(const char *filename)
       RGmemberID = 0;
       RGmemID[j] = RGmemberID;
       ReacParent[j] = j;
-      ReacGroups[j] = RGclass[j];
-      RGid[numRG] = j;
+      RGclassByRG[numRG] = RGclass[j];
+      RGParent[numRG] = j;
+      ReacRG[j] = numRG;
       if(displayPEInput) {
 	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
         printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[j], j);
@@ -280,12 +279,12 @@ void Network::loadReactions(const char *filename)
           //give reac n the current reaction group ID. 
           reacPlaced[n] = 1;
           RGmemberID++;
-          reactionRG[n] = numRG; 
           RGmemID[n] = RGmemberID;
           ReacParent[n] = j;
+          ReacRG[n] = numRG;
           if(displayPEInput) {
-            printf("Reac: %d, Class: %d\n", j, ReacGroups[j]);
-  	        printf("RGid: %d, ReacParent: %d,  RGmemID: %d, isReverseR: %d\n", RGid[numRG], ReacParent[n], RGmemID[n], isReverseR[n]);
+            printf("Reac: %d, Class: %d\n", j, RGclassByRG[j]);
+  	        printf("RGParent: %d, ReacParent: %d,  RGmemID: %d, isReverseR: %d\n", RGParent[numRG], ReacParent[n], RGmemID[n], isReverseR[n]);
             printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
             for (int q = 0; q < species; q++) {
               printf("%d ", reacVector[n][q]);
@@ -305,7 +304,7 @@ void Network::loadReactions(const char *filename)
   if(displayPEInput) {
     printf("numRG: %d\n",numRG);
     for(int i = 0; i < numRG; i++) {
-      printf("ReacParent for each RG[%d]: %d\n", i, RGid[i]);
+      printf("ReacParent for each RG[%d]: %d\n", i, RGParent[i]);
     }
   }
 	fclose(file);
@@ -330,7 +329,7 @@ void Network::loadReactions(const char *filename)
 void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	vec_4i *productZ, vec_4i *productN)
 {
-	const static bool showParsing = false;
+	const static bool showParsing = true;
 	
 	// These tempInt blocks will become MapFPlus and MapFMinus eventually.
 	size_t tempIntSize = species * reactions / 2;
@@ -391,20 +390,20 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 				numFminus++;
 				reacMask[i + species * j] = -total;
 				tempInt2[incrementMinus + numFminus - 1] = j;
-				// if (showParsing)
-				// 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F-\n",
-				// 		   isoLabel[i], j, reacLabel[j], NumReactingSpecies[j], NumProducts[j], totalL,
-				// 		   totalR, total);
+				 if (showParsing)
+				 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F-\n",
+				 		   isotopeLabel[i], j, reactionLabel[j], numReactingSpecies[j], numProducts[j], totalL,
+				 		   totalR, total);
 			}
 			else if (total < 0)  // Contributes to F+ for this isotope
 			{
 				numFplus++;
 				reacMask[i + species * j] = -total;
 				tempInt1[incrementPlus + numFplus - 1] = j;
-				// if (showParsing)
-				// 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F+\n",
-				// 		   isoLabel[i], j, reacLabel[j], NumReactingSpecies[j], NumProducts[j], totalL,
-				// 		   totalR, total);
+				 if (showParsing)
+				 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F+\n",
+				 		   isotopeLabel[i], j, reactionLabel[j], numReactingSpecies[j], numProducts[j], totalL,
+				 		   totalR, total);
 			}
 			else                 // Does not contribute to flux for this isotope
 			{
@@ -571,7 +570,7 @@ void Network::allocate()
 	numReactingSpecies = new unsigned char[reactions];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
-  ReacGroups = new int[reactions];
+  RGclassByRG = new int[numRG];
   RGmemberIndex = new int [reactions];
   isReverseR = new int [reactions];
   PEnumProducts = new int[reactions];
@@ -582,8 +581,10 @@ void Network::allocate()
 	
 	for (int i = 0; i < 3; i++)
 		reactant[i] = new int[reactions];
-  pEquil = new int [numRG];
-  RGid = new int [numRG];
+  pEquilbyRG = new int [numRG];
+  pEquilbyReac = new int [reactions];
+  ReacRG = new int [reactions];//holds each reaction's RGid
+  RGParent = new int [numRG];
 }
 
 void Network::setSizes(const Network &source)

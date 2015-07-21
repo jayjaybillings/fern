@@ -26,7 +26,7 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 
 fern_real NDreduceSum(fern_real *a, unsigned short length);
 fern_real reduceMax(fern_real *a, unsigned short length);
-void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups, int **reactant, int **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq);
+void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups, int **reactant, int **product, fern_real **final_k, int *pEquilbyRG, int *pEquilbyReac, int *ReacRG, int *RGid, int numRG, fern_real tolerance, int eq);
 
 
 void network_print(const Network &network);

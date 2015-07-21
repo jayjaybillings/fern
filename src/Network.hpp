@@ -42,14 +42,16 @@ struct Network
 	int *product[3]; // [reactions]
 
 	//Partial Equilibrium
-  int *ReacGroups; //[reactions]
+  int *RGclassByRG; //[numRG]
   int *RGmemberIndex; // [reactions]
   int *PEnumProducts; // [reactions]
   int *isReverseR; //[reactions]
   int *ReacParent; // [reactions] 
 	int numRG;
-	int *pEquil; //[numRG]
-	int *RGid; //[numRG]
+	int *pEquilbyRG; //[numRG]
+	int *pEquilbyReac; //[reactions]
+	int *ReacRG; //[reactions]
+	int *RGParent; //[numRG]
   int *RGclass; // [reactions]
   int **reacVector; // [reactions][species]
 	

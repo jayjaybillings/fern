@@ -58,6 +58,7 @@ void integrateNetwork(
 	fern_real *Y;
 
 	const bool plotOutput = 1;
+	const bool pEquilOn = 0;
 	const int numIntervals = 100;
 	int plotStartTime = -16;
 	fern_real intervalLogt;
@@ -70,18 +71,22 @@ void integrateNetwork(
   fern_real FracRGPE = 0;
 	int eq = 0;
   int numRG = network.numRG;
-  int *RGid;
-  RGid = network.RGid;
+  int *RGParent;
+  RGParent = network.RGParent;
   int *ReacParent;
   ReacParent = network.ReacParent;
   int *RGmemberIndex;
   RGmemberIndex = network.RGmemberIndex;
   int *isReverseR;
   isReverseR = network.isReverseR;
-  int *ReacGroups;
-  ReacGroups = network.ReacGroups;
-  int *pEquil;
-  pEquil = network.pEquil;
+  int *RGclassByRG;
+  RGclassByRG = network.RGclassByRG;
+  int *pEquilbyRG;
+  pEquilbyRG = network.pEquilbyRG;
+  int *pEquilbyReac;
+  pEquilbyReac = network.pEquilbyReac;
+  int *ReacRG;
+  ReacRG = network.ReacRG; //holds each reaction's RGid
 
 	/* Assign globals pointers. */
 	
@@ -183,31 +188,33 @@ void integrateNetwork(
     }
 
 		//second to calculate final reaciton rates for each RG
-		for(int i = 0; i < network.reactions; i++) {
-			if(displayRGdata && ReacGroups[i] != 0) {
-				printf("RG #%d\nRG Class: %d\nParent Reaction: %d\n", countRG, ReacGroups[i], i);
+		for(int i = 0; i < network.numRG; i++) {
+			if(displayRGdata && RGclassByRG[i] != 0) {
+				printf("RG #%d\nRG Class: %d\nParent Reaction: %d\n", countRG, RGclassByRG[i], i);
 				//output numReactingSpecies and numProducts for Parent of RG
         printf("numReacting: %d, numProducts: %d\n", network.numReactingSpecies[i], network.PEnumProducts[i]);			
-				if(ReacGroups[i] == 1) {		
+				if(RGclassByRG[i] == 1) {		
 					printf("Reactant SID: %d; Product SID: %d\n",network.reactant[0][i], network.product[0][i]);
 				} 
-				else if(ReacGroups[i] == 2) {
+				else if(RGclassByRG[i] == 2) {
           printf("Reactant SID: %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i]);
         }
-        else if(ReacGroups[i] == 3) {
+        else if(RGclassByRG[i] == 3) {
           printf("Reactant SID: %d, %d, %d; Product SID: %d\n",network.reactant[0][i], network.reactant[1][i], network.reactant[2][i], network.product[0][i]);
         }
-        else if(ReacGroups[i] == 4) {
+        else if(RGclassByRG[i] == 4) {
           printf("Reactant SID: %d, %d; Product SID: %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i]);
         }
-        else if(ReacGroups[i] == 5) {
+        else if(RGclassByRG[i] == 5) {
           printf("Reactant SID: %d, %d; Product SID: %d, %d, %d\n",network.reactant[0][i], network.reactant[1][i], network.product[0][i], network.product[1][i], network.product[2][i]);
         }
 				printf("-----\n|\n");
 			}				
 			if(displayRGdata)
 				printf("Reaction ID: %d\nRG Member ID: %d\nisReverseR: %d\nRate:%e\n|\n", i, RGmemberIndex[i], isReverseR[i], Rate[i]);
+    }
 
+		for(int i = 0; i < network.reactions; i++) {
             //if RGmemberindex is greater (or equal for RGmemberindex[i] = RGmemberindex[i+1] = 0 than next one, then end of Reaction Group
             if(RGmemberIndex[i] >= RGmemberIndex[i+1]) {
                 //get forward and reverse rates for all reactions within group, starting with i-network.RGmemberIndex[i], and ending with i.
@@ -281,7 +288,7 @@ void integrateNetwork(
 				nextOutput = log10(t);
 				setNextOut = 1;
 			}
-		//stdout to file > fernOut.txt for plottable output
+  		//stdout to file > fernOut.txt for plottable output
       //tolerance to check if time is close to nextOutput
       fern_real nextOuttol = fabs(log10(t)-nextOutput)/fabs(nextOutput);
 			if(nextOuttol <= .000001) {
@@ -301,10 +308,10 @@ void integrateNetwork(
           }
 				}
         //check frac RG PartialEq
-	      partialEquil(Y, numberReactions, ReacGroups, network.reactant, network.product, final_k, pEquil, RGid, numRG, 0.01, eq);
+	      //partialEquil(Y, numberReactions, RGclassByRG, network.reactant, network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
         //Check all RG if in Equilibrium
 				for(int i = 0; i < numRG; i++) {
-					if(pEquil[i] == 1) {
+					if(pEquilbyRG[i] == 1) {
 						peCount++;			
           }
 				}
@@ -314,6 +321,14 @@ void integrateNetwork(
 				outputCount++;
 			}
 		}
+
+    //Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value 
+    //if plotOut == 0 to check for PE regardless of whether I'm plotting...
+    if(plotOutput == 0) {
+    }
+	  partialEquil(Y, numberReactions, RGclassByRG, network.reactant, network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
+
+    
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		
 		for (int i = 0; i < numberSpecies; i++)
@@ -328,20 +343,24 @@ void integrateNetwork(
 		
 		for (int i = 0; i < numberReactions; i++)
 		{
+
 			int nr = network.numReactingSpecies[i];
-			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
-			
-			switch (nr)
-			{
-			case 3:
-				/* 3-body; flux = rate x Y x Y x Y */
-				Flux[i] *= Y[network.reactant[2][i]];
-				
-			case 2:
-				/* 2-body; flux = rate x Y x Y */
-				Flux[i] *= Y[network.reactant[1][i]];
-				break;
-			}
+      if((pEquilbyReac[i] == 0 || pEquilOn == 0) || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
+  			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
+			  switch (nr)
+		  	{
+	  		case 3:
+  				/* 3-body; flux = rate x Y x Y x Y */
+				  Flux[i] *= Y[network.reactant[2][i]];
+			  case 2:
+		  		/* 2-body; flux = rate x Y x Y */
+	  			Flux[i] *= Y[network.reactant[1][i]];
+  				break;
+			  }
+      } else if (pEquilbyReac[i] == 1 && pEquilOn == 1) {
+        Flux[i] = 0.0;
+      }
+
 		}
 		
 		
@@ -349,8 +368,13 @@ void integrateNetwork(
 		
 		populateF(Fplus, FplusFac, Flux, MapFplus, totalFplus);
 		populateF(Fminus, FminusFac, Flux, MapFminus, totalFminus);
-
-
+/* I have this here in case I want to set fluxes equal to zero after populating Fplus/Fminus used in the Asymptotic update... Herein lie my issues. 
+  How do I apply partial equilibrium without disrupting the calculation of Asymptotic update?
+		for (int i = 0; i < numberReactions; i++)
+		{
+			int nr = network.numReactingSpecies[i];
+		}
+*/
 		/*
 		   Sum the F+ and F- for each isotope. These are "sub-arrays"
 		   of Fplus and Fminus at (F[+ or -] + minny) of size FplusMax[i].
@@ -402,8 +426,7 @@ void integrateNetwork(
 		
 		/*
 		   Now use the fluxes to update the populations in parallel for this timestep.
-		   For now we shall assume the asymptotic method. We determine whether each isotope
-		   satisfies the asymptotic condition. If it does we update with the asymptotic formula.
+		   For now we shall assume the e the asymptotic condition. If it does we update with the asymptotic formula.
 		   If not, we update numerically using the forward Euler formula.
 		*/
 		
@@ -530,8 +553,8 @@ void integrateNetwork(
 			/* Compute mass fraction X from abundance Y. */
 			X[i] = massNum[i] * Y[i];
 		}
-		
-		sumX = NDreduceSum(X, numberSpecies);
+
+    sumX = NDreduceSum(X, numberSpecies);
 		
 		
 		/* Increment the integration time and set the new timestep. */
@@ -540,6 +563,14 @@ void integrateNetwork(
 		timesteps++;
 		
 		sumXLast = sumX;
+    //renormalize mass fraction so sumX is 1
+    if(pEquilOn == 1) {
+      for (int i = 0; i < numberSpecies; i++) {
+        X[i] = X[i]*sumX;
+      }
+
+      sumX = NDreduceSum(X, numberSpecies);
+    }
 	}
 	if(plotOutput == 1)
 		printf("EO\n");//EndOutput
@@ -580,7 +611,7 @@ inline fern_real asymptoticUpdate(fern_real Fplus, fern_real Fminus, fern_real Y
 
 inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum, fern_real Y, fern_real dt)
 {
-	return Y + (FplusSum - FminusSum) * dt;
+  return Y + (FplusSum - FminusSum) * dt;
 }
 
 /*
@@ -645,19 +676,21 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++)
 	{
-		if (checkAsy(FminusSum[i], Y[i], dt))
-		{
-			Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
-		}
-		else
-		{
-			Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
-		}
+    if(FplusSum[i] > 0.0 || FminusSum[i] > 0.0) { //only bother to update populations if this species has a nonzero flux
+  		if (checkAsy(FminusSum[i], Y[i], dt))
+	  	{
+		  	Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
+  		}
+	  	else
+		  {
+			  Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
+  		}
+    }
 	}
 }
 
 /* Checks for partial equilibrium between reaction groups */
-void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups, int **reactant, int **product, fern_real **final_k, int *pEquil, int *RGid, int numRG, fern_real tolerance, int eq) {
+void partialEquil(fern_real *Y, unsigned short numberReactions, int *RGclassByRG, int **reactant, int **product, fern_real **final_k, int *pEquilbyRG, int *pEquilbyReac, int *ReacRG, int *RGParent, int numRG, fern_real tolerance, int eq) {
 	fern_real y_a=0;
 	fern_real y_b=0;
 	fern_real y_c=0;
@@ -690,9 +723,9 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 		//final partial equilibrium loop for calculating equilibrium
 		for(int i = 0; i < numRG; i++) {
 				if(PEprintData) {
-          printf("RGNUM: %d, Class: %d, RGid: %d\n", i, ReacGroups[RGid[i]], RGid[i]);
+          printf("RGNUM: %d, Class: %d, RGParent: %d\n", i, RGclassByRG[i], RGParent[i]);
         }
-        pEquil[i] = 0;
+        pEquilbyRG[i] = 0;
 	      //reset RG reactant and product populations
         y_a = 0;
         y_b = 0;
@@ -703,9 +736,9 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
         //this RG's parent rID, and that of the next RG. Else, take the difference between the
         //total number of reactions and the current RG parent rID.
         if(i!=numRG-1) {
-          members = RGid[i+1]-RGid[i];
+          members = RGParent[i+1]-RGParent[i];
         } else {
-          members = numberReactions-RGid[i];
+          members = numberReactions-RGParent[i];
         }
 				//Get current population for each reactant and product of this RG
 				//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
@@ -714,9 +747,9 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 				// if the latter occurs, we'll need to add some logic to account for that. Right now, assuming that all RGParents are set up
 				// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null 
 				// in the reactant and product arrays.
-				if(ReacGroups[RGid[i]] == 1) {
-					y_a = Y[reactant[0][RGid[i]]];
-					y_b = Y[product[0][RGid[i]]];
+				if(RGclassByRG[i] == 1) {
+					y_a = Y[reactant[0][RGParent[i]]];
+					y_b = Y[product[0][RGParent[i]]];
           //set specific constraints and coefficients for RGclass 1
           c1 = y_a+y_b;
           a = 0;
@@ -732,16 +765,16 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
           PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
           if(PE_val_a < tolerance && PE_val_b < tolerance) {
-            pEquil[i] = 1;
+            pEquilbyRG[i] = 1;
           } 
 					if(PEprintData) {
-						printf("RG %d: members=%d kf=%e kr=%e\n RGClass=%d c1=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e R0: %e R1: %e inEquilibrium: %d\n\n",i,members,final_k[0][i],final_k[1][i],ReacGroups[RGid[i]], c1, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, PE_val_a, PE_val_b, pEquil[i]);
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass=%d c1=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e R0: %e R1: %e inEquilibrium: %d\n\n",i,members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, PE_val_a, PE_val_b, pEquilbyRG[i]);
           }
 				} 
-				else if(ReacGroups[RGid[i]] == 2) {
-          y_a = Y[reactant[0][RGid[i]]];
-          y_b = Y[reactant[1][RGid[i]]];
-          y_c = Y[product[0][RGid[i]]];
+				else if(RGclassByRG[i] == 2) {
+          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[product[0][RGParent[i]]];
           c1 = y_b-y_a;
           c2 = y_b+y_c;
           a = -final_k[0][i];
@@ -755,17 +788,17 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
           PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
-            pEquil[i] = 1;
+            pEquilbyRG[i] = 1;
           }   
           if(PEprintData) {
-    				printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e\nR0:%e R1: %e R2: %e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],ReacGroups[RGid[i]], c1, c2, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, PE_val_a, PE_val_b, PE_val_c, pEquil[i]);
+    				printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e\nR0:%e R1: %e R2: %e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, PE_val_a, PE_val_b, PE_val_c, pEquilbyRG[i]);
           }
         }
-        else if(ReacGroups[RGid[i]] == 3) {
-          y_a = Y[reactant[0][RGid[i]]];
-          y_b = Y[reactant[1][RGid[i]]];
-          y_c = Y[reactant[2][RGid[i]]];
-          y_d = Y[product[0][RGid[i]]];
+        else if(RGclassByRG[i] == 3) {
+          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[reactant[2][RGParent[i]]];
+          y_d = Y[product[0][RGParent[i]]];
           c1 = y_a-y_b;
           c2 = y_a-y_c;
           c3 = ((y_a+y_b+y_c)/3)+y_d;
@@ -782,17 +815,17 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
           PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
-            pEquil[i] = 1;
+            pEquilbyRG[i] = 1;
           } 
           if(PEprintData) {
- 						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2:%e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e, inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],ReacGroups[RGid[i]], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d, pEquil[i]);
+ 						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2:%e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e, inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d, pEquilbyRG[i]);
           }
         }
-        else if(ReacGroups[RGid[i]] == 4) {
-          y_a = Y[reactant[0][RGid[i]]];
-          y_b = Y[reactant[1][RGid[i]]];
-          y_c = Y[product[0][RGid[i]]];
-          y_d = Y[product[1][RGid[i]]];
+        else if(RGclassByRG[i] == 4) {
+          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[product[0][RGParent[i]]];
+          y_d = Y[product[1][RGParent[i]]];
           c1 = y_a-y_b;
           c2 = y_a+y_c;
           c3 = y_a+y_d;
@@ -809,18 +842,18 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 	        PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
   				PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
-    				pEquil[i] = 1;
+    				pEquilbyRG[i] = 1;
 		      }
           if(PEprintData) {
-    				printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],ReacGroups[RGid[i]], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d, pEquil[i]);
+    				printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d, pEquilbyRG[i]);
           }
 		    }
-      	else if(ReacGroups[RGid[i]] == 5) {
-          y_a = Y[reactant[0][RGid[i]]];
-          y_b = Y[reactant[1][RGid[i]]];
-          y_c = Y[product[0][RGid[i]]];
-          y_d = Y[product[1][RGid[i]]];
-			   	y_e = Y[product[2][RGid[i]]];
+      	else if(RGclassByRG[i] == 5) {
+          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[product[0][RGParent[i]]];
+          y_d = Y[product[1][RGParent[i]]];
+			   	y_e = Y[product[2][RGParent[i]]];
           c1 = y_a+((y_c+y_d+y_e)/3);
           c2 = y_a-y_b;
           c3 = y_c-y_d;
@@ -843,13 +876,21 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
           PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
           PE_val_e = fabs(y_e-y_eq_e)/fabs(y_eq_e);
           if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
-            pEquil[i] = 1;
+            pEquilbyRG[i] = 1;
           } 
           if(PEprintData) {
-  					printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e c4=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e y4_eq: %e y4: %e\nR0: %e R1: %e R2: %e R3: %e R4:%e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],ReacGroups[RGid[i]], c1, c2, c3, c4, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, y_eq_e, y_e, PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e, pEquil[i]); 
+  					printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e c4=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e y4_eq: %e y4: %e\nR0: %e R1: %e R2: %e R3: %e R4:%e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, c3, c4, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, y_eq_e, y_e, PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e, pEquilbyRG[i]); 
           }
 	      }
-		}
+
+      //update all PEvals for each reaction
+      for(int j = 0; j < numberReactions; j++) {
+        if(ReacRG[j] == i) {
+          pEquilbyReac[j] = pEquilbyRG[i];
+        }
+      }//end update PEval for each reaction
+
+		}//end for each RG
 }
 
 void network_print(const Network &network)
