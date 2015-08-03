@@ -329,7 +329,7 @@ void Network::loadReactions(const char *filename)
 void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	vec_4i *productZ, vec_4i *productN)
 {
-	const static bool showParsing = true;
+	const static bool showParsing = false;
 	
 	// These tempInt blocks will become MapFPlus and MapFMinus eventually.
 	size_t tempIntSize = species * reactions / 2;

@@ -58,7 +58,7 @@ void integrateNetwork(
 	fern_real *Y;
 
 	const bool plotOutput = 1;
-	const bool pEquilOn = 0;
+	const bool pEquilOn = 1;
 	const int numIntervals = 100;
 	int plotStartTime = -16;
 	fern_real intervalLogt;
@@ -281,6 +281,16 @@ void integrateNetwork(
 	
 	while (t < integrationData.t_max)
 	{
+/*    if (log10(t) > -10) {
+      floorFac = 0.007;
+    }
+    if (log10(t) > -9) {
+      floorFac = 0.0001;
+    }
+*/
+
+
+    //printf("begofloop SUMX: %e\n\n\n\n", sumX);
 		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
@@ -291,7 +301,7 @@ void integrateNetwork(
   		//stdout to file > fernOut.txt for plottable output
       //tolerance to check if time is close to nextOutput
       fern_real nextOuttol = fabs(log10(t)-nextOutput)/fabs(nextOutput);
-			if(nextOuttol <= .000001) {
+			if(nextOuttol <= 1e-6) {
         //printf("tol = %f, log10(t): %f, nextOut: %f\n", nextOuttol, log10(t), nextOutput);
 				printf("OC\n");//OutputCount
 				//printf("OC: %d\n", outputCount);//OutputCount
@@ -318,16 +328,16 @@ void integrateNetwork(
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
 				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T9, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+//        printf("maxFlux: %e\n", maxFlux);
 				outputCount++;
 			}
 		}
 
     //Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value 
     //if plotOut == 0 to check for PE regardless of whether I'm plotting...
-    if(plotOutput == 0) {
+    if(log10(t) >= -11) {
+	    partialEquil(Y, numberReactions, RGclassByRG, network.reactant, network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
     }
-	  partialEquil(Y, numberReactions, RGclassByRG, network.reactant, network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
-
     
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		
@@ -345,7 +355,7 @@ void integrateNetwork(
 		{
 
 			int nr = network.numReactingSpecies[i];
-      if((pEquilbyReac[i] == 0 || pEquilOn == 0) || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
+      if(pEquilOn == 0 || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
   			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
 			  switch (nr)
 		  	{
@@ -360,7 +370,7 @@ void integrateNetwork(
       } else if (pEquilbyReac[i] == 1 && pEquilOn == 1) {
         Flux[i] = 0.0;
       }
-
+//printf("Flux[%d]: %e\n", i, Flux[i]);
 		}
 		
 		
@@ -368,13 +378,6 @@ void integrateNetwork(
 		
 		populateF(Fplus, FplusFac, Flux, MapFplus, totalFplus);
 		populateF(Fminus, FminusFac, Flux, MapFminus, totalFminus);
-/* I have this here in case I want to set fluxes equal to zero after populating Fplus/Fminus used in the Asymptotic update... Herein lie my issues. 
-  How do I apply partial equilibrium without disrupting the calculation of Asymptotic update?
-		for (int i = 0; i < numberReactions; i++)
-		{
-			int nr = network.numReactingSpecies[i];
-		}
-*/
 		/*
 		   Sum the F+ and F- for each isotope. These are "sub-arrays"
 		   of Fplus and Fminus at (F[+ or -] + minny) of size FplusMax[i].
@@ -390,20 +393,24 @@ void integrateNetwork(
 		
 		for (int i = 0; i < numberSpecies; i++)
 		{
-            minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
+      minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
 			/* Serially sum secction of F+. */
 			FplusSum[i] = 0.0;
 			for (int j = minny; j <= FplusMax[i]; j++)
 			{
-				FplusSum[i] += Fplus[j];
+        if(Fplus[j] > 0) {
+  				FplusSum[i] += Fplus[j];
+        }
 			}
 
 			/* Serially sum section of F-. */
-           	minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
+      minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
 			FminusSum[i] = 0.0;
 			for (int j = minny; j <= FminusMax[i]; j++)
 			{
-				FminusSum[i] += Fminus[j];
+        if(Fminus[j] > 0) {
+				  FminusSum[i] += Fminus[j];
+        }
 			}
 		}
 		
@@ -422,8 +429,27 @@ void integrateNetwork(
 		/* Call tree algorithm to find max of array Fdiff. */
 
 		maxFlux = reduceMax(Fdiff, numberSpecies);
-
-		
+    
+//        printf("maxflux: %e\n", maxFlux);
+/*
+    if(log10(maxFlux) > 7) { 
+      if(log10(t) < -9) {
+        floorFac = (0.01+(0.01*FracRGPE))/log10(maxFlux);
+      } 
+      if(log10(t) > -9) {
+        floorFac = (0.01+(0.005*FracRGPE))/log10(maxFlux);
+      }
+      if(log10(t) > -8.5) {
+        floorFac = (0.01+(0.005*FracRGPE))/log10(maxFlux);
+      }
+    } 
+*/
+    /*if(log10(maxFlux) > 8) {
+      floorFac = 0.0001;
+    } else {
+      floorFac = 0.005;
+    }*/
+	  
 		/*
 		   Now use the fluxes to update the populations in parallel for this timestep.
 		   For now we shall assume the e the asymptotic condition. If it does we update with the asymptotic formula.
@@ -431,34 +457,58 @@ void integrateNetwork(
 		*/
 		
 		/* Determine an initial trial timestep based on fluxes and dt in previous step. */
-		
+	  if(pEquilOn == 0 || (pEquilOn == 1 && log10(t) <= -11)) {	
 		dtFlux = fluxFrac / maxFlux;
+    //if(log10(t) > -9)
+    //printf("\nThe maximum flux is %e, setting potential dt due to this flux to %e\n", maxFlux, dtFlux);
 		dtFloor = floorFac * t;
-		if (dtFlux > dtFloor) dtFlux = dtFloor;
+    //if(log10(t) > -9)
+    //printf("We don't want dt to be larger than %f of t:%e = %e\n", floorFac, t, dtFloor);
+		if (dtFlux > dtFloor) {
+      dtFlux = dtFloor;
+    //if(log10(t) > -9)
+    //  printf("the maximum flux was relatively small, making dtFlux too large, setting dt to %f of %e = %e\n", floorFac, t, dtFlux);
+    }
 			
 		dt = dtFlux;
-		if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
-		
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+
+	  	if (deltaTimeRestart < dtFlux) {
+//      printf("dt(%e) is larger than the dt from the last timestep,", dt);
+      dt = deltaTimeRestart;
+//       printf(" so set it to the last dt: %e\n", deltaTimeRestart);
+      }
+  		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+    }
+/*
+    if (log10(t) < -9) {
+    } 
+    if (log10(t) > -9) {
+    	upbumper = 0.01 * massTol;
+    }
+    if (log10(t) > -8.4) {
+    	upbumper = 0.01 * massTol;
+    }
+    if (dt > dtFloor) {
+      dt = dtFloor;
+    }
+*/		
 		
 		/* Compute sum of mass fractions sumX for all species. */
-		
-		for (int i = 0; i < numberSpecies; i++)
-		{
-			/* Compute mass fraction X from abundance Y. */
-			X[i] = massNum[i] * Y[i];
-		}
-		
-		sumX = NDreduceSum(X, numberSpecies);
-		
-		
+		  for (int i = 0; i < numberSpecies; i++)
+	  	{
+  			/* Compute mass fraction X from abundance Y. */
+			  X[i] = massNum[i] * Y[i];
+		  }
+	  	sumX = NDreduceSum(X, numberSpecies);
+    //printf("First Recalc of SUMX: %e \n\n\n\n", sumX);
+    //printf("\nBEFORE mass\n");		
 		/*
 		   Now modify timestep if necessary to ensure that particle number is conserved to
 		   specified tolerance (but not too high a tolerance). Using updated populations
 		   based on the trial timestep computed above, test for conservation of particle
 		   number and modify trial timestep accordingly.
 		*/
-		
+	if(pEquilOn == 0 || (pEquilOn == 1 && log10(t) <= -11)) {	
 		#ifdef FERN_SINGLE
 			fern_real test1 = fabsf(sumXLast - 1.0);
 			fern_real test2 = fabsf(sumX - 1.0);
@@ -479,17 +529,39 @@ void integrateNetwork(
 
 			if (test2 > test1 && massChecker > massTol)
 			{
-				dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
+//        printf("sumX is farther from 1 than last time, meaning populations changed too much, so make dt(%e) smaller by a factor of %e. massChecker: %e\n", dt, fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper), massChecker);
+  			dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
 			}
 			else if (massChecker < massTolUp)
 			{
+  //      printf("sumX is closer to 1, so make dt(%e) larger by %e. massChecker: %e\n", dt, (massTol / (fmax(massChecker, upbumper))), massChecker);
 				dt *= (massTol / (fmax(massChecker, upbumper)));
 			}
 		#endif
-		
-		
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+  }
+ 
 		
+	//	printf("AFTER mass\n");
+  //  printf("massChecker: %e, diffsumX: %e, diffsumXL: %e, sumX: %e, sumXL: %e\n", massChecker, test2, test1, sumX, sumXLast);
+
+		
+
+  //One last recalibration of the timestep for partial equilibrium which disregards sumX, and is only concerned with the maximum flux.
+  if(pEquilOn == 1 && log10(t) > -11) {
+    dt = fluxFrac/maxFlux;
+    if(log10(t) < -9) {
+      if(dt > .00211*t) {
+        dt *= .002;
+      }
+    }
+    if(log10(t) > -9) {
+      if(dt > .000911*t) {
+        dt *= .0009;
+      }
+    }
+    updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+  }
 		
 		/*
 		   Store the actual timestep that would be taken. Same as dt unless
@@ -510,16 +582,18 @@ void integrateNetwork(
       #else
         dt = powf(10, plotStartTime) - t;
       #endif
+      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 
     if(plotOutput == 1 && log10(t+dt) > nextOutput) {
-//      printf("nextOut: %e, t: %e, dt: %e, t+dt: %e", pow(10, nextOutput), t, dt, t+dt);
+//      printf("nextOut: %e, t: %e, dt: %e, t+dt: %e\n", pow(10, nextOutput), t, dt, t+dt);
       #ifdef FERN_SINGLE
         dt = pow(10, nextOutput) - t;
       #else
         dt = powf(10, nextOutput) - t;
       #endif
  //     printf(", updated time: %e\n", t+dt);
+      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 		
 		/*
@@ -547,14 +621,14 @@ void integrateNetwork(
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 		
 		/* Now that final dt is set, compute final sum of mass fractions sumX. */
-		
-		for (int i = 0; i < numberSpecies; i++)
-		{
-			/* Compute mass fraction X from abundance Y. */
-			X[i] = massNum[i] * Y[i];
-		}
-
-    sumX = NDreduceSum(X, numberSpecies);
+	  if(pEquilOn == 0 || (pEquilOn == 1 && log10(t) <= -11)) {	
+  		for (int i = 0; i < numberSpecies; i++)
+		  {
+	  		/* Compute mass fraction X from abundance Y. */
+  			X[i] = massNum[i] * Y[i];
+		  }
+      sumX = NDreduceSum(X, numberSpecies);
+    }
 		
 		
 		/* Increment the integration time and set the new timestep. */
@@ -566,10 +640,11 @@ void integrateNetwork(
     //renormalize mass fraction so sumX is 1
     if(pEquilOn == 1) {
       for (int i = 0; i < numberSpecies; i++) {
-        X[i] = X[i]*sumX;
+        X[i] = X[i]*(1/sumX);
       }
 
       sumX = NDreduceSum(X, numberSpecies);
+//      printf("endofloop NEW SUMX: %e\n\n\n\n", sumX);
     }
 	}
 	if(plotOutput == 1)
@@ -663,7 +738,11 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 {
 	for (int i = 0; i < totalFsign; i++)
 	{
-		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
+    if(Flux[MapFsign[i]] > 0) {
+   		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
+    } else {
+      Fsign[i] = 0.0;
+    }
 	}
 }
 
