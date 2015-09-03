@@ -1,4 +1,3 @@
-
 #include "Network.hpp"
 #include <cstdio>
 #include <cassert>
@@ -14,7 +13,6 @@ Network::Network()
 void Network::loadNetwork(const char *filename)
 {
 	// Unused variables
-	char isotopeLabel[10];
 	unsigned short A;
 	fern_real massExcess;
 	fern_real pf;
@@ -32,19 +30,20 @@ void Network::loadNetwork(const char *filename)
 	}
 	
 	// Read 4 lines at a time
-	
+	isotopeLabel = (char **) malloc(sizeof(char *) * species);
 	for (int n = 0; n < species; n++)
 	{
+		isotopeLabel[n] = (char *) malloc(sizeof(char) * 10);
 		int status;
 		
 		// Line #1
 		
 		#ifdef FERN_SINGLE
 			status = fscanf(file, "%s %hu %hhu %hhu %f %f\n",
-				isotopeLabel, &A, &Z[n], &N[n], &Y, &massExcess);
+				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#else
 			status = fscanf(file, "%s %hu %hhu %hhu %lf %lf\n",
-				isotopeLabel, &A, &Z[n], &N[n], &Y, &massExcess);
+				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
 		#endif
 		
 		if (status == EOF)
@@ -67,18 +66,15 @@ void Network::loadNetwork(const char *filename)
 void Network::loadReactions(const char *filename)
 {
 	static const bool displayInput = false;
+	static const bool displayPEInput = false;
 	
 	// Unused variables
-	char reactionLabel[100];
-	int RGclass;
-	int RGmemberIndex;
 	int reaclibClass;
 	int isEC;
-	int isReverseR;
-	int ProductIndex[4];
 	
 	// Allocate the host-only memory to be used by parseFlux()
 	int *numProducts = new int [reactions];
+  int *RGclass = new int [reactions];
 	
 	// Each element of these dynamic arrays are pointers to static arrays of size 4.
 	vec_4i *reactantZ = new vec_4i [reactions]; // [reactions]
@@ -98,22 +94,26 @@ void Network::loadReactions(const char *filename)
 	}
 	
 	// Read eight lines at a time
-	
+  numRG = 0;
+  reactionLabel = (char **) malloc(sizeof(char *) * reactions);
+  reacVector = (int **) malloc(sizeof(int *) * reactions);
 	for (int n = 0; n < reactions; n++)
 	{
+		reactionLabel[n] = (char *) malloc(sizeof(char) * 50);
+		reacVector[n] = (int *) malloc(sizeof(int) * species);
 		int status;
 		
 		// Line #1
 
 		#ifdef FERN_SINGLE		
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %f %f",
-				reactionLabel, &RGclass, &RGmemberIndex, &reaclibClass,
-				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
+				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&statFac[n], &Q[n]);
 		#else
 			status = fscanf(file, "%s %d %d %d %hhu %d %d %d %lf %lf",
-				reactionLabel, &RGclass, &RGmemberIndex, &reaclibClass,
-				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR,
+				reactionLabel[n], &RGclass[n], &RGmemberIndex[n], &reaclibClass,
+				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&statFac[n], &Q[n]);
 		#endif
 		
@@ -124,13 +124,14 @@ void Network::loadReactions(const char *filename)
 		{
 			printf("Reaction Index = %d\n", n);
 			printf("isReverseR = %d reaclibIndex = %d\n",
-				isReverseR, reaclibClass);
+				isReverseR[n], reaclibClass);
 			printf("%s %d %d %d %d %d %d %d %f %f\n",
-				reactionLabel, RGclass, RGmemberIndex, reaclibClass,
+				reactionLabel[n], RGclass[n], RGmemberIndex[n], reaclibClass,
 				numReactingSpecies[n], numProducts[n], isEC,
-				isReverseR, statFac[n], Q[n]);
+				isReverseR[n], statFac[n], Q[n]);
 		}
-		
+    //Reset isReverseR to zero so I can determine if Reverse by reaction vector
+    isReverseR[n] = 0;
 		// Line #2
 		
 		if (displayInput)
@@ -195,8 +196,13 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numReactingSpecies[n]; mm++)
 		{
-			status = fscanf(file, "%hu", &reactant[mm][n]);
-			
+			status = fscanf(file, "%d", &reactant[mm][n]);
+      //"subtract" reactants from reacVector (PE)
+      for(int i = 0; i < species; i++) {
+        if(i==reactant[mm][n]){
+          reacVector[n][i]--;
+        }      
+      }
 			if (displayInput)
 				printf("\treactant[%d]: N=%d\n", mm, reactant[mm][n]);
 		}
@@ -205,16 +211,102 @@ void Network::loadReactions(const char *filename)
 		
 		for (int mm = 0; mm < numProducts[n]; mm++)
 		{
-			status = fscanf(file, "%d", &ProductIndex[mm]);
+			status = fscanf(file, "%d", &product[mm][n]);
+      //"add" products to reacVector (PE)
+      for(int i = 0; i < species; i++) {
+        if(i==product[mm][n]){
+          reacVector[n][i]++;
+        }      
+      }
 			
 			if (displayInput)
-				printf("\tProductIndex[%d]: N=%d\n", mm, ProductIndex[mm]);
+				printf("\tProductIndex[%d]: N=%d\n", mm, product[mm][n]);
 		}
-		
-		if (displayInput)
-			printf("\n");
+    PEnumProducts[n] = numProducts[n];
 	}
-	
+  //PartialEquilibrium: define Reaction Groups based on ReacVector
+  //reworked so parsing to reaction groups does not depend on the reaction input
+  //file having RG members in order
+  //embedded loop over all reactions to compare to all other reactions
+  //and group them if the absolute value of their reaction vectors are equivalent.
+  int isRGmember = 0;
+  int RGmemberID = 0;
+  //each reaction's home RGParent
+  int *reacPlaced = new int [reactions];
+  // initialize reacPlaced for logic below. This indicates whether a reaction has been placed into a reaction group yet... If not, it will be the parent of a new RG.
+  for (int i = 0; i < reactions; i++) {
+    reacPlaced[i] = 0;
+  }
+  //member ID within this reaction's RG
+  int *RGmemID = new int [reactions];
+  int *RGnumMembers = new int [numRG];
+  for(int j = 0; j < reactions; j++) {
+
+    //if this reaction doesn't yet have an RG home of its own...
+    if(reacPlaced[j] == 0) {
+      RGmemberID = 0;
+      RGmemID[j] = RGmemberID;
+      ReacParent[j] = j;
+      RGclassByRG[numRG] = RGclass[j];
+      RGParent[numRG] = j;
+      ReacRG[j] = numRG;
+      if(displayPEInput) {
+	      printf("\nRG #%d: %s\n", numRG, reactionLabel[ReacParent[j]]);
+        printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[j], j);
+        for (int q = 0; q < species; q++) {
+          printf("%d ", reacVector[j][q]);
+        }
+	    	printf("\n");
+      }
+      for(int n = 0; n < reactions; n++) {
+        for (int i = 0; i < species; i++) {
+          //if reaction j has a different species than reaction n, check n+1
+          //also if n = j, skip it
+          if(abs(reacVector[j][i]) != abs(reacVector[n][i]) || j == n) {
+            isRGmember = 0;
+            break;
+          } else {
+            isRGmember = 1;
+          }
+        }
+          //if reac n was determined to have same species as reac j, 
+        if(isRGmember == 1) {
+          for(int b = 0; b < species; b++) {
+            if(reacVector[j][b] != (reacVector[n][b]) && abs(reacVector[j][b]) == abs(reacVector[n][b])) {
+              isReverseR[n] = 1;
+            }
+          }
+          //give reac n the current reaction group ID. 
+          reacPlaced[n] = 1;
+          RGmemberID++;
+          RGmemID[n] = RGmemberID;
+          ReacParent[n] = j;
+          ReacRG[n] = numRG;
+          if(displayPEInput) {
+            printf("Reac: %d, Class: %d\n", j, RGclassByRG[j]);
+  	        printf("RGParent: %d, ReacParent: %d,  RGmemID: %d, isReverseR: %d\n", RGParent[numRG], ReacParent[n], RGmemID[n], isReverseR[n]);
+            printf("Reaction %s ID[%d]\nReaction Vector: ", reactionLabel[n], n);
+            for (int q = 0; q < species; q++) {
+              printf("%d ", reacVector[n][q]);
+            }
+	      		printf("\n");
+          }
+        }
+      }
+    //indicates number of members in each reaction group
+    RGnumMembers[numRG] = RGmemberID + 1;
+    if(displayPEInput) {
+      printf("Number Members: %d\n", RGnumMembers[numRG]);
+    }
+    numRG++;
+    }
+  }
+  if(displayPEInput) {
+    printf("numRG: %d\n",numRG);
+    for(int i = 0; i < numRG; i++) {
+      printf("ReacParent for each RG[%d]: %d\n", i, RGParent[i]);
+    }
+  }
 	fclose(file);
 	
 	
@@ -298,20 +390,20 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 				numFminus++;
 				reacMask[i + species * j] = -total;
 				tempInt2[incrementMinus + numFminus - 1] = j;
-				// if (showParsing)
-				// 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F-\n",
-				// 		   isoLabel[i], j, reacLabel[j], NumReactingSpecies[j], NumProducts[j], totalL,
-				// 		   totalR, total);
+				 if (showParsing)
+				 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F-\n",
+				 		   isotopeLabel[i], j, reactionLabel[j], numReactingSpecies[j], numProducts[j], totalL,
+				 		   totalR, total);
 			}
 			else if (total < 0)  // Contributes to F+ for this isotope
 			{
 				numFplus++;
 				reacMask[i + species * j] = -total;
 				tempInt1[incrementPlus + numFplus - 1] = j;
-				// if (showParsing)
-				// 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F+\n",
-				// 		   isoLabel[i], j, reacLabel[j], NumReactingSpecies[j], NumProducts[j], totalL,
-				// 		   totalR, total);
+				 if (showParsing)
+				 	printf("%s reacIndex=%d %s nReac=%d nProd=%d totL=%d totR=%d tot=%d F+\n",
+				 		   isotopeLabel[i], j, reactionLabel[j], numReactingSpecies[j], numProducts[j], totalL,
+				 		   totalR, total);
 			}
 			else                 // Does not contribute to flux for this isotope
 			{
@@ -478,9 +570,21 @@ void Network::allocate()
 	numReactingSpecies = new unsigned char[reactions];
 	statFac = new fern_real[reactions];
 	Q = new fern_real[reactions];
+  RGclassByRG = new int[numRG];
+  RGmemberIndex = new int [reactions];
+  isReverseR = new int [reactions];
+  PEnumProducts = new int[reactions];
+  ReacParent = new int [reactions];
+
+  for (int i = 0; i < 3; i++)
+    product[i] = new int[reactions];
 	
 	for (int i = 0; i < 3; i++)
-		reactant[i] = new unsigned short[reactions];
+		reactant[i] = new int[reactions];
+  pEquilbyRG = new int [numRG];
+  pEquilbyReac = new int [reactions];
+  ReacRG = new int [reactions];//holds each reaction's RGid
+  RGParent = new int [numRG];
 }
 
 void Network::setSizes(const Network &source)
@@ -489,6 +593,7 @@ void Network::setSizes(const Network &source)
 	reactions = source.reactions;
 	totalFplus = source.totalFplus;
 	totalFminus = source.totalFminus;
+	numRG = source.numRG;
 }
 
 void Network::print()

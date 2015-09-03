@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
 {
 	/* Load the network */
 	FERNIntegrator integrator;
-	integrator.network.species = 150;
+	integrator.network.species = 150 ;
 	integrator.network.reactions = 1604;
 	integrator.network.massTol = 1.0e-7;
 	integrator.network.fluxFrac = 0.01;
