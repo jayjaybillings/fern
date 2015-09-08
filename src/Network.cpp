@@ -303,7 +303,6 @@ void Network::loadReactions(const char *filename) {
 	parseFlux(numProducts, reactantZ, reactantN, productZ, productN);
 
 	// Cleanup dynamic memory
-
 	delete[] numProducts;
 	delete[] reactantZ;
 	delete[] reactantN;

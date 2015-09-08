@@ -622,236 +622,205 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 }
 
 /* Checks for partial equilibrium between reaction groups */
-void partialEquil(fern_real *Y, unsigned short numberReactions,
-		int *RGclassByRG, int **reactant, int **product, fern_real **final_k,
-		int *pEquilbyRG, int *pEquilbyReac, int *ReacRG, int *RGParent,
-		int numRG, fern_real tolerance, int eq) {
-	fern_real y_a = 0;
-	fern_real y_b = 0;
-	fern_real y_c = 0;
-	fern_real y_d = 0;
-	fern_real y_e = 0;
-	fern_real c1 = 0;
-	fern_real c2 = 0;
-	fern_real c3 = 0;
-	fern_real c4 = 0;
-	fern_real a = 0;
-	fern_real b = 0;
-	fern_real c = 0;
-	fern_real alpha = 0;
-	fern_real beta = 0;
-	fern_real gamma = 0;
-	fern_real q = 0;
-	fern_real y_eq_a = 0;
-	fern_real y_eq_b = 0;
-	fern_real y_eq_c = 0;
-	fern_real y_eq_d = 0;
-	fern_real y_eq_e = 0;
-	fern_real PE_val_a = 0;
-	fern_real PE_val_b = 0;
-	fern_real PE_val_c = 0;
-	fern_real PE_val_d = 0;
-	fern_real PE_val_e = 0;
-	int members = 0;
-	bool PEprintData = false;
+void partialEquil(fern_real *Y, unsigned short numberReactions, int *RGclassByRG, int **reactant, int **product, fern_real **final_k, int *pEquilbyRG, int *pEquilbyReac, int *ReacRG, int *RGParent, int numRG, fern_real tolerance, int eq) {
+	fern_real y_a=0;
+	fern_real y_b=0;
+	fern_real y_c=0;
+	fern_real y_d=0;
+	fern_real y_e=0;
+	/*fern_real c1=0;
+	fern_real c2=0;
+	fern_real c3=0;
+	fern_real c4=0;
+	fern_real a=0;
+	fern_real b=0;
+	fern_real c=0;
+	fern_real alpha=0;
+	fern_real beta=0;
+	fern_real gamma=0;
+	fern_real q=0;
+	fern_real y_eq_a=0;
+	fern_real y_eq_b=0;
+	fern_real y_eq_c=0;
+	fern_real y_eq_d=0;
+	fern_real y_eq_e=0;
+	fern_real PE_val_a=0;
+	fern_real PE_val_b=0;
+	fern_real PE_val_c=0;
+	fern_real PE_val_d=0;
+	fern_real PE_val_e=0;*/
+  int members=0;
+  bool PEprintData = false;
 
-	//final partial equilibrium loop for calculating equilibrium
-	for (int i = 0; i < numRG; i++) {
-		if (PEprintData) {
-			printf("RGNUM: %d, Class: %d, RGParent: %d\n", i, RGclassByRG[i],
-					RGParent[i]);
-		}
-		pEquilbyRG[i] = 0;
-		//reset RG reactant and product populations
-		y_a = 0;
-		y_b = 0;
-		y_c = 0;
-		y_d = 0;
-		y_e = 0;
-		//if i is not the last RG, calculate number of members by the difference between
-		//this RG's parent rID, and that of the next RG. Else, take the difference between the
-		//total number of reactions and the current RG parent rID.
-		if (i != numRG - 1) {
-			members = RGParent[i + 1] - RGParent[i];
-		} else {
-			members = numberReactions - RGParent[i];
-		}
-		//Get current population for each reactant and product of this RG
-		//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
-		//TODO: Something to watch out for: if a reaction has, for example, three reactants and two products such as in RGclass 5,
-		// will it be presented first (RGParent) as a+b+c --> d+e, or might the RGParent have the reverse set up, a+b --> c+d+e
-		// if the latter occurs, we'll need to add some logic to account for that. Right now, assuming that all RGParents are set up
-		// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null
-		// in the reactant and product arrays.
-		switch (RGclassByRG[i]) {
-		case 1:
-			y_a = Y[reactant[0][RGParent[i]]];
-			y_b = Y[product[0][RGParent[i]]];
-			//set specific constraints and coefficients for RGclass 1
-			c1 = y_a + y_b;
-			a = 0;
-			b = -final_k[0][i];
-			c = final_k[1][i];
-			q = 0;
+		//final partial equilibrium loop for calculating equilibrium
+		for(int i = 0; i < numRG; i++) {
+				if(PEprintData) {
+          printf("RGNUM: %d, Class: %d, RGParent: %d\n", i, RGclassByRG[i], RGParent[i]);
+        }
+        pEquilbyRG[i] = 0;
+	      //reset RG reactant and product populations
+        y_a = 0;
+        y_b = 0;
+        y_c = 0;
+        y_d = 0;
+        y_e = 0;
+        //if i is not the last RG, calculate number of members by the difference between
+        //this RG's parent rID, and that of the next RG. Else, take the difference between the
+        //total number of reactions and the current RG parent rID.
+        if(i!=numRG-1) {
+          members = RGParent[i+1]-RGParent[i];
+        } else {
+          members = numberReactions-RGParent[i];
+        }
+				//Get current population for each reactant and product of this RG
+				//TODO: figure out how to differentiate between a neutron as reactant/product and a null entry, as n has Isotope species ID = 0.
+				//TODO: Something to watch out for: if a reaction has, for example, three reactants and two products such as in RGclass 5,
+				// will it be presented first (RGParent) as a+b+c --> d+e, or might the RGParent have the reverse set up, a+b --> c+d+e
+				// if the latter occurs, we'll need to add some logic to account for that. Right now, assuming that all RGParents are set up
+				// in the former scenario. This would then be another instance where we'll need to differentiate between neutrons and null 
+				// in the reactant and product arrays.
+        switch (RGclassByRG[i]) {
+				case 1:
+          handlePERG_1(i, Y[reactant[0][RGParent[i]]], Y[product[0][RGParent[i]]], final_k[0][i], final_k[1][i], pEquilbyRG, tolerance);
+				/*	y_a = Y[reactant[0][RGParent[i]]];
+					y_b = Y[product[0][RGParent[i]]];
+          //set specific constraints and coefficients for RGclass 1
+          c1 = y_a+y_b;
+          a = 0;
+          b = -final_k[0][i];
+          c = final_k[1][i];
+          q = 0;
 
 			//theoretical equilibrium population of given species
 			y_eq_a = -c / b;
 			y_eq_b = c1 - y_eq_a;
 
-			//is each reactant and product in equilibrium?
-			PE_val_a = fabs(y_a - y_eq_a) / fabs(y_eq_a);
-			PE_val_b = fabs(y_b - y_eq_b) / fabs(y_eq_b);
-			if (PE_val_a < tolerance && PE_val_b < tolerance) {
-				pEquilbyRG[i] = 1;
-			}
-			if (PEprintData) {
-				printf(
-						"RG %d: members=%d kf=%e kr=%e\n RGClass=%d c1=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e R0: %e R1: %e inEquilibrium: %d\n\n",
-						i, members, final_k[0][i], final_k[1][i],
-						RGclassByRG[i], c1, a, b, c, q, y_eq_a, y_a, y_eq_b,
-						y_b, PE_val_a, PE_val_b, pEquilbyRG[i]);
-			}
-			break;
-		case 2:
-			y_a = Y[reactant[0][RGParent[i]]];
-			y_b = Y[reactant[1][RGParent[i]]];
-			y_c = Y[product[0][RGParent[i]]];
-			c1 = y_b - y_a;
-			c2 = y_b + y_c;
-			a = -final_k[0][i];
-			b = -(c1 * final_k[0][i] + final_k[1][i]);
-			c = final_k[1][i] * (c2 - c1);
-			q = (4 * a * c) - (b * b);
-			y_eq_a = ((-.5 / a) * (b + sqrt(-q)));
-			y_eq_b = y_eq_a + c1;
-			y_eq_c = c2 - y_eq_b;
-			PE_val_a = fabs(y_a - y_eq_a) / fabs(y_eq_a);
-			PE_val_b = fabs(y_b - y_eq_b) / fabs(y_eq_b);
-			PE_val_c = fabs(y_c - y_eq_c) / fabs(y_eq_c);
-			if (PE_val_a < tolerance && PE_val_b < tolerance
-					&& PE_val_c < tolerance) {
-				pEquilbyRG[i] = 1;
-			}
-			if (PEprintData) {
-				printf(
-						"RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e\nR0:%e R1: %e R2: %e inEquilibrium: %d\n\n",
-						i, members, final_k[0][i], final_k[1][i],
-						RGclassByRG[i], c1, c2, a, b, c, q, y_eq_a, y_a, y_eq_b,
-						y_b, y_eq_c, y_c, PE_val_a, PE_val_b, PE_val_c,
-						pEquilbyRG[i]);
-			}
-			break;
-		case 3:
-			y_a = Y[reactant[0][RGParent[i]]];
-			y_b = Y[reactant[1][RGParent[i]]];
-			y_c = Y[reactant[2][RGParent[i]]];
-			y_d = Y[product[0][RGParent[i]]];
-			c1 = y_a - y_b;
-			c2 = y_a - y_c;
-			c3 = ((y_a + y_b + y_c) / 3) + y_d;
-			a = final_k[0][i] * (c1 + c2) - final_k[0][i] * y_a;
-			b = -((final_k[0][i] * c1 * c2) + final_k[1][i]);
-			c = final_k[1][i] * (c3 + (c1 / 3) + (c2 / 3));
-			q = (4 * a * c) - (b * b);
-			y_eq_a = ((-.5 / a) * (b + sqrt(-q)));
-			y_eq_b = y_eq_a - c1;
-			y_eq_c = y_eq_a - c2;
-			y_eq_d = c3 - y_eq_a + ((1 / 3) * (c1 + c2));
-			PE_val_a = fabs(y_a - y_eq_a) / fabs(y_eq_a);
-			PE_val_b = fabs(y_b - y_eq_b) / fabs(y_eq_b);
-			PE_val_c = fabs(y_c - y_eq_c) / fabs(y_eq_c);
-			PE_val_d = fabs(y_d - y_eq_d) / fabs(y_eq_d);
-			if (PE_val_a < tolerance && PE_val_b < tolerance
-					&& PE_val_c < tolerance && PE_val_d < tolerance) {
-				pEquilbyRG[i] = 1;
-			}
-			if (PEprintData) {
-				printf(
-						"RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2:%e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e, inEquilibrium: %d\n\n",
-						i, members, final_k[0][i], final_k[1][i],
-						RGclassByRG[i], c1, c2, c3, a, b, c, q, y_eq_a, y_a,
-						y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a,
-						PE_val_b, PE_val_c, PE_val_d, pEquilbyRG[i]);
-			}
-			break;
-		case 4:
-			y_a = Y[reactant[0][RGParent[i]]];
-			y_b = Y[reactant[1][RGParent[i]]];
-			y_c = Y[product[0][RGParent[i]]];
-			y_d = Y[product[1][RGParent[i]]];
-			c1 = y_a - y_b;
-			c2 = y_a + y_c;
-			c3 = y_a + y_d;
-			a = final_k[1][i] - final_k[0][i];
-			b = -(final_k[1][i] * (c2 + c3)) + (final_k[0][i] * c1);
-			c = final_k[1][i] * c2 * c3;
-			q = (4 * a * c) - (b * b);
-			y_eq_a = ((-.5 / a) * (b + sqrt(-q)));
-			y_eq_b = y_eq_a - c1;
-			y_eq_c = c2 - y_eq_a;
-			y_eq_d = c3 - y_eq_a;
-			PE_val_a = fabs(y_a - y_eq_a) / fabs(y_eq_a);
-			PE_val_b = fabs(y_b - y_eq_b) / fabs(y_eq_b);
-			PE_val_c = fabs(y_c - y_eq_c) / fabs(y_eq_c);
-			PE_val_d = fabs(y_d - y_eq_d) / fabs(y_eq_d);
-			if (PE_val_a < tolerance && PE_val_b < tolerance
-					&& PE_val_c < tolerance && PE_val_d < tolerance) {
-				pEquilbyRG[i] = 1;
-			}
-			if (PEprintData) {
-				printf(
-						"RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e inEquilibrium: %d\n\n",
-						i, members, final_k[0][i], final_k[1][i],
-						RGclassByRG[i], c1, c2, c3, a, b, c, q, y_eq_a, y_a,
-						y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a,
-						PE_val_b, PE_val_c, PE_val_d, pEquilbyRG[i]);
-			}
-			break;
-		case 5:
-			y_a = Y[reactant[0][RGParent[i]]];
-			y_b = Y[reactant[1][RGParent[i]]];
-			y_c = Y[product[0][RGParent[i]]];
-			y_d = Y[product[1][RGParent[i]]];
-			y_e = Y[product[2][RGParent[i]]];
-			c1 = y_a + ((y_c + y_d + y_e) / 3);
-			c2 = y_a - y_b;
-			c3 = y_c - y_d;
-			c4 = y_c - y_e;
-			a = (((3 * c1) - y_a) * final_k[1][i]) - final_k[0][i];
-			alpha = c1 + ((c3 + c4) / 3);
-			beta = c1 - (2 * c3 / 3) + (c4 / 3);
-			gamma = c1 + (c3 / 3) - (2 * c4 / 3);
-			b = (c2 * final_k[0][i])
-					- (((alpha * beta) + (alpha * gamma) + (beta * gamma))
-							* final_k[1][i]);
-			c = final_k[1][i] * alpha * beta * gamma;
-			q = (4 * a * c) - (b * b);
-			y_eq_a = ((-.5 / a) * (b + sqrt(-q)));
-			y_eq_b = y_eq_a - c2;
-			y_eq_c = alpha - y_eq_a;
-			y_eq_d = beta - y_eq_a;
-			y_eq_e = gamma - y_eq_a;
-			PE_val_a = fabs(y_a - y_eq_a) / fabs(y_eq_a);
-			PE_val_b = fabs(y_b - y_eq_b) / fabs(y_eq_b);
-			PE_val_c = fabs(y_c - y_eq_c) / fabs(y_eq_c);
-			PE_val_d = fabs(y_d - y_eq_d) / fabs(y_eq_d);
-			PE_val_e = fabs(y_e - y_eq_e) / fabs(y_eq_e);
-			if (PE_val_a < tolerance && PE_val_b < tolerance
-					&& PE_val_c < tolerance && PE_val_d < tolerance
-					&& PE_val_e < tolerance) {
-				pEquilbyRG[i] = 1;
-			}
-			if (PEprintData) {
-				printf(
-						"RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e c4=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e y4_eq: %e y4: %e\nR0: %e R1: %e R2: %e R3: %e R4:%e inEquilibrium: %d\n\n",
-						i, members, final_k[0][i], final_k[1][i],
-						RGclassByRG[i], c1, c2, c3, c4, a, b, c, q, y_eq_a, y_a,
-						y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, y_eq_e, y_e,
-						PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e,
-						pEquilbyRG[i]);
-			}
-			break;
-		}
+          //is each reactant and product in equilibrium?
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          if(PE_val_a < tolerance && PE_val_b < tolerance) {
+            pEquilbyRG[i] = 1;
+          } 
+					if(PEprintData) {
+						printf("RG %d: members=%d kf=%e kr=%e\n RGClass=%d c1=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e R0: %e R1: %e inEquilibrium: %d\n\n",i,members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, PE_val_a, PE_val_b, pEquilbyRG[i]);
+          }*/
+				break; 
+				case 2:
+          handlePERG_2(i, Y[reactant[0][RGParent[i]]], Y[reactant[1][RGParent[i]]], Y[product[0][RGParent[i]]], final_k[0][i], final_k[1][i], pEquilbyRG, tolerance);
+/*          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[product[0][RGParent[i]]];
+          c1 = y_b-y_a;
+          c2 = y_b+y_c;
+          a = -final_k[0][i];
+          b = -(c1*final_k[0][i]+final_k[1][i]);
+          c = final_k[1][i]*(c2-c1);
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a+c1;
+          y_eq_c = c2-y_eq_b;
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
+            pEquilbyRG[i] = 1;
+          }   
+          if(PEprintData) {
+    				printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e\nR0:%e R1: %e R2: %e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, PE_val_a, PE_val_b, PE_val_c, pEquilbyRG[i]);
+          }*/
+        break;
+        case 3: 
+        handlePERG_3(i, Y[reactant[0][RGParent[i]]], Y[reactant[1][RGParent[i]]], Y[reactant[2][RGParent[i]]], Y[product[0][RGParent[i]]], final_k[0][i], final_k[1][i], pEquilbyRG, tolerance);
+/*          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[reactant[2][RGParent[i]]];
+          y_d = Y[product[0][RGParent[i]]];
+          c1 = y_a-y_b;
+          c2 = y_a-y_c;
+          c3 = ((y_a+y_b+y_c)/3)+y_d;
+          a = final_k[0][i]*(c1+c2)-final_k[0][i]*y_a;
+          b = -((final_k[0][i]*c1*c2)+final_k[1][i]);
+          c = final_k[1][i]*(c3+(c1/3)+(c2/3));
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a-c1;
+          y_eq_c = y_eq_a-c2;
+          y_eq_d = c3-y_eq_a+((1/3)*(c1+c2));
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+          PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+            pEquilbyRG[i] = 1;
+          } 
+          if(PEprintData) {
+ 						printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2:%e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e, inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d, pEquilbyRG[i]);
+          }*/
+        break;
+        case 4: 
+        handlePERG_4(i, Y[reactant[0][RGParent[i]]], Y[reactant[1][RGParent[i]]], Y[product[0][RGParent[i]]], Y[product[1][RGParent[i]]], final_k[0][i], final_k[1][i], pEquilbyRG, tolerance);
+/*          y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[product[0][RGParent[i]]];
+          y_d = Y[product[1][RGParent[i]]];
+          c1 = y_a-y_b;
+          c2 = y_a+y_c;
+          c3 = y_a+y_d;
+          a = final_k[1][i]-final_k[0][i];
+          b = -(final_k[1][i]*(c2+c3))+(final_k[0][i]*c1);
+          c = final_k[1][i]*c2*c3;
+ 					q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));	
+  				y_eq_b = y_eq_a-c1;
+  				y_eq_c = c2-y_eq_a;
+  				y_eq_d = c3-y_eq_a;
+	        PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  				PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+	        PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+  				PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+    				pEquilbyRG[i] = 1;
+		      }
+          if(PEprintData) {
+    				printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e\nR0: %e R1: %e R2: %e R3: %e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, c3, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, PE_val_a, PE_val_b, PE_val_c, PE_val_d, pEquilbyRG[i]);
+          }*/
+		    break;
+      	case 5:
+        handlePERG_5(i, Y[reactant[0][RGParent[i]]], Y[reactant[1][RGParent[i]]], Y[product[0][RGParent[i]]], Y[product[1][RGParent[i]]], Y[product[2][RGParent[i]]], final_k[0][i], final_k[1][i], pEquilbyRG, tolerance);
+        /*  y_a = Y[reactant[0][RGParent[i]]];
+          y_b = Y[reactant[1][RGParent[i]]];
+          y_c = Y[product[0][RGParent[i]]];
+          y_d = Y[product[1][RGParent[i]]];
+			   	y_e = Y[product[2][RGParent[i]]];
+          c1 = y_a+((y_c+y_d+y_e)/3);
+          c2 = y_a-y_b;
+          c3 = y_c-y_d;
+          c4 = y_c-y_e;
+          a = (((3*c1)-y_a)*final_k[1][i])-final_k[0][i];
+ 					alpha = c1+((c3+c4)/3);	
+          beta = c1-(2*c3/3)+(c4/3);	
+  				gamma = c1+(c3/3)-(2*c4/3);	
+          b = (c2*final_k[0][i])-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*final_k[1][i]);
+          c = final_k[1][i]*alpha*beta*gamma;
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a-c2;
+          y_eq_c = alpha-y_eq_a;
+          y_eq_d = beta-y_eq_a;
+          y_eq_e = gamma-y_eq_a;
+          PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+          PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+          PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+          PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+          PE_val_e = fabs(y_e-y_eq_e)/fabs(y_eq_e);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
+            pEquilbyRG[i] = 1;
+          } 
+          if(PEprintData) {
+  					printf("RG %d: members=%d kf=%e kr=%e\n RGClass= %d c1=%e c2=%e c3=%e c4=%e\n a=%e b=%e c=%e\n q=%e\n y0_eq: %e y0: %e y1_eq: %e y1: %e y2_eq: %e y2: %e y3_eq: %e y3: %e y4_eq: %e y4: %e\nR0: %e R1: %e R2: %e R3: %e R4:%e inEquilibrium: %d\n\n",i, members,final_k[0][i],final_k[1][i],RGclassByRG[i], c1, c2, c3, c4, a, b, c, q, y_eq_a, y_a, y_eq_b, y_b, y_eq_c, y_c, y_eq_d, y_d, y_eq_e, y_e, PE_val_a, PE_val_b, PE_val_c, PE_val_d, PE_val_e, pEquilbyRG[i]); 
+          }*/
+	      break;
+        }
 
 		//update all PEvals for each reaction
 		for (int j = 0; j < numberReactions; j++) {
@@ -863,7 +832,111 @@ void partialEquil(fern_real *Y, unsigned short numberReactions,
 	}				//end for each RG
 }
 
-void network_print(const Network &network) {
+void handlePERG_1(int i, fern_real y_a, fern_real y_b, fern_real kf, fern_real kr, int *pEquilbyRG, fern_real tolerance) {
+  //set specific constraints and coefficients for RGclass 1
+  fern_real c1 = y_a+y_b;
+  fern_real b = -kf;
+  fern_real c = kr;
+  //theoretical equilibrium population of given species
+  fern_real y_eq_a = -c/b;
+  fern_real y_eq_b = c1-y_eq_a;
+  //is each reactant and product in equilibrium?
+  fern_real PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  fern_real PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+  if(PE_val_a < tolerance && PE_val_b < tolerance) {
+    pEquilbyRG[i] = 1;
+  } 
+}
+
+void handlePERG_2(int i, fern_real y_a, fern_real y_b, fern_real y_c, fern_real kf, fern_real kr, int *pEquilbyRG, fern_real tolerance) {
+  fern_real c1 = y_b-y_a;
+  fern_real c2 = y_b+y_c;
+  fern_real a = -kf;
+  fern_real b = -(c1*kf+kr);
+  fern_real c = kr*(c2-c1);
+  fern_real q = (4*a*c)-(b*b);
+  fern_real y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+  fern_real y_eq_b = y_eq_a+c1;
+  fern_real y_eq_c = c2-y_eq_b;
+  fern_real PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  fern_real PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+  fern_real PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+  if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
+    pEquilbyRG[i] = 1;
+  }   
+}
+
+void handlePERG_3(int i, fern_real y_a, fern_real y_b, fern_real y_c, fern_real y_d, fern_real kf, fern_real kr, int *pEquilbyRG, fern_real tolerance) {
+  fern_real c1 = y_a-y_b;
+  fern_real c2 = y_a-y_c;
+  fern_real c3 = ((y_a+y_b+y_c)/3)+y_d;
+  fern_real a = kf*(c1+c2)-kf*y_a;
+  fern_real b = -((kf*c1*c2)+kr);
+  fern_real c = kr*(c3+(c1/3)+(c2/3));
+  fern_real q = (4*a*c)-(b*b);
+  fern_real y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+  fern_real y_eq_b = y_eq_a-c1;
+  fern_real y_eq_c = y_eq_a-c2;
+  fern_real y_eq_d = c3-y_eq_a+((1/3)*(c1+c2));
+  fern_real PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  fern_real PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+  fern_real PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+  fern_real PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+  if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+    pEquilbyRG[i] = 1;
+  } 
+}
+
+void handlePERG_4(int i, fern_real y_a, fern_real y_b, fern_real y_c, fern_real y_d, fern_real kf, fern_real kr, int *pEquilbyRG, fern_real tolerance) {
+  fern_real c1 = y_a-y_b;
+  fern_real c2 = y_a+y_c;
+  fern_real c3 = y_a+y_d;
+  fern_real a = kr-kf;
+  fern_real b = -(kr*(c2+c3))+(kf*c1);
+  fern_real c = kr*c2*c3;
+ 	fern_real q = (4*a*c)-(b*b);
+  fern_real y_eq_a = ((-.5/a)*(b+sqrt(-q)));	
+  fern_real y_eq_b = y_eq_a-c1;
+	fern_real y_eq_c = c2-y_eq_a;
+  fern_real y_eq_d = c3-y_eq_a;
+	fern_real PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  fern_real PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+  fern_real PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+	fern_real PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+  if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) {
+    pEquilbyRG[i] = 1;
+  }
+}
+
+void handlePERG_5(int i, fern_real y_a, fern_real y_b, fern_real y_c, fern_real y_d, fern_real y_e, fern_real kf, fern_real kr, int *pEquilbyRG, fern_real tolerance) {
+  fern_real c1 = y_a+((y_c+y_d+y_e)/3);
+  fern_real c2 = y_a-y_b;
+  fern_real c3 = y_c-y_d;
+  fern_real c4 = y_c-y_e;
+  fern_real a = (((3*c1)-y_a)*kr)-kf;
+ 	fern_real alpha = c1+((c3+c4)/3);	
+  fern_real beta = c1-(2*c3/3)+(c4/3);	
+  fern_real gamma = c1+(c3/3)-(2*c4/3);	
+  fern_real b = (c2*kf)-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*kr);
+  fern_real c = kr*alpha*beta*gamma;
+  fern_real q = (4*a*c)-(b*b);
+  fern_real y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+  fern_real y_eq_b = y_eq_a-c2;
+  fern_real y_eq_c = alpha-y_eq_a;
+  fern_real y_eq_d = beta-y_eq_a;
+  fern_real y_eq_e = gamma-y_eq_a;
+  fern_real PE_val_a = fabs(y_a-y_eq_a)/fabs(y_eq_a);
+  fern_real PE_val_b = fabs(y_b-y_eq_b)/fabs(y_eq_b);
+  fern_real PE_val_c = fabs(y_c-y_eq_c)/fabs(y_eq_c);
+  fern_real PE_val_d = fabs(y_d-y_eq_d)/fabs(y_eq_d);
+  fern_real PE_val_e = fabs(y_e-y_eq_e)/fabs(y_eq_e);
+  if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) {
+    pEquilbyRG[i] = 1;
+  } 
+}
+
+void network_print(const Network &network)
+{
 	/* Network data */
 
 	printf("species: %d\n", network.species);
