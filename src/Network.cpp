@@ -318,11 +318,11 @@ void Network::loadReactions(const char *filename)
 	
 	// Cleanup dynamic memory
 	
-	delete [] numProducts;
+	/*delete [] numProducts;
 	delete [] reactantZ;
 	delete [] reactantN;
 	delete [] productZ;
-	delete [] productN;
+	delete [] productN;*/
 }
 
 
@@ -532,7 +532,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	
 	
 	// Clean up dynamic memory
-	delete [] reacMask;
+	/*delete [] reacMask;
 	
 	delete [] FplusIsotopeCut;
 	delete [] FminusIsotopeCut;
@@ -547,7 +547,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	delete [] numFluxMinus;
 	
 	delete [] FplusMin;
-	delete [] FminusMin;
+	delete [] FminusMin;*/
 }
 
 
