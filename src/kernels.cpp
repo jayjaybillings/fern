@@ -53,8 +53,8 @@ void integrateNetwork(Network network, IntegrationData integrationData,
 	fern_real *Y;
 
 	const bool plotOutput = 0;
-	const bool pEquilOn = 1;
-	const bool trackPE = 1;
+	const bool pEquilOn = 0;
+	const bool trackPE = 0;
 	const int numIntervals = 100;
 	int plotStartTime = -16;
 	fern_real intervalLogt;

@@ -1,0 +1,7 @@
+Simple INI version 4.17
+
+See LICENSE.txt for license and copyright information.
+
+Available at:
+https://github.com/brofield/simpleini/archive/4.17.tar.gz
+

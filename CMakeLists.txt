@@ -23,7 +23,7 @@ FIND_PACKAGE(Boost)
 IF (Boost_FOUND)
     message(STATUS "Boost version ${Boost_VERSION} found.")
     message(STATUS "Tests will be built since Boost was found.")
-    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+    INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIR}")
 ENDIF()
 
 # Create the documentation directory and set up the doc target.
@@ -36,12 +36,15 @@ set(DOXYFILE_LATEX "ON")
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
 include(UseDoxygen OPTIONAL)
 
+# Include directories for the main program. Note that include 
+# directories must come before add subdirectory!
+include_directories("${CMAKE_SOURCE_DIR}/src")
+include_directories("${CMAKE_SOURCE_DIR}/tpls/simpleini-4.17")
+
 # Add the source directory
 add_subdirectory(src)
-
-# Include directories for the main program
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/src)
+# Add the third party libraries
+ADD_SUBDIRECTORY(tpls)
 
 # Setup the library list
 set(FERN_LIBS fern)

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "FERNIntegrator.hpp"
+#include <SimpleIni.h>
 
 int main(int argc, char const *argv[])
 {
