@@ -50,7 +50,13 @@ ADD_SUBDIRECTORY(tpls)
 set(FERN_LIBS fern)
 
 # Add an executable for the main program
-ADD_EXECUTABLE (fern-exec ${CMAKE_SOURCE_DIR}/src/main.cpp)
+ADD_EXECUTABLE(fern-exec ${CMAKE_SOURCE_DIR}/src/main.cpp)
+
+# Add tests. The first one just makes sure it executes.
+add_test(smoke_test_alpha fern-exec ${CMAKE_SOURCE_DIR}/data/alpha.ini)
+# Check the results for the alpha network benchmark
+# FIXME! Wrong files for now!
+add_test(diff_test_alpha diff ${CMAKE_SOURCE_DIR}/data/alpha.ini ${CMAKE_SOURCE_DIR}/data/alpha.ini)
 
 # Link the FERN library
 target_link_libraries(fern-exec ${FERN_LIBS})
