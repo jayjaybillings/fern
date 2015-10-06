@@ -1,9 +1,7 @@
-
-#include "FERNIntegrator.hpp"
-
 #ifndef Network_cuh
 #define Network_cuh
 
+#include "fern_math.h"
 
 struct Network
 {

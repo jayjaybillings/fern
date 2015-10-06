@@ -2,7 +2,6 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
-#include "FERNIntegrator.hpp"
 
 Network::Network() {
 }

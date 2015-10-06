@@ -36,5 +36,8 @@
 ./fern-exec $1 > out.txt
 # Diff the output
 diff $2 out.txt
+# Capture the return code
+retCode=$?
 # Remove the tmp file
 rm out.txt
+exit $retCode

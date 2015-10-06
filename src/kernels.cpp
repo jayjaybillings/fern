@@ -1,3 +1,34 @@
+/**----------------------------------------------------------------------------
+Copyright (c) 2015-, The University of Tennessee
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of fern nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
+-----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <cmath>
 #include "kernels.hpp"
@@ -46,8 +77,6 @@ static fern_real *Yzero;
 static fern_real *FplusSum;
 static fern_real *FminusSum;
 
-static IntegrationData integrationData;
-
 /* Declare local variables for Network struct. */
 
 static unsigned short numberSpecies;
@@ -70,64 +99,13 @@ static unsigned short *FminusMax;
 static fern_real massTol;
 static fern_real fluxFrac;
 
+static Network * network;
+static IntegrationData * integrationData;
+static Globals * globals;
+
 /* Declare pointer variables for IntegrationData arrays.  */
 
 fern_real *Y;
-
-
-/**
- * This operation returns the absolute value of a fern_real.
- * @param val the number for which the absolute value should be found
- * @return the absolute value of val
- */
-fern_real abs(fern_real val) {
-#ifdef FERN_SINGLE
-	return fabsf(val);
-#else
-	return fabs(val);
-#endif
-}
-
-/**
- * This operation computes the maximum of a fern_real.
- * @param val1 the first value for the comparison
- * @param val2 the second value for the comparison
- * @return the maximum of the two numbers
- */
-fern_real max(fern_real val1, fern_real val2) {
-#ifdef FERN_SINGLE
-	return fmaxf(val1,val2);
-#else
-	return fmax(val1, val2);
-#endif
-}
-
-/**
- * This function computes f = e^val correctly for fern_real type variables.
- * @param val the exponent in f(x) = e^x.
- * @return f(x) = e^x.
- */
-fern_real fern_exp(fern_real val) {
-#ifdef FERN_SINGLE
-	return expf(val);
-#else
-	return exp(val);
-#endif
-}
-
-/**
- * This function computes val1^val2.
- * @param val1 the base
- * @param val2 the exponent
- * @return the val1^val2
- */
-fern_real fern_pow(fern_real val1, fern_real val2) {
-#ifdef FERN_SINGLE
-	return powf(val1,val2);
-#else
-	return pow(val1, val2);
-#endif
-}
 
 /**
  * This function checks the status for the plotting
@@ -161,7 +139,7 @@ void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime, fern
 			}
 			//check frac RG PartialEq
 			//partialEquil(Y, numberReactions, RGclassByRG,
-			//network.reactant, network.product, final_k, pEquilbyRG,
+			//network->reactant, network->product, final_k, pEquilbyRG,
 			//pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
 			//Check all RG if in Equilibrium
 			for (int i = 0; i < numRG; i++) {
@@ -172,66 +150,73 @@ void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime, fern
 			FracAsy = asyCount / numberSpecies;
 			FracRGPE = peCount / numRG;
 			printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", time, stepSize,
-					integrationData.T9, integrationData.rho, sumX, FracAsy,
+					integrationData->T9, integrationData->rho, sumX, FracAsy,
 					FracRGPE);        //StartUniversalData
 			outputCount++;
 		}
 	}
 }
 
-void integrateNetwork(Network network, IntegrationData data,
-		Globals *globalsPtr) {
-	Globals &globals = *globalsPtr;
+void initialize(Network * networkInfo, IntegrationData * data,
+		Globals * globalsPtr) {
+	globals = globalsPtr;
+	network = networkInfo;
 
-	numberSpecies = network.species;
-	numberReactions = network.reactions;
-	totalFplus = network.totalFplus;
-	totalFminus = network.totalFminus;
+	numberSpecies = network->species;
+	numberReactions = network->reactions;
+	totalFplus = network->totalFplus;
+	totalFminus = network->totalFminus;
 
 	integrationData = data;
 
 	// Assign network parameters
-	numRG = network.numRG;
-	RGParent = network.RGParent;
-	ReacParent = network.ReacParent;
-	RGmemberIndex = network.RGmemberIndex;
-	isReverseR = network.isReverseR;
-	RGclassByRG = network.RGclassByRG;
-	pEquilbyRG = network.pEquilbyRG;
-	pEquilbyReac = network.pEquilbyReac;
-	ReacRG = network.ReacRG; //holds each reaction's RGid
+	numRG = network->numRG;
+	RGParent = network->RGParent;
+	ReacParent = network->ReacParent;
+	RGmemberIndex = network->RGmemberIndex;
+	isReverseR = network->isReverseR;
+	RGclassByRG = network->RGclassByRG;
+	pEquilbyRG = network->pEquilbyRG;
+	pEquilbyReac = network->pEquilbyReac;
+	ReacRG = network->ReacRG; //holds each reaction's RGid
 
-	massTol = network.massTol;
-	fluxFrac = network.fluxFrac;
+	massTol = network->massTol;
+	fluxFrac = network->fluxFrac;
 
 	/* Assign globals pointers. */
 
-	Flux = globals.Flux;
-	Fplus = globals.Fplus;
-	Fminus = globals.Fminus;
-	Rate = globals.rate;
-	massNum = globals.massNum;
-	X = globals.X;
-	Fdiff = globals.Fdiff;
-	Yzero = globals.Yzero;
-	FplusSum = globals.FplusSum;
-	FminusSum = globals.FminusSum;
+	Flux = globals->Flux;
+	Fplus = globals->Fplus;
+	Fminus = globals->Fminus;
+	Rate = globals->rate;
+	massNum = globals->massNum;
+	X = globals->X;
+	Fdiff = globals->Fdiff;
+	Yzero = globals->Yzero;
+	FplusSum = globals->FplusSum;
+	FminusSum = globals->FminusSum;
 
 	/* Assign Network pointers. */
 
-	Z = network.Z;
-	N = network.N;
-	FplusFac = network.FplusFac;
-	FminusFac = network.FminusFac;
-	MapFplus = network.MapFplus;
-	MapFminus = network.MapFminus;
-	FplusMax = network.FplusMax;
-	FminusMax = network.FminusMax;
+	Z = network->Z;
+	N = network->N;
+	FplusFac = network->FplusFac;
+	FminusFac = network->FminusFac;
+	MapFplus = network->MapFplus;
+	MapFminus = network->MapFminus;
+	FplusMax = network->FplusMax;
+	FminusMax = network->FminusMax;
 
 	/* Assign IntegrationData pointers. */
 
-	Y = integrationData.Y;
+	Y = integrationData->Y;
 
+}
+
+/**
+ * This function performs the time integration of the network->
+ */
+void integrate() {
 	fern_real maxFlux;
 	fern_real sumX;
 	fern_real t;
@@ -242,10 +227,10 @@ void integrateNetwork(Network network, IntegrationData data,
 
 	/* Compute the preFac vector. */
 
-	for (int i = 0; i < network.reactions; i++) {
-		globals.preFac[i] = network.statFac[i]
-				* fern_pow(integrationData.rho,
-						network.numReactingSpecies[i] - 1);
+	for (int i = 0; i < network->reactions; i++) {
+		globals->preFac[i] = network->statFac[i]
+				* pow(integrationData->rho,
+						network->numReactingSpecies[i] - 1);
 	}
 
 	/* Compute the rate values. */
@@ -257,20 +242,20 @@ void integrateNetwork(Network network, IntegrationData data,
 	 per GPU call.
 	 */
 
-	fern_real T93 = cbrt(integrationData.T9);
-	fern_real t1 = 1 / integrationData.T9;
+	fern_real T93 = cbrt(integrationData->T9);
+	fern_real t1 = 1 / integrationData->T9;
 	fern_real t2 = 1 / T93;
 	fern_real t3 = T93;
-	fern_real t4 = integrationData.T9;
+	fern_real t4 = integrationData->T9;
 	fern_real t5 = T93 * T93 * T93 * T93 * T93;
-	fern_real t6 = log(integrationData.T9);
+	fern_real t6 = log(integrationData->T9);
 
 	// Compute the rates as R[i] = ae^x (Arhenius rates)
-	for (int i = 0; i < network.reactions; i++) {
-		double x = network.P[0][i] + t1 * network.P[1][i] + t2 * network.P[2][i]
-				+ t3 * network.P[3][i] + t4 * network.P[4][i]
-				+ t5 * network.P[5][i] + t6 * network.P[6][i];
-		Rate[i] = globals.preFac[i] * exp(x);
+	for (int i = 0; i < network->reactions; i++) {
+		double x = network->P[0][i] + t1 * network->P[1][i] + t2 * network->P[2][i]
+				+ t3 * network->P[3][i] + t4 * network->P[4][i]
+				+ t5 * network->P[5][i] + t6 * network->P[6][i];
+		Rate[i] = globals->preFac[i] * exp(x);
 	}
 
 	/* Author: Daniel Shyles */
@@ -283,15 +268,15 @@ void integrateNetwork(Network network, IntegrationData data,
 	int countRG = 0;
 	//first set up array of final reaction rates for each RG based on Rate[i] calculated above
 	for (int m = 0; m < 2; m++) {
-		final_k[m] = new fern_real[network.numRG];
+		final_k[m] = new fern_real[network->numRG];
 	}
 
-	for (int i = 0; i < network.reactions; i++) {
+	for (int i = 0; i < network->reactions; i++) {
 		// if RGmemberindex is greater (or equal for RGmemberindex[i] =
 		// RGmemberindex[i+1] = 0 than next one, then end of Reaction Group
 		if (RGmemberIndex[i] >= RGmemberIndex[i + 1]) {
 			// get forward and reverse rates for all reactions within group,
-			// starting with i-network.RGmemberIndex[i], and ending with i.
+			// starting with i-network->RGmemberIndex[i], and ending with i.
 			kf = 0; //forward rate
 			kr = 0; //reverse rate
 			// iterate through each RGmember and calculate the total rate from
@@ -326,7 +311,7 @@ void integrateNetwork(Network network, IntegrationData data,
 	 */
 
 	t = 1.0e-20;
-	dt = integrationData.dt_init;
+	dt = integrationData->dt_init;
 	timesteps = 1;
 
 	fern_real floorFac = 0.1;
@@ -352,14 +337,14 @@ void integrateNetwork(Network network, IntegrationData data,
 	}
 	/* Main time integration loop */
 
-	while (t < integrationData.t_max) {
-		checkPlotStatus(t,dt,integrationData.t_max,sumX);
+	while (t < integrationData->t_max) {
+		checkPlotStatus(t,dt,integrationData->t_max,sumX);
 
 		//Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value
 		//if plotOut == 0 to check for PE regardless of whether I'm plotting...
 		if (log10(t) >= -11 && (pEquilOn == 1 || trackPE == 1)) {
-			partialEquil(Y, numberReactions, RGclassByRG, network.reactant,
-					network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG,
+			partialEquil(Y, numberReactions, RGclassByRG, network->reactant,
+					network->product, final_k, pEquilbyRG, pEquilbyReac, ReacRG,
 					RGParent, numRG, 0.01, eq);
 
 		}
@@ -374,18 +359,18 @@ void integrateNetwork(Network network, IntegrationData data,
 		/* Parallel version of flux calculation */
 
 		for (int i = 0; i < numberReactions; i++) {
-			int nr = network.numReactingSpecies[i];
+			int nr = network->numReactingSpecies[i];
 			if (pEquilOn == 0 || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
-				Flux[i] = Rate[i] * Y[network.reactant[0][i]];
+				Flux[i] = Rate[i] * Y[network->reactant[0][i]];
 
 				switch (nr) {
 				case 3:
 					/* 3-body; flux = rate x Y x Y x Y */
-					Flux[i] *= Y[network.reactant[2][i]];
+					Flux[i] *= Y[network->reactant[2][i]];
 
 				case 2:
 					/* 2-body; flux = rate x Y x Y */
-					Flux[i] *= Y[network.reactant[1][i]];
+					Flux[i] *= Y[network->reactant[1][i]];
 					break;
 				}
 			} else if (pEquilbyReac[i] == 1 && pEquilOn == 1) {
@@ -474,10 +459,10 @@ void integrateNetwork(Network network, IntegrationData data,
 		massChecker = abs(sumXLast - sumX);
 
 		if (test2 > test1 && massChecker > massTol) {
-			dt *= max(massTol / max(massChecker, (fern_real) 1.0e-16),
+			dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16),
 					downbumper);
 		} else if (massChecker < massTolUp) {
-			dt *= (massTol / (max(massChecker, upbumper)));
+			dt *= (massTol / (fmax(massChecker, upbumper)));
 		}
 
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
@@ -497,12 +482,12 @@ void integrateNetwork(Network network, IntegrationData data,
 
 		if (plotOutput == 1 && log10(t + dt) > plotStartTime
 				&& setNextOut == 0) {
-			dt = fern_pow(10, plotStartTime) - t;
+			dt = pow(10, plotStartTime) - t;
 			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		}
 
 		if (plotOutput == 1 && log10(t + dt) > nextOutput) {
-			dt = fern_pow(10, nextOutput) - t;
+			dt = pow(10, nextOutput) - t;
 			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		}
 
@@ -513,14 +498,14 @@ void integrateNetwork(Network network, IntegrationData data,
 		 corresponding to the adjusted time interval.
 		 */
 
-		if (t + dt >= integrationData.t_max) {
+		if (t + dt >= integrationData->t_max) {
 			/*
 			 TODO
 			 Copy back to CPU for dt_init next operator split integration.
 			 Params2[2] = dt;
 			 */
 
-			dt = integrationData.t_max - t;
+			dt = integrationData->t_max - t;
 
 			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		}
@@ -851,87 +836,87 @@ void handlePERG_5(int i, fern_real y_a, fern_real y_b, fern_real y_c,
 	}
 }
 
-void network_print(const Network &network) {
+void network_print() {
 	/* Network data */
 
-	printf("species: %d\n", network.species);
+	printf("species: %d\n", network->species);
 
 	printf("Z: { ");
-	for (int i = 0; i < network.species; i++)
-		printf("%4d ", network.Z[i]);
+	for (int i = 0; i < network->species; i++)
+		printf("%4d ", network->Z[i]);
 	printf("}\n");
 
 	printf("N: { ");
-	for (int i = 0; i < network.species; i++)
-		printf("%4d ", network.N[i]);
+	for (int i = 0; i < network->species; i++)
+		printf("%4d ", network->N[i]);
 	printf("}\n");
 
 	/* Reaction data */
 
 	printf("\n");
 
-	printf("reactions: %d\n", network.reactions);
+	printf("reactions: %d\n", network->reactions);
 
 	for (int n = 0; n < 7; n++) {
 		printf("P[%d]: { ", n);
-		for (int i = 0; i < network.reactions; i++)
-			printf("%e ", network.P[n][i]);
+		for (int i = 0; i < network->reactions; i++)
+			printf("%e ", network->P[n][i]);
 		;
 		printf("\n");
 	}
 
 	printf("numReactingSpecies: { ");
-	for (int i = 0; i < network.reactions; i++)
-		printf("%4d ", network.numReactingSpecies[i]);
+	for (int i = 0; i < network->reactions; i++)
+		printf("%4d ", network->numReactingSpecies[i]);
 	printf("}\n");
 
 	printf("statFac: { ");
-	for (int i = 0; i < network.reactions; i++)
-		printf("%e ", network.statFac[i]);
+	for (int i = 0; i < network->reactions; i++)
+		printf("%e ", network->statFac[i]);
 	printf("}\n");
 
 	printf("Q: { ");
-	for (int i = 0; i < network.reactions; i++)
-		printf("%e ", network.Q[i]);
+	for (int i = 0; i < network->reactions; i++)
+		printf("%e ", network->Q[i]);
 	printf("}\n");
 
 	for (int n = 0; n < 3; n++) {
 		printf("reactant[%d]: { ", n);
-		for (int i = 0; i < network.reactions; i++)
-			printf("%4d ", network.reactant[n][i]);
+		for (int i = 0; i < network->reactions; i++)
+			printf("%4d ", network->reactant[n][i]);
 		printf("}\n");
 	}
 
-	printf("totalFplus: %d\n", network.totalFplus);
-	printf("totalFminus: %d\n", network.totalFminus);
+	printf("totalFplus: %d\n", network->totalFplus);
+	printf("totalFminus: %d\n", network->totalFminus);
 
 	printf("FplusFac: { ");
-	for (int i = 0; i < network.totalFplus; i++)
-		printf("%e ", network.FplusFac[i]);
+	for (int i = 0; i < network->totalFplus; i++)
+		printf("%e ", network->FplusFac[i]);
 	printf("}\n");
 
 	printf("FminusFac: { ");
-	for (int i = 0; i < network.totalFminus; i++)
-		printf("%e ", network.FminusFac[i]);
+	for (int i = 0; i < network->totalFminus; i++)
+		printf("%e ", network->FminusFac[i]);
 	printf("}\n");
 
 	printf("MapFplus: { ");
-	for (int i = 0; i < network.totalFplus; i++)
-		printf("%4u ", network.MapFplus[i]);
+	for (int i = 0; i < network->totalFplus; i++)
+		printf("%4u ", network->MapFplus[i]);
 	printf("}\n");
 
 	printf("MapFminus: { ");
-	for (int i = 0; i < network.totalFminus; i++)
-		printf("%4u ", network.MapFminus[i]);
+	for (int i = 0; i < network->totalFminus; i++)
+		printf("%4u ", network->MapFminus[i]);
 	printf("}\n");
 
 	printf("FplusMax: { ");
-	for (int i = 0; i < network.species; i++)
-		printf("%4u ", network.FplusMax[i]);
+	for (int i = 0; i < network->species; i++)
+		printf("%4u ", network->FplusMax[i]);
 	printf("}\n");
 
 	printf("FminusMax: { ");
-	for (int i = 0; i < network.species; i++)
-		printf("%4u ", network.FminusMax[i]);
+	for (int i = 0; i < network->species; i++)
+		printf("%4u ", network->FminusMax[i]);
 	printf("}\n");
 }

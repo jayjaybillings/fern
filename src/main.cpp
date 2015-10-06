@@ -27,11 +27,11 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles
+Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 -----------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
-#include "FERNIntegrator.hpp"
+#include "kernels.hpp"
 #include <SimpleIni.h>
 
 /**
@@ -42,7 +42,7 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles
  * @param integrator the integrator into which the parameters should be loaded
  * @param filename the name of the file that contains the parameters
  */
-void loadParameters(FERNIntegrator & integrator, IntegrationData & data,
+void loadParameters(Network * network, IntegrationData * data,
 		const char * filename) {
 
 	// Load the parameters file
@@ -55,39 +55,39 @@ void loadParameters(FERNIntegrator & integrator, IntegrationData & data,
 
 	// Load the network parameters. The simple parameters can be loaded
 	// directly, but the file names are used in multiple places.
-	integrator.network.species = atoi(
+	network->species = atoi(
 			iniReader.GetValue("network", "numSpecies", "0"));
-	integrator.network.reactions = atoi(
+	network->reactions = atoi(
 			iniReader.GetValue("network", "numReactions", "0"));
-	integrator.network.numRG = atoi(
+	network->numRG = atoi(
 			iniReader.GetValue("network", "numReactionGroups", "0"));
-	integrator.network.massTol = strtod(
+	network->massTol = strtod(
 			iniReader.GetValue("network", "massTol", "0.0"), NULL);
-	integrator.network.fluxFrac = strtod(
+	network->fluxFrac = strtod(
 			iniReader.GetValue("network", "fluxFrac", "0.0"), NULL);
 	const char * networkFile = iniReader.GetValue("network", "networkFile",
 	NULL);
 	const char * rateFile = iniReader.GetValue("network", "rateFile", NULL);
 
 	// Load the solver parameters
-	data.T9 = strtod(iniReader.GetValue("initialConditions", "T9",
+	data->T9 = strtod(iniReader.GetValue("initialConditions", "T9",
 			"0.0"), NULL);
-	data.t_init = strtod(iniReader.GetValue("initialConditions",
+	data->t_init = strtod(iniReader.GetValue("initialConditions",
 			"startTime", "0.0"), NULL);
-	data.t_max = strtod(iniReader.GetValue("initialConditions",
+	data->t_max = strtod(iniReader.GetValue("initialConditions",
 			"endTime", "0.0"), NULL);
-	data.dt_init = strtod(iniReader.GetValue("initialConditions",
+	data->dt_init = strtod(iniReader.GetValue("initialConditions",
 			"initialTimeStep", "0.0"), NULL);
-	data.rho = strtod(iniReader.GetValue("initialConditions",
+	data->rho = strtod(iniReader.GetValue("initialConditions",
 			"density", "0.0"), NULL);
 
 	// Configure the integrator
-	integrator.network.allocate();
-	integrator.network.loadNetwork(networkFile);
-	integrator.network.loadReactions(rateFile);
+	network->allocate();
+	network->loadNetwork(networkFile);
+	network->loadReactions(rateFile);
 	// Configure the data
-	data.allocate(integrator.network.species);
-	data.loadAbundances(networkFile);
+	data->allocate(network->species);
+	data->loadAbundances(networkFile);
 
 	return;
 }
@@ -108,11 +108,14 @@ int main(int argc, char const *argv[]) {
 	}
 
 	/* Load the network */
-	FERNIntegrator integrator;
 	IntegrationData integrationData;
-	loadParameters(integrator, integrationData, argv[1]);
+	Network network;
+	loadParameters(&network, &integrationData, argv[1]);
 	// Launch the integrator
-	integrator.integrate(integrationData);
+	Globals globals;
+	globals.allocate(network);
+	initialize(&network, &integrationData, &globals);
+	integrate();
 	integrationData.print();
 
 	return EXIT_SUCCESS;
