@@ -2,6 +2,79 @@
 #include <cmath>
 #include "kernels.hpp"
 
+// Global Variables.
+/*
+ * I have moved these here temporarily until I refactor the code enough to put
+ * them on appropriate classes. ~JJB 20151006 09:38.
+ */
+static const bool plotOutput = 0;
+static const bool pEquilOn = 0;
+static const bool trackPE = 0;
+static const int numIntervals = 100;
+static int plotStartTime = -16;
+static fern_real intervalLogt;
+static fern_real nextOutput;
+static int outputCount = 0;
+static int setNextOut = 0;
+static fern_real asyCount = 0;
+static fern_real peCount = 0;
+static fern_real FracAsy = 0;
+static fern_real FracRGPE = 0;
+static int eq = 0;
+
+// Global references to parameter data
+static int numRG;
+static int *RGParent;
+static int *ReacParent;
+static int *RGmemberIndex;
+static int *isReverseR;
+static int *RGclassByRG;
+static int *pEquilbyRG;
+static int *pEquilbyReac;
+static int *ReacRG;
+
+/* Declare local pointers for Globals arrays. */
+
+static fern_real *Flux;
+static fern_real *Fplus;
+static fern_real *Fminus;
+static fern_real *Rate;
+static fern_real *massNum;
+static fern_real *X;
+static fern_real *Fdiff;
+static fern_real *Yzero;
+static fern_real *FplusSum;
+static fern_real *FminusSum;
+
+static IntegrationData integrationData;
+
+/* Declare local variables for Network struct. */
+
+static unsigned short numberSpecies;
+static unsigned short numberReactions;
+static unsigned short totalFplus;
+static unsigned short totalFminus;
+
+static unsigned char *Z;
+static unsigned char *N;
+
+static fern_real *FplusFac;
+static fern_real *FminusFac;
+
+static unsigned short *MapFplus;
+static unsigned short *MapFminus;
+
+static unsigned short *FplusMax;
+static unsigned short *FminusMax;
+
+static fern_real massTol;
+static fern_real fluxFrac;
+
+/* Declare pointer variables for IntegrationData arrays.  */
+
+fern_real *Y;
+
+
 /**
  * This operation returns the absolute value of a fern_real.
  * @param val the number for which the absolute value should be found
@@ -56,87 +129,80 @@ fern_real fern_pow(fern_real val1, fern_real val2) {
 #endif
 }
 
-void integrateNetwork(Network network, IntegrationData integrationData,
+/**
+ * This function checks the status for the plotting
+ */
+void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime, fern_real sumX) {
+	if (plotOutput == 1 && log10(time) >= plotStartTime) {
+		//Do this once after log10(t) >= plotStartTime.
+		if (setNextOut == 0) {
+			intervalLogt = (log10(maxTime) - log10(time))
+					/ numIntervals;
+			nextOutput = log10(time);
+			setNextOut = 1;
+		}
+		//stdout to file > fernOut.txt for plottable output
+		//tolerance to check if time is close to nextOutput
+		fern_real nextOuttol = abs(log10(time) - nextOutput) / abs(nextOutput);
+		if (nextOuttol <= 1e-6) {
+			printf("OC\n");      //OutputCount
+			//renormalize nextOutput by compensating for overshooting last expected output time
+			nextOutput = intervalLogt + nextOutput;
+			//For this timestep start asy and pe counts at zero, then count them up for this timestep
+			asyCount = 0;
+			peCount = 0;
+			//Check all Species if undergoing asymptotic update
+			for (int m = 0; m < numberSpecies; m++) {
+				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m],
+						Fminus[m]);
+				if (checkAsy(FminusSum[m], Y[m], stepSize)) {
+					asyCount++;
+				}
+			}
+			//check frac RG PartialEq
+			//partialEquil(Y, numberReactions, RGclassByRG,
+			//network.reactant, network.product, final_k, pEquilbyRG,
+			//pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
+			//Check all RG if in Equilibrium
+			for (int i = 0; i < numRG; i++) {
+				if (pEquilbyRG[i] == 1) {
+					peCount++;
+				}
+			}
+			FracAsy = asyCount / numberSpecies;
+			FracRGPE = peCount / numRG;
+			printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", time, stepSize,
+					integrationData.T9, integrationData.rho, sumX, FracAsy,
+					FracRGPE);        //StartUniversalData
+			outputCount++;
+		}
+	}
+}
+
+void integrateNetwork(Network network, IntegrationData data,
 		Globals *globalsPtr) {
 	Globals &globals = *globalsPtr;
 
-	/*
-	 TEMPORARY
-	 Variables are declared with local pointers.
-	 This is to ease refactoring and allow easy
-	 maneuvering with dynamic shared memory.
-	 */
+	numberSpecies = network.species;
+	numberReactions = network.reactions;
+	totalFplus = network.totalFplus;
+	totalFminus = network.totalFminus;
 
-	/* Declare local pointers for Globals arrays. */
+	integrationData = data;
 
-	fern_real *Flux;
-	fern_real *Fplus;
-	fern_real *Fminus;
-	fern_real *Rate;
-	fern_real *massNum;
-	fern_real *X;
-	fern_real *Fdiff;
-	fern_real *Yzero;
-	fern_real *FplusSum;
-	fern_real *FminusSum;
-
-	/* Declare local variables for Network struct. */
-
-	const unsigned short numberSpecies = network.species;
-	const unsigned short numberReactions = network.reactions;
-	const unsigned short totalFplus = network.totalFplus;
-	const unsigned short totalFminus = network.totalFminus;
-
-	unsigned char *Z;
-	unsigned char *N;
-
-	fern_real *FplusFac;
-	fern_real *FminusFac;
-
-	unsigned short *MapFplus;
-	unsigned short *MapFminus;
-
-	unsigned short *FplusMax;
-	unsigned short *FminusMax;
-
-	const fern_real massTol = network.massTol;
-	const fern_real fluxFrac = network.fluxFrac;
-
-	/* Declare pointer variables for IntegrationData arrays.  */
-
-	fern_real *Y;
-
-	const bool plotOutput = 0;
-	const bool pEquilOn = 0;
-	const bool trackPE = 0;
-	const int numIntervals = 100;
-	int plotStartTime = -16;
-	fern_real intervalLogt;
-	fern_real nextOutput;
-	int outputCount = 0;
-	int setNextOut = 0;
-	fern_real asyCount = 0;
-	fern_real peCount = 0;
-	fern_real FracAsy = 0;
-	fern_real FracRGPE = 0;
-	int eq = 0;
-	int numRG = network.numRG;
-	int *RGParent;
+	// Assign network parameters
+	numRG = network.numRG;
 	RGParent = network.RGParent;
-	int *ReacParent;
 	ReacParent = network.ReacParent;
-	int *RGmemberIndex;
 	RGmemberIndex = network.RGmemberIndex;
-	int *isReverseR;
 	isReverseR = network.isReverseR;
-	int *RGclassByRG;
 	RGclassByRG = network.RGclassByRG;
-	int *pEquilbyRG;
 	pEquilbyRG = network.pEquilbyRG;
-	int *pEquilbyReac;
 	pEquilbyReac = network.pEquilbyReac;
-	int *ReacRG;
 	ReacRG = network.ReacRG; //holds each reaction's RGid
+
+	massTol = network.massTol;
+	fluxFrac = network.fluxFrac;
 
 	/* Assign globals pointers. */
 
@@ -240,7 +306,7 @@ void integrateNetwork(Network network, IntegrationData integrationData,
 				}
 			}
 			final_k[0][countRG] = 0;
-			final_k[1][countRG] = 0
+			final_k[1][countRG] = 0;
 			final_k[0][countRG] = kf;
 			final_k[1][countRG] = kr;
 			if (displayRGdata) {
@@ -287,53 +353,7 @@ void integrateNetwork(Network network, IntegrationData integrationData,
 	/* Main time integration loop */
 
 	while (t < integrationData.t_max) {
-		if (plotOutput == 1 && log10(t) >= plotStartTime) {
-			//Do this once after log10(t) >= plotStartTime.
-			if (setNextOut == 0) {
-				intervalLogt = (log10(integrationData.t_max) - log10(t))
-						/ numIntervals;
-				nextOutput = log10(t);
-				setNextOut = 1;
-			}
-			//stdout to file > fernOut.txt for plottable output
-			//tolerance to check if time is close to nextOutput
-			fern_real nextOuttol = abs(log10(t) - nextOutput) / abs(nextOutput);
-			if (nextOuttol <= 1e-6) {
-				//printf("tol = %f, log10(t): %f, nextOut: %f\n", nextOuttol, log10(t), nextOutput);
-				printf("OC\n");      //OutputCount
-				//printf("OC: %d\n", outputCount);//OutputCount
-				//renormalize nextOutput by compensating for overshooting last expected output time
-				nextOutput = intervalLogt + nextOutput;
-				//For this timestep start asy and pe counts at zero, then count them up for this timestep
-				asyCount = 0;
-				peCount = 0;
-				//Check all Species if undergoing asymptotic update
-				for (int m = 0; m < network.species; m++) {
-					printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m],
-							Fminus[m]);
-					if (checkAsy(FminusSum[m], Y[m], dt)) {
-						asyCount++;
-					}
-				}
-				//check frac RG PartialEq
-				//partialEquil(Y, numberReactions, RGclassByRG,
-				//network.reactant, network.product, final_k, pEquilbyRG,
-				//pEquilbyReac, ReacRG, RGParent, numRG, 0.01, eq);
-				//Check all RG if in Equilibrium
-				for (int i = 0; i < numRG; i++) {
-					if (pEquilbyRG[i] == 1) {
-						peCount++;
-					}
-				}
-				FracAsy = asyCount / numberSpecies;
-				FracRGPE = peCount / numRG;
-				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt,
-						integrationData.T9, integrationData.rho, sumX, FracAsy,
-						FracRGPE);        //StartUniversalData
-//        printf("maxFlux: %e\n", maxFlux);
-				outputCount++;
-			}
-		}
+		checkPlotStatus(t,dt,integrationData.t_max,sumX);
 
 		//Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value
 		//if plotOut == 0 to check for PE regardless of whether I'm plotting...
@@ -576,7 +596,6 @@ inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum,
  Same as previous, but copies array to dsmem allocated
  to the global scratch_space before executing algorithm.
  */
-
 fern_real NDreduceSum(fern_real *a, unsigned short length) {
 	fern_real sum;
 
