@@ -82,13 +82,13 @@ fern_real *Y;
  * @param val the number for which the absolute value should be found
  * @return the absolute value of val
  */
-fern_real abs(fern_real val) {
-#ifdef FERN_SINGLE
-	return fabsf(val);
-#else
-	return fabs(val);
-#endif
-}
+//fern_real std::abs(fern_real val) {
+//#ifdef FERN_SINGLE
+//	return fabsf(val);
+//#else
+//	return fstd::abs(val);
+//#endif
+//}
 
 /**
  * This function checks the status for the plotting
@@ -104,7 +104,7 @@ void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime, fern
 		}
 		//stdout to file > fernOut.txt for plottable output
 		//tolerance to check if time is close to nextOutput
-		fern_real nextOuttol = abs(log10(time) - nextOutput) / abs(nextOutput);
+		fern_real nextOuttol = std::abs(log10(time) - nextOutput) / std::abs(nextOutput);
 		if (nextOuttol <= 1e-6) {
 			printf("OC\n");      //OutputCount
 			//renormalize nextOutput by compensating for overshooting last expected output time
@@ -395,7 +395,7 @@ void integrate() {
 
 		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
 		for (int i = 0; i < numberSpecies; i++) {
-			Fdiff[i] = abs(FplusSum[i] - FminusSum[i]);
+			Fdiff[i] = std::abs(FplusSum[i] - FminusSum[i]);
 		}
 
 		/* Call tree algorithm to find max of array Fdiff. */
@@ -435,9 +435,9 @@ void integrate() {
 		 based on the trial timestep computed above, test for conservation of particle
 		 number and modify trial timestep accordingly.
 		 */
-		fern_real test1 = abs(sumXLast - 1.0);
-		fern_real test2 = abs(sumX - 1.0);
-		massChecker = abs(sumXLast - sumX);
+		fern_real test1 = std::abs(sumXLast - 1.0);
+		fern_real test2 = std::abs(sumX - 1.0);
+		massChecker = std::abs(sumXLast - sumX);
 
 		if (test2 > test1 && massChecker > massTol) {
 			dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16),
@@ -712,8 +712,8 @@ void handlePERG_1(int i, fern_real y_a, fern_real y_b, fern_real kf,
 	fern_real y_eq_a = -c / b;
 	fern_real y_eq_b = c1 - y_eq_a;
 	//is each reactant and product in equilibrium?
-	fern_real PE_val_a = abs(y_a - y_eq_a) / abs(y_eq_a);
-	fern_real PE_val_b = abs(y_b - y_eq_b) / abs(y_eq_b);
+	fern_real PE_val_a = std::abs(y_a - y_eq_a) / std::abs(y_eq_a);
+	fern_real PE_val_b = std::abs(y_b - y_eq_b) / std::abs(y_eq_b);
 	if (PE_val_a < tolerance && PE_val_b < tolerance) {
 		pEquilbyRG[i] = 1;
 	}
@@ -730,9 +730,9 @@ void handlePERG_2(int i, fern_real y_a, fern_real y_b, fern_real y_c,
 	fern_real y_eq_a = ((-.5 / a) * (b + sqrt(-q)));
 	fern_real y_eq_b = y_eq_a + c1;
 	fern_real y_eq_c = c2 - y_eq_b;
-	fern_real PE_val_a = abs(y_a - y_eq_a) / abs(y_eq_a);
-	fern_real PE_val_b = abs(y_b - y_eq_b) / abs(y_eq_b);
-	fern_real PE_val_c = abs(y_c - y_eq_c) / abs(y_eq_c);
+	fern_real PE_val_a = std::abs(y_a - y_eq_a) / std::abs(y_eq_a);
+	fern_real PE_val_b = std::abs(y_b - y_eq_b) / std::abs(y_eq_b);
+	fern_real PE_val_c = std::abs(y_c - y_eq_c) / std::abs(y_eq_c);
 	if (PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) {
 		pEquilbyRG[i] = 1;
 	}
@@ -752,10 +752,10 @@ void handlePERG_3(int i, fern_real y_a, fern_real y_b, fern_real y_c,
 	fern_real y_eq_b = y_eq_a - c1;
 	fern_real y_eq_c = y_eq_a - c2;
 	fern_real y_eq_d = c3 - y_eq_a + ((1 / 3) * (c1 + c2));
-	fern_real PE_val_a = abs(y_a - y_eq_a) / abs(y_eq_a);
-	fern_real PE_val_b = abs(y_b - y_eq_b) / abs(y_eq_b);
-	fern_real PE_val_c = abs(y_c - y_eq_c) / abs(y_eq_c);
-	fern_real PE_val_d = abs(y_d - y_eq_d) / abs(y_eq_d);
+	fern_real PE_val_a = std::abs(y_a - y_eq_a) / std::abs(y_eq_a);
+	fern_real PE_val_b = std::abs(y_b - y_eq_b) / std::abs(y_eq_b);
+	fern_real PE_val_c = std::abs(y_c - y_eq_c) / std::abs(y_eq_c);
+	fern_real PE_val_d = std::abs(y_d - y_eq_d) / std::abs(y_eq_d);
 	if (PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance
 			&& PE_val_d < tolerance) {
 		pEquilbyRG[i] = 1;
@@ -776,10 +776,10 @@ void handlePERG_4(int i, fern_real y_a, fern_real y_b, fern_real y_c,
 	fern_real y_eq_b = y_eq_a - c1;
 	fern_real y_eq_c = c2 - y_eq_a;
 	fern_real y_eq_d = c3 - y_eq_a;
-	fern_real PE_val_a = abs(y_a - y_eq_a) / abs(y_eq_a);
-	fern_real PE_val_b = abs(y_b - y_eq_b) / abs(y_eq_b);
-	fern_real PE_val_c = abs(y_c - y_eq_c) / abs(y_eq_c);
-	fern_real PE_val_d = abs(y_d - y_eq_d) / abs(y_eq_d);
+	fern_real PE_val_a = std::abs(y_a - y_eq_a) / std::abs(y_eq_a);
+	fern_real PE_val_b = std::abs(y_b - y_eq_b) / std::abs(y_eq_b);
+	fern_real PE_val_c = std::abs(y_c - y_eq_c) / std::abs(y_eq_c);
+	fern_real PE_val_d = std::abs(y_d - y_eq_d) / std::abs(y_eq_d);
 	if (PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance
 			&& PE_val_d < tolerance) {
 		pEquilbyRG[i] = 1;
@@ -806,11 +806,11 @@ void handlePERG_5(int i, fern_real y_a, fern_real y_b, fern_real y_c,
 	fern_real y_eq_c = alpha - y_eq_a;
 	fern_real y_eq_d = beta - y_eq_a;
 	fern_real y_eq_e = gamma - y_eq_a;
-	fern_real PE_val_a = abs(y_a - y_eq_a) / abs(y_eq_a);
-	fern_real PE_val_b = abs(y_b - y_eq_b) / abs(y_eq_b);
-	fern_real PE_val_c = abs(y_c - y_eq_c) / abs(y_eq_c);
-	fern_real PE_val_d = abs(y_d - y_eq_d) / abs(y_eq_d);
-	fern_real PE_val_e = abs(y_e - y_eq_e) / abs(y_eq_e);
+	fern_real PE_val_a = std::abs(y_a - y_eq_a) / std::abs(y_eq_a);
+	fern_real PE_val_b = std::abs(y_b - y_eq_b) / std::abs(y_eq_b);
+	fern_real PE_val_c = std::abs(y_c - y_eq_c) / std::abs(y_eq_c);
+	fern_real PE_val_d = std::abs(y_d - y_eq_d) / std::abs(y_eq_d);
+	fern_real PE_val_e = std::abs(y_e - y_eq_e) / std::abs(y_eq_e);
 	if (PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance
 			&& PE_val_d < tolerance && PE_val_e < tolerance) {
 		pEquilbyRG[i] = 1;

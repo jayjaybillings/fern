@@ -35,7 +35,6 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 #include "Network.hpp"
 #include "IntegrationData.hpp"
 #include "Globals.hpp"
-#include <cstdlib>
 #include "fern_math.h"
 
 /**
