@@ -67,6 +67,7 @@ static unsigned short *FminusMax;
 
 static fern_real massTol;
 static fern_real fluxFrac;
+static fern_real sumX, sumXLast;
 
 static Network * network;
 static IntegrationData * integrationData;
@@ -76,35 +77,25 @@ static Globals * globals;
 
 fern_real *Y;
 
-
-/**
- * This operation returns the absolute value of a fern_real.
- * @param val the number for which the absolute value should be found
- * @return the absolute value of val
- */
-//fern_real std::abs(fern_real val) {
-//#ifdef FERN_SINGLE
-//	return fabsf(val);
-//#else
-//	return fstd::abs(val);
-//#endif
-//}
+/** Global partial equilibrium variables **/
+static fern_real *final_k[2];
 
 /**
  * This function checks the status for the plotting
  */
-void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime, fern_real sumX) {
+void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime,
+		fern_real sumX) {
 	if (plotOutput == 1 && log10(time) >= plotStartTime) {
 		//Do this once after log10(t) >= plotStartTime.
 		if (setNextOut == 0) {
-			intervalLogt = (log10(maxTime) - log10(time))
-					/ numIntervals;
+			intervalLogt = (log10(maxTime) - log10(time)) / numIntervals;
 			nextOutput = log10(time);
 			setNextOut = 1;
 		}
 		//stdout to file > fernOut.txt for plottable output
 		//tolerance to check if time is close to nextOutput
-		fern_real nextOuttol = std::abs(log10(time) - nextOutput) / std::abs(nextOutput);
+		fern_real nextOuttol = std::abs(log10(time) - nextOutput)
+				/ std::abs(nextOutput);
 		if (nextOuttol <= 1e-6) {
 			printf("OC\n");      //OutputCount
 			//renormalize nextOutput by compensating for overshooting last expected output time
@@ -132,12 +123,247 @@ void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime, fern
 			}
 			FracAsy = asyCount / numberSpecies;
 			FracRGPE = peCount / numRG;
-			printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", time, stepSize,
-					integrationData->T9, integrationData->rho, sumX, FracAsy,
-					FracRGPE);        //StartUniversalData
+			printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", time,
+					stepSize, integrationData->T9, integrationData->rho, sumX,
+					FracAsy, FracRGPE);        //StartUniversalData
 			outputCount++;
 		}
 	}
+}
+
+/**
+ * This function computes the prefactors for the partial equilibrium method.
+ */
+static void computePrefactors() {
+	/* Compute the preFac vector. */
+
+	for (int i = 0; i < network->reactions; i++) {
+		globals->preFac[i] = network->statFac[i]
+				* pow(integrationData->rho, network->numReactingSpecies[i] - 1);
+	}
+
+}
+
+/**
+ * This function computes the reaction rates for the network.
+ */
+static void computeRates() {
+
+	/*
+	 Compute the temperature-dependent factors for the rates.
+	 Since we assume the GPU integration to be done at constant
+	 temperature and density, these only need be calculated once
+	 per GPU call.
+	 */
+
+	fern_real T93 = cbrt(integrationData->T9);
+	fern_real t1 = 1 / integrationData->T9;
+	fern_real t2 = 1 / T93;
+	fern_real t3 = T93;
+	fern_real t4 = integrationData->T9;
+	fern_real t5 = T93 * T93 * T93 * T93 * T93;
+	fern_real t6 = log(integrationData->T9);
+
+	// Compute the rates as R[i] = ae^x (Arhenius rates)
+	for (int i = 0; i < network->reactions; i++) {
+		double x = network->P[0][i] + t1 * network->P[1][i]
+				+ t2 * network->P[2][i] + t3 * network->P[3][i]
+				+ t4 * network->P[4][i] + t5 * network->P[5][i]
+				+ t6 * network->P[6][i];
+		Rate[i] = globals->preFac[i] * exp(x);
+	}
+}
+
+/**
+ * This function is responsible for configuring partial equilibrium groups for
+ * the integration.
+ */
+static void configurePartialEquilibriumGroups() {
+	/* Author: Daniel Shyles */
+	/* Begin Partial Equilibrium calculation */
+
+	const bool displayRGdata = false;
+	fern_real kf;
+	fern_real kr;
+	int countRG = 0;
+	// first set up array of final reaction rates for each RG based on Rate[i]
+	// calculated above
+	for (int m = 0; m < 2; m++) {
+		final_k[m] = new fern_real[network->numRG];
+	}
+
+	for (int i = 0; i < network->reactions; i++) {
+		// if RGmemberindex is greater (or equal for RGmemberindex[i] =
+		// RGmemberindex[i+1] = 0 than next one, then end of Reaction Group
+		if (RGmemberIndex[i] >= RGmemberIndex[i + 1]) {
+			// get forward and reverse rates for all reactions within group,
+			// starting with i-network->RGmemberIndex[i], and ending with i.
+			kf = 0; //forward rate
+			kr = 0; //reverse rate
+			// iterate through each RGmember and calculate the total rate from
+			// forward and reverse reactions
+			for (int n = RGmemberIndex[i]; n >= 0; n--) {
+				//add the rate to forward reaction
+				if (isReverseR[i - n] == 1) {
+					kr += Rate[i - n];
+				} else {
+					//add the rate to reverse reaction
+					kf += Rate[i - n];
+				}
+			}
+			final_k[0][countRG] = 0;
+			final_k[1][countRG] = 0;
+			final_k[0][countRG] = kf;
+			final_k[1][countRG] = kr;
+			if (displayRGdata) {
+				printf("-----\n");
+				printf("kf[RGID:%d] = %e \n", countRG, final_k[0][countRG]);
+				printf("kr[RGID:%d] = %e \n", countRG, final_k[1][countRG]);
+				printf("\n\n\n");
+			}
+			countRG++;
+		}
+	}
+
+	return;
+}
+
+void computeFluxes() {
+
+	/* Compute the fluxes from the previously-computed rates and the current abundances. */
+
+	/* Parallel version of flux calculation */
+
+	for (int i = 0; i < numberReactions; i++) {
+		int nr = network->numReactingSpecies[i];
+		if (pEquilOn == 0 || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
+			Flux[i] = Rate[i] * Y[network->reactant[0][i]];
+
+			switch (nr) {
+			case 3:
+				/* 3-body; flux = rate x Y x Y x Y */
+				Flux[i] *= Y[network->reactant[2][i]];
+
+			case 2:
+				/* 2-body; flux = rate x Y x Y */
+				Flux[i] *= Y[network->reactant[1][i]];
+				break;
+			}
+		} else if (pEquilbyReac[i] == 1 && pEquilOn == 1) {
+			Flux[i] = 0.0;
+		}
+	}
+
+	/* Populate the F+ and F- arrays in parallel from the master Flux array. */
+
+	populateF(Fplus, FplusFac, Flux, MapFplus, totalFplus);
+	populateF(Fminus, FminusFac, Flux, MapFminus, totalFminus);
+
+	/*
+	 Sum the F+ and F- for each isotope. These are "sub-arrays"
+	 of Fplus and Fminus at (F[+ or -] + minny) of size FplusMax[i].
+	 The first loop applies to sub-arrays with size < 40. The outer
+	 loop (in i) is parallel, but the inner loops (in j) are serial.
+
+	 Alpha particles, protons, and neutrons all have size much
+	 greater than 40, and they are summed in the next for loop, which
+	 uses the NDreduceSum.
+	 */
+
+	int minny;
+
+	for (int i = 0; i < numberSpecies; i++) {
+		minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
+		/* Serially sum secction of F+. */
+		FplusSum[i] = 0.0;
+		for (int j = minny; j <= FplusMax[i]; j++) {
+			FplusSum[i] += Fplus[j];
+		}
+
+		/* Serially sum section of F-. */
+		minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
+		FminusSum[i] = 0.0;
+		for (int j = minny; j <= FminusMax[i]; j++) {
+			FminusSum[i] += Fminus[j];
+		}
+	}
+
+	/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
+	for (int i = 0; i < numberSpecies; i++) {
+		Fdiff[i] = std::abs(FplusSum[i] - FminusSum[i]);
+	}
+
+}
+
+/**
+ * This operation checks the status of the reaction groups to determine if they
+ * are in equilbrium.
+ * @param time the current time
+ */
+static void checkReactionGroupEquilibrium(fern_real time) {
+	//Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value
+	//if plotOut == 0 to check for PE regardless of whether I'm plotting...
+	if (log10(time) >= -11 && (pEquilOn == 1 || trackPE == 1)) {
+		partialEquil(Y, numberReactions, RGclassByRG, network->reactant,
+				network->product, final_k, pEquilbyRG, pEquilbyReac, ReacRG,
+				RGParent, numRG, 0.01, eq);
+
+	}
+	return;
+}
+
+/**
+ * This function computes secondary quantities that are derived from the main
+ * integration variables. For example, this could include computing the mass
+ * fractions from the abundances.
+ */
+static void computeSecondaryValues() {
+	// Compute the mass fractions
+	for (int i = 0; i < numberSpecies; i++) {
+		/* Compute mass fraction X from abundance Y. */
+		X[i] = massNum[i] * Y[i];
+	}
+	return;
+}
+
+static void renormalizeSolution() {
+	// RENORMALIZE
+	sumX = NDreduceSum(X, numberSpecies);
+	sumXLast = sumX;
+	if (pEquilOn == 1) {
+		//renormalize mass fraction so sumX is 1 for partial equilibrium
+		for (int i = 0; i < numberSpecies; i++) {
+			X[i] = X[i] * (1 / sumX);
+		}
+
+		sumX = NDreduceSum(X, numberSpecies);
+	}
+}
+
+/**
+ * This function finalizes the next time step based on integration limits and
+ * possibly other considerations.
+ * @param time the current time
+ * @param timeStep the current time step
+ * @param numTimeSteps the total number of time steps that have been taken
+ */
+static void finalizeNextTimeStep(fern_real & time, fern_real & timeStep, unsigned int & numTimeSteps) {
+
+	/*
+	 Finally check to be sure that timestep will not overstep next plot output
+	 time and adjust to match if necessary. This will adjust dt only if at the end
+	 of the integration interval. In that case it will also recompute the Y[]
+	 corresponding to the adjusted time interval.
+	 */
+	if (time + timeStep >= integrationData->t_max) {
+		timeStep = integrationData->t_max - time;
+	}
+
+	/* Increment the integration time and set the new timestep. */
+	time += timeStep;
+	numTimeSteps++;
+
+	return;
 }
 
 void initialize(Network * networkInfo, IntegrationData * data,
@@ -190,100 +416,25 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	FplusMax = network->FplusMax;
 	FminusMax = network->FminusMax;
 
+	// Compute the prefactors
+	computePrefactors();
+	// Compute the rate values.
+	computeRates();
+	// Configure the partial equilibrium groups
+	configurePartialEquilibriumGroups();
+
 	return;
 }
 
 void integrate() {
-	/* Assign IntegrationData pointers. */
 
+	/* Assign IntegrationData pointers. */
 	Y = integrationData->Y;
 
 	fern_real maxFlux;
-	fern_real sumX;
 	fern_real t;
 	fern_real dt;
 	unsigned int timesteps;
-
-	fern_real sumXLast;
-
-	/* Compute the preFac vector. */
-
-	for (int i = 0; i < network->reactions; i++) {
-		globals->preFac[i] = network->statFac[i]
-				* pow(integrationData->rho,
-						network->numReactingSpecies[i] - 1);
-	}
-
-	/* Compute the rate values. */
-
-	/*
-	 Compute the temperature-dependent factors for the rates.
-	 Since we assume the GPU integration to be done at constant
-	 temperature and density, these only need be calculated once
-	 per GPU call.
-	 */
-
-	fern_real T93 = cbrt(integrationData->T9);
-	fern_real t1 = 1 / integrationData->T9;
-	fern_real t2 = 1 / T93;
-	fern_real t3 = T93;
-	fern_real t4 = integrationData->T9;
-	fern_real t5 = T93 * T93 * T93 * T93 * T93;
-	fern_real t6 = log(integrationData->T9);
-
-	// Compute the rates as R[i] = ae^x (Arhenius rates)
-	for (int i = 0; i < network->reactions; i++) {
-		double x = network->P[0][i] + t1 * network->P[1][i] + t2 * network->P[2][i]
-				+ t3 * network->P[3][i] + t4 * network->P[4][i]
-				+ t5 * network->P[5][i] + t6 * network->P[6][i];
-		Rate[i] = globals->preFac[i] * exp(x);
-	}
-
-	/* Author: Daniel Shyles */
-	/* Begin Partial Equilibrium calculation */
-
-	const bool displayRGdata = false;
-	fern_real kf;
-	fern_real kr;
-	fern_real *final_k[2];
-	int countRG = 0;
-	//first set up array of final reaction rates for each RG based on Rate[i] calculated above
-	for (int m = 0; m < 2; m++) {
-		final_k[m] = new fern_real[network->numRG];
-	}
-
-	for (int i = 0; i < network->reactions; i++) {
-		// if RGmemberindex is greater (or equal for RGmemberindex[i] =
-		// RGmemberindex[i+1] = 0 than next one, then end of Reaction Group
-		if (RGmemberIndex[i] >= RGmemberIndex[i + 1]) {
-			// get forward and reverse rates for all reactions within group,
-			// starting with i-network->RGmemberIndex[i], and ending with i.
-			kf = 0; //forward rate
-			kr = 0; //reverse rate
-			// iterate through each RGmember and calculate the total rate from
-			// forward and reverse reactions
-			for (int n = RGmemberIndex[i]; n >= 0; n--) {
-				//add the rate to forward reaction
-				if (isReverseR[i - n] == 1) {
-					kr += Rate[i - n];
-				} else {
-					//add the rate to reverse reaction
-					kf += Rate[i - n];
-				}
-			}
-			final_k[0][countRG] = 0;
-			final_k[1][countRG] = 0;
-			final_k[0][countRG] = kf;
-			final_k[1][countRG] = kr;
-			if (displayRGdata) {
-				printf("-----\n");
-				printf("kf[RGID:%d] = %e \n", countRG, final_k[0][countRG]);
-				printf("kr[RGID:%d] = %e \n", countRG, final_k[1][countRG]);
-				printf("\n\n\n");
-			}
-			countRG++;
-		}
-	}
 
 	/*
 	 Begin the time integration from t=0 to tmax. Rather than t=0 we
@@ -313,96 +464,25 @@ void integrate() {
 
 	sumXLast = NDreduceSum(X, numberSpecies);
 
-	if (plotOutput == 1) {
-		printf("SO\n");                //StartOutput
-	}
 	/* Main time integration loop */
-
 	while (t < integrationData->t_max) {
-		checkPlotStatus(t,dt,integrationData->t_max,sumX);
+		// Check the time to see if plot information should be provided
+		checkPlotStatus(t, dt, integrationData->t_max, sumX);
+		// Check the reaction groups to see if they are in equilibrium
+		checkReactionGroupEquilibrium(t);
 
-		//Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value
-		//if plotOut == 0 to check for PE regardless of whether I'm plotting...
-		if (log10(t) >= -11 && (pEquilOn == 1 || trackPE == 1)) {
-			partialEquil(Y, numberReactions, RGclassByRG, network->reactant,
-					network->product, final_k, pEquilbyRG, pEquilbyReac, ReacRG,
-					RGParent, numRG, 0.01, eq);
-
-		}
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
-
 		for (int i = 0; i < numberSpecies; i++) {
 			Yzero[i] = Y[i];
 		}
 
-		/* Compute the fluxes from the previously-computed rates and the current abundances. */
-
-		/* Parallel version of flux calculation */
-
-		for (int i = 0; i < numberReactions; i++) {
-			int nr = network->numReactingSpecies[i];
-			if (pEquilOn == 0 || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
-				Flux[i] = Rate[i] * Y[network->reactant[0][i]];
-
-				switch (nr) {
-				case 3:
-					/* 3-body; flux = rate x Y x Y x Y */
-					Flux[i] *= Y[network->reactant[2][i]];
-
-				case 2:
-					/* 2-body; flux = rate x Y x Y */
-					Flux[i] *= Y[network->reactant[1][i]];
-					break;
-				}
-			} else if (pEquilbyReac[i] == 1 && pEquilOn == 1) {
-				Flux[i] = 0.0;
-			}
-		}
-
-		/* Populate the F+ and F- arrays in parallel from the master Flux array. */
-
-		populateF(Fplus, FplusFac, Flux, MapFplus, totalFplus);
-		populateF(Fminus, FminusFac, Flux, MapFminus, totalFminus);
-
-		/*
-		 Sum the F+ and F- for each isotope. These are "sub-arrays"
-		 of Fplus and Fminus at (F[+ or -] + minny) of size FplusMax[i].
-		 The first loop applies to sub-arrays with size < 40. The outer
-		 loop (in i) is parallel, but the inner loops (in j) are serial.
-
-		 Alpha particles, protons, and neutrons all have size much
-		 greater than 40, and they are summed in the next for loop, which
-		 uses the NDreduceSum.
-		 */
-
-		int minny;
-
-		for (int i = 0; i < numberSpecies; i++) {
-			minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
-			/* Serially sum secction of F+. */
-			FplusSum[i] = 0.0;
-			for (int j = minny; j <= FplusMax[i]; j++) {
-				FplusSum[i] += Fplus[j];
-			}
-
-			/* Serially sum section of F-. */
-			minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
-			FminusSum[i] = 0.0;
-			for (int j = minny; j <= FminusMax[i]; j++) {
-				FminusSum[i] += Fminus[j];
-			}
-		}
-
-		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
-		for (int i = 0; i < numberSpecies; i++) {
-			Fdiff[i] = std::abs(FplusSum[i] - FminusSum[i]);
-		}
-
-		/* Call tree algorithm to find max of array Fdiff. */
+		// Compute the fluxes
+		computeFluxes();
+		// Get the max flux for the time step calculation
 		maxFlux = reduceMax(Fdiff, numberSpecies);
 
 		/*
-		 Now use the fluxes to update the populations in parallel for this timestep.
+		 Now use the fluxes to update the populations for this timestep.
 		 For now we shall assume the asymptotic method. We determine whether each isotope
 		 satisfies the asymptotic condition. If it does we update with the asymptotic formula.
 		 If not, we update numerically using the forward Euler formula.
@@ -452,73 +532,17 @@ void integrate() {
 		 Store the actual timestep that would be taken. Same as dt unless
 		 artificially shortened in the last integration step to match end time.
 		 */
-
 		deltaTimeRestart = dt;
-
-		/*
-		 DS plotting addon, if next time is greater than plotStartTime, set dt to
-		 diff between plotStartTime and current time. This will ensure that the
-		 output data begins at exactly the plotSartTime
-		 */
-
-		if (plotOutput == 1 && log10(t + dt) > plotStartTime
-				&& setNextOut == 0) {
-			dt = pow(10, plotStartTime) - t;
-			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
-		}
-
-		if (plotOutput == 1 && log10(t + dt) > nextOutput) {
-			dt = pow(10, nextOutput) - t;
-			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
-		}
-
-		/*
-		 Finally check to be sure that timestep will not overstep next plot output
-		 time and adjust to match if necessary. This will adjust dt only if at the end
-		 of the integration interval. In that case it will also recompute the Y[]
-		 corresponding to the adjusted time interval.
-		 */
-
-		if (t + dt >= integrationData->t_max) {
-			/*
-			 TODO
-			 Copy back to CPU for dt_init next operator split integration.
-			 Params2[2] = dt;
-			 */
-
-			dt = integrationData->t_max - t;
-
-			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
-		}
+		// Finalize the next time step based on bounds and other
+		// considerations.
+		finalizeNextTimeStep(t,dt,timesteps);
 
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
-		/* Now that final dt is set, compute final sum of mass fractions sumX. */
-
-		for (int i = 0; i < numberSpecies; i++) {
-			/* Compute mass fraction X from abundance Y. */
-			X[i] = massNum[i] * Y[i];
-		}
-
-		sumX = NDreduceSum(X, numberSpecies);
-
-		/* Increment the integration time and set the new timestep. */
-
-		t += dt;
-		timesteps++;
-
-		sumXLast = sumX;
-		if (pEquilOn == 1) {
-			//renormalize mass fraction so sumX is 1 for partial equilibrium
-			for (int i = 0; i < numberSpecies; i++) {
-				X[i] = X[i] * (1 / sumX);
-			}
-
-			sumX = NDreduceSum(X, numberSpecies);
-		}
+		// Handle postprocessing and renormalization
+		computeSecondaryValues();
+		renormalizeSolution();
 	}
-	if (plotOutput == 1)
-		printf("EO\n");    //EndOutput
 
 	return;
 }
