@@ -56,9 +56,16 @@ void Network::loadNetwork(const char *filename)
 		// all nonzero abundances
     //if(n == 0 || n == 2 || n == 3 || (n >= 5 && n <= 14) || n == 16 || (n >= 18 && n <= 35) || n == 37 || (n >= 75 && n <= 85) || (n >= 95 && n <= 97) || n == 99 || n == 101) {
     // important nonzero abundances
-    if(n == 0 || n == 2 || n == 3 || n == 6 || n == 7 || (n >= 12 && n <= 16) || n == 18 || n == 19 || n == 22 || n == 27 || (n >= 75 && n <= 77) || n == 80 || n == 85 || (n >= 95 && n <= 97) || n == 99 || n == 101) {
+//    if(n == 0 || n == 2 || n == 3 || n == 6 || n == 7 || (n >= 12 && n <= 16) || n == 18 || n == 19 || n == 22 || n == 27 || (n >= 75 && n <= 77) || n == 80 || n == 85 || (n >= 95 && n <= 97) || n == 99 || n == 101) 
+//      printf("%s ", speciesLabel[n]);
+    //plot long lived non-radicals 
+    if(n == 21 || n == 0 || n == 5 || n == 6 || n == 11 || n == 12 || n == 27 || n == 18 || n == 9 || n == 28 || n == 29 || n == 31 || n == 30 || n == 101 || n == 75 || n == 76 || n == 77)
       printf("%s ", speciesLabel[n]);
-    }
+
+    //plot short lived radicals 
+//    if(n == 75 || n == 3 || n == 76 || n == 77)
+  //    printf("%s ", speciesLabel[n]);
+
 		// Line #2...4
 		for (int i = 0; i < 8 * 3; i++)
 		{
@@ -128,7 +135,8 @@ void Network::loadReactions(const char *filename)
 				&numReactingSpecies[n], &numProducts[n], &isEC, &isReverseR[n],
 				&reacType[n], &statFac[n], &Q[n]);
 		#endif
-		
+//	printf("Reaction[%d] is %s\n", n, reactionLabel[n]);
+	
 		if (status == EOF)
 			break;
 		
@@ -353,6 +361,11 @@ void Network::loadPhotolytic(const char *filename) {
         printf("\n");
   	}
 
+      //check parameter length for fast comparison with the photolytic reaction ID
+      int paramLength = 0;
+      while(pparamID[n][paramLength] != '\0') {
+        paramLength++;
+      }
     //connect photolysis params to corresponding reactions from loadReactions function
     //based on pparamID, eg "fjo3a"
     //currently set up for a maximum of TWO parameters with TWO multipliers (ie, 0.1*fjno3a+0.9*fjno3b)
@@ -366,14 +379,17 @@ void Network::loadPhotolytic(const char *filename) {
       //photolytic parameter.
       //effect of strlen without the need for <string> library
       int length = 0;
+      //photoID is the full string of the photolytic parameter name such as 0.1*fjno3a+0.9*fjno3b or fjo3a which is held in the main rate library
       while(photoID[i][length] != '\0') {
         length++;
       }
+
       //if length > 1, this reaction has at least one corresponding photolytic parameter  
       if(length > 1) {
         //check if photoID has a "+" in it, implying a combination of photolytic parameters (ie. fjno3a+fjno3b)
         for(int j = 0; j < length; j++) {
           if(photoID[i][j] == 43) {
+            printf("This Reaction has a plus: %s\n", photoID[i]);
             //43 is the ascii code for "+"
             //now j = location of "+"
             char firstID[j]; //the chunk before "+"
@@ -383,7 +399,10 @@ void Network::loadPhotolytic(const char *filename) {
             for(int p = 0; p < j; p++) {
               firstID[p] = 0; //initialize each char element
               firstID[p] = photoID[i][p]; //set each to each char before j (before "+")
+            }
+            for(int p = 0; p < j; p++) {
               if(firstID[p] == 42) {
+              //  printf("This reaction has a multiplier: %s\n", photoID[i]);
                 asterPlace = p;
                 //42 is the ascii code for "*"
                 //p is now location of "*"
@@ -400,26 +419,32 @@ void Network::loadPhotolytic(const char *filename) {
                 }
                 for(int x = 0; x < decimalPlace; x++) {
                   //46 is the ascii code for "."
-                  paramMult[0][i] += (firstID[x] - 48)/pow(10, x - decimalPlace + 1);
+                  paramMult[0][i] = (firstID[x] - 48)/pow(10, x - decimalPlace + 1);
                 }
                 for(int x = p - 1; x > decimalPlace; x--) {
                   //coming down from location of "*" to "."
-                  paramMult[0][i] += (firstID[x] - 48)/pow(10, x - 1);
-                  //printf("p = %d, dec = %d, x = %d, mult = %f\n", p, decimalPlace, x, firstMult[n]); 
+                  paramMult[0][i] = (firstID[x] - 48)/pow(10, x - 1);
+                  printf("p = %d, dec = %d, x = %d, mult = %f\n", p, decimalPlace, x, paramMult[0][i]); 
                 } //end "." multipliers
               } // end check if first chunk of "+" param has "*"
               else {
               //this reaction has no special multipliers, compare reaction param requirement
               //and pair with necessary parameter for paramNumID[1][i]
-                setParam = paramNumID[0][i];
-                for(int x = 0; x < j ; x++) {
-                  if(firstID[x] == pparamID[n][x]) {
-                    paramNumID[0][i] = n;
-                  } else {
-                    paramNumID[0][i] = setParam;
-                    break;
-                  }
-                } //end cycle through each char of first chunk of photoID[i] with "+"
+
+              setParam = paramNumID[0][i];
+                if(paramLength == j) {
+                  for(int x = 0; x < j ; x++) {
+                    if(firstID[x] == pparamID[n][x]) {
+                      //appointing this reaction with a photolytic parameter within rateLibrary_atmosCHASER_photo.data
+                      paramNumID[0][i] = n;
+                      printf("comparing %s with: %s\n", firstID, pparamID[n]);
+                    } else {
+                      paramNumID[0][i] = setParam;
+                      break;
+                    }
+                  } //end cycle through each char of first chunk of photoID[i] with "+"
+                }
+                printf("Final paramNumID[0]: %d\n", paramNumID[0][i]);
               } //end else: deal with this firstID, first chunk of a photoID[i] with "+" with no special multipliers
             } //end cycle through chars of first element from params with "+"
             //if an asterisk was found, a multiplier was registered, now we must connect parameter to reaction
@@ -433,10 +458,13 @@ void Network::loadPhotolytic(const char *filename) {
                   break;
                 }
               } //end cycle through each char of first chunk of photoID[i] with "+", connecting param to reaction
+                printf("Final paramNumID[0] with multiplier: %d\n", paramNumID[0][i]);
             }//end check if this reaction had a multiplier
-            for (int p = 0; p < length-j; p++) {
+            for(int p = 0; p < length-j; p++) {
               secondID[p] = 0;
               secondID[p] = photoID[i][j+p+1];
+            }
+            for (int p = 0; p < length-j; p++) {
               if(secondID[p] == 42) {
                 //42 is the ascii code for "*"
                 //now p is the location of the "*"
@@ -451,17 +479,22 @@ void Network::loadPhotolytic(const char *filename) {
                 }
                 for(int x = 0; x < decimalPlace; x++) {
                   //46 is the ascii code for "."
-                  paramMult[1][i] += (secondID[x] - 48)/pow(10, x - decimalPlace + 1);
+                  paramMult[1][i] = (secondID[x] - 48)/pow(10, x - decimalPlace + 1);
                 }
                 for(int x = p - 1; x > decimalPlace; x--) {
                   //coming down from location of "*" to "."
-                  paramMult[1][i] += (secondID[x] - 48)/pow(10, x - 1);
+                  paramMult[1][i] = (secondID[x] - 48)/pow(10, x - 1);
                 }//end "." multipliers
+                printf("p = %d, dec = %d, mult = %f\n", p, decimalPlace, paramMult[1][i]); 
               } // end "*" params
               else {
               //this reaction has no special multipliers, compare reaction param requirement
               //and pair with necessary parameter for paramNumID[1][i]
+                if(aster2Place == 0){
+                  paramMult[1][i] = 1;
+                }
                 setParam = paramNumID[1][i];
+                if(paramLength == length-j-1) {
                 for(int x = 0; x < length-j-1 ; x++) {
                   if(secondID[x] == pparamID[n][x]) {
                     paramNumID[1][i] = n;
@@ -470,6 +503,8 @@ void Network::loadPhotolytic(const char *filename) {
                     break;
                   }
                 } //end cycle through each char of first chunk of photoID[i] with "+"
+                }
+                printf("Final paramNumID[1]: %d\n", paramNumID[1][i]);
               }
             }
             if(aster2Place > 0){
@@ -482,24 +517,37 @@ void Network::loadPhotolytic(const char *filename) {
                   break;
                 }
               } //end cycle through each char of first chunk of photoID[i] with "+", connecting param to reaction
+                printf("Final paramNumID[1] with multiplier: %d\n", paramNumID[1][i]);
             }//end check if this reaction had a multiplier
           } // end "+" separator. All other reactions only have one param
           else {
             //this reaction does not have a "+", so only need
             //to assign a single parameter(ID) to this reaction
             setParam = paramNumID[0][i];
+  //          if(i==12)
+//            printf("setParam: %d\n",setParam);
+            //find length of current parameter we want to compare to, and choose to cycle over greater length in next for loop for comparison. 
+            //if different lengths, not the same, so we can skip. If same length, compare each letter to ensure they are indeed the same.
+            if(paramLength == length) {
             for(int x = 0; x < length ; x++) {
               if(photoID[i][x] == pparamID[n][x]) {
                 paramNumID[0][i] = n;
+  //              if(i==12)
+//                printf("comparing requiredreaction ID[%d][%d]: %s to available parameter ID[%d][%d]: %s\n", i, x, photoID[i], n, x, pparamID[n]); 
               } //end compare each char of photoID[i] and pparamID[n] 
               else {
                 paramNumID[0][i] = setParam;
                 break;
               } //end else: pparamID and photoID have a different char
             } //end cycle through each char of photoID[i] which has length = length
+            }
           } //end else: this photoID[i] does not have a "+"
         } //end cycle through chars[j] of photoID[i], the photolytic reaction required parameter ID
       } //end check if this reaction needs a parameter (!= 1)
+                //    if(i==12) {
+                  //  printf("i:%d\n", i);
+                    //  printf("fromNetwork - paramNumID: %d\n", paramNumID[0][i]);
+                   // }
     } //end cycle through all photolytic reactions, checking if needs param
   } //end cycle through all photolytic parameters, picking up reactions to be connected
 

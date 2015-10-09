@@ -63,10 +63,10 @@ void integrateNetwork(
 	//DSOUTPUT
 	const bool plotOutput = 1;
 	const int numIntervals = 100;
-	int plotStartTime = -4;
+	int plotStartTime = 0;
 	fern_real intervalLogt;
   fern_real nextOutput = 0.0;
-  int chooseyourSpecies = 80; //for GNUplotting of rates and fluxes by species
+  int chooseyourSpecies = 1000; //for GNUplotting of rates and fluxes by species
   int outputCount = 0;
 	int setNextOut = 0;
 	fern_real asyCount = 0;
@@ -260,44 +260,50 @@ void integrateNetwork(
 
       //begin interpolation
       //calculate rateparam1 (eg in fjmacra+fjmacrb, fjmacra is param1, often rateparam2 will be 0)
-      amin0 = network.aparam[(amin-1)][network.paramNumID[0][i]];
-      amin1 = network.aparam[(amin+6)][network.paramNumID[0][i]];
-      amin2 = network.aparam[(amin+13)][network.paramNumID[0][i]];
-      amin3 = network.aparam[(amin+20)][network.paramNumID[0][i]];
-      amin4 = network.aparam[(amin+27)][network.paramNumID[0][i]];
-      amin5 = network.aparam[(amin+34)][network.paramNumID[0][i]];
-      amin6 = network.aparam[(amin+41)][network.paramNumID[0][i]];
-      amax0 = network.aparam[(amax-1)][network.paramNumID[0][i]];
-      amax1 = network.aparam[(amax+6)][network.paramNumID[0][i]];
-      amax2 = network.aparam[(amax+13)][network.paramNumID[0][i]];
-      amax3 = network.aparam[(amax+20)][network.paramNumID[0][i]];
-      amax4 = network.aparam[(amax+27)][network.paramNumID[0][i]];
-      amax5 = network.aparam[(amax+34)][network.paramNumID[0][i]];
-      amax6 = network.aparam[(amax+41)][network.paramNumID[0][i]];
+      if(network.paramNumID[0][i] >= 0) {
+        amin0 = network.aparam[(amin-1)][network.paramNumID[0][i]];
+        amin1 = network.aparam[(amin+6)][network.paramNumID[0][i]];
+        amin2 = network.aparam[(amin+13)][network.paramNumID[0][i]];
+        amin3 = network.aparam[(amin+20)][network.paramNumID[0][i]];
+        amin4 = network.aparam[(amin+27)][network.paramNumID[0][i]];
+        amin5 = network.aparam[(amin+34)][network.paramNumID[0][i]];
+        amin6 = network.aparam[(amin+41)][network.paramNumID[0][i]];
+        amax0 = network.aparam[(amax-1)][network.paramNumID[0][i]];
+        amax1 = network.aparam[(amax+6)][network.paramNumID[0][i]];
+        amax2 = network.aparam[(amax+13)][network.paramNumID[0][i]];
+        amax3 = network.aparam[(amax+20)][network.paramNumID[0][i]];
+        amax4 = network.aparam[(amax+27)][network.paramNumID[0][i]];
+        amax5 = network.aparam[(amax+34)][network.paramNumID[0][i]];
+        amax6 = network.aparam[(amax+41)][network.paramNumID[0][i]];
 
-      zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
-      zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
+if(i==12) {
+printf("paramNumID: %d\n", network.paramNumID[0][i]);
+}
+
+        zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
+        zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
 //      printf("photoreac[%d]: amin0: %e, amax0: %e, zpolylow: %e, zpolyhigh: %e\n", i, amin0, amax0, zpolylow, zpolyhigh);
 
-      rateparam1 = zfac1*zpolyhigh + zfac*zpolylow;
+        rateparam1 = zfac1*zpolyhigh + zfac*zpolylow;
 
-      if(displayPhotodata) {
-        printf("FOR RATEPARAM1\namin0: %e\n", amin0);
-        printf("amin1: %e\n", amin1);
-        printf("amin2: %e\n", amin2);
-        printf("amin3: %e\n", amin3);
-        printf("amin4: %e\n", amin4);
-        printf("amin5: %e\n", amin5);
-        printf("amin6: %e\n", amin6);
-        printf("amax0: %e\n", amax0);
-        printf("amax1: %e\n", amax1);
-        printf("amax2: %e\n", amax2);
-        printf("amax3: %e\n", amax3);
-        printf("amax4: %e\n", amax4);
-        printf("amax5: %e\n", amax5);
-        printf("amax6: %e\n", amax6);
-        printf("zpolylow: %e\n", zpolylow);
-        printf("zpolyhigh: %e\n", zpolyhigh);
+        if(displayPhotodata) {
+          printf("FOR RATEPARAM1\namin0: %e\n", amin0);
+          printf("amin1: %e\n", amin1);
+          printf("amin2: %e\n", amin2);
+          printf("amin3: %e\n", amin3);
+          printf("amin4: %e\n", amin4);
+          printf("amin5: %e\n", amin5);
+          printf("amin6: %e\n", amin6);
+          printf("amax0: %e\n", amax0);
+          printf("amax1: %e\n", amax1);
+          printf("amax2: %e\n", amax2);
+          printf("amax3: %e\n", amax3);
+          printf("amax4: %e\n", amax4);
+          printf("amax5: %e\n", amax5);
+          printf("amax6: %e\n", amax6);
+          printf("zpolylow: %e\n", zpolylow);
+          printf("zpolyhigh: %e\n", zpolyhigh);
+        }
       }
       
       if(network.paramNumID[1][i] >= 0) {
@@ -344,6 +350,7 @@ void integrateNetwork(
 
       //bring it all together, calculate Rate using multipliers, rateparam1 and 2
       if(zenith >= 0 && zenith <= 1.57079632679) {
+        printf("paramMult[0][%d]: %f * paramNumID[0]: %d + paramMult[1]: %f * paramNumID[1]: %d\n", i, network.paramMult[0][i], network.paramNumID[0][i], network.paramMult[1][i], network.paramNumID[1][i]);
         Rate[i] = network.paramMult[0][i]*rateparam1 + network.paramMult[1][i]*rateparam2;
       } else {
         Rate[i] = 0.0;
@@ -442,7 +449,16 @@ void integrateNetwork(
       fern_real p5 = F*powf(T,2)*expf(e/T);
 		  #endif
       fern_real p6 = G*(1+R*Patm);
-		  Rate[i] = A + ((Q * p1 * (p2 + p3)) / (1 + (t + u * p2) * p4)) + p5 + p6;
+      if(i == 36) {
+        printf("A: %e, B: %e, C: %e, D: %e, E: %e, F: %e, G: %e, a: %e, b: %e, c: %e, d: %e, e: %e, t: %e, u: %e, v: %e, w: %e, x: %e, Q: %e, R: %e\n", A, B, C, D, E, F, G, a, b, c, d, e, t, u, v, w, x, Q, R);
+        //This reaction has the form k11 = (ka + kb[M])*kc
+        Rate[i] = (p3+p2)*p1;       
+      } else if(i == 38) {
+        //This reaction has the form k13 = ka + kb [M]/(1 + kb [M]/kc)
+		    Rate[i] = p3+(p2/(1+p2*p4));
+      } else {
+  		  Rate[i] = A + ((Q * p1 * (p2 + p3)) / (1 + (t + u * p2) * p4)) + p5 + p6;
+      }
       /*
       printf("%e + ((%f * (1 + %e * H2O * exp(%f/T)) * (%eexp(%f/T) * (%f + %f*M)+%eexp(%f/T)))/(%f + (%f * %eexp(%f/T) * (%f + %f*M)) * pow(%eexp(%f/T), %f))) + %e*pow(T,2)*exp(%f/T) + %e*(1+%fPatm)\n", 
         A, Q, B, a, C, b, v, w, E, d, t, u, C, b, v, w, D, c, x, F, e, G, R);
@@ -527,17 +543,23 @@ void integrateNetwork(
 		    #ifdef FERN_SINGLE
           fern_real p1 = A*pow((a/T),x);
           fern_real p2 = B*pow((b/T),y);
-          fern_real p3 = p1*pow((M/p2),2);
-          fern_real p4 = 1/log10(p3);
+          fern_real p3 = pow((log10(p1*M/p2)),2);
+          fern_real p4 = 1/(1+p3);
           fern_real p5 = pow(C, p4);
         #else
           fern_real p1 = A*powf((a/T),x);
           fern_real p2 = B*powf((b/T),y);
-          fern_real p3 = p1*powf((M/p2),2);
-          fern_real p4 = 1/log10f(p3);
+          fern_real p3 = powf((log10(p1*M/p2)),2);
+          fern_real p4 = 1/(1+p3);
           fern_real p5 = powf(C, p4);
         #endif
-        Rate[i] = (p1*M/(1+(p1*M/p2)))*p5;
+        fern_real rk = p1*M/p2;
+        fern_real logrk = log10(rk);
+        fern_real g = 1/(1+(logrk*logrk));
+//        printf("Reac[%d], k0:%e, ki:%e, log^2:%e, 1/1+log:%e, F^1/1+log:%e\n", i, p1, p2, p3, p4, p5);
+//        Rate[i] = (p1*M/(1+(p1*M/p2)))*p5;
+        Rate[i] = 0;
+        Rate[i] = (p1*M/(1+rk))*pow(C,g);
         if(displayPhotodata)
           printf("Parent/Solo MType[%d] = %e\n", i-25, Rate[i]);
       }
@@ -613,7 +635,7 @@ void integrateNetwork(
 	   code as well as the Java version.
 	*/
 	
-	t = 1.0e-4;
+	t = 1.0e-20;
 	dt = integrationData.dt_init;
 	timesteps = 1;
 	
@@ -667,7 +689,11 @@ void integrateNetwork(
 			if(log10(t) >= nextOutput) {
         
         //For GNUplot Output
-        printf("%e ", t);
+        //if(chooseyourSpecies < 1000)
+          printf("%e ", t);
+          for(int i = 0; i < numberReactions; i++) {
+            printf("Rate for Reaction[%d]: %e, Flux: %e\n", i, Rate[i], Flux[i]);
+          }
 
     //REPEAT Flux loops to print for GNUPLOT at proper intervals
 		int minny;
@@ -712,7 +738,8 @@ void integrateNetwork(
       }
       //FOR GNUPLOT of fluxes
 		}
-      printf("\n");
+    //if(chooseyourSpecies < 1000)
+     // printf("\n");
       //END GNUPLOT for FLUXES
 
 
@@ -726,7 +753,7 @@ void integrateNetwork(
 				for(int m = 0; m < network.species; m++) {
           //convert back to parts-per-billion for graphing/output
           Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
-		//			printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
+					//printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
 
 
           /***** FOR GNUPLOT *****/
@@ -736,6 +763,16 @@ void integrateNetwork(
           //important species
           //if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
           //  printf("%e ", Yppb);
+
+
+          //plot long-lived species in ppb
+          if(m == 21 || m == 0 || m == 5 || m == 6 || m == 11 || m == 12 || m == 27 || m == 18 || m == 9 || m == 28 || m == 29 || m == 31 || m == 30 || m == 101 || m == 75 || m == 76 || m == 77) {
+            printf("%e ", Y[m]);
+          }
+
+          //plot shortlived radicals in molecules/cm^3
+          //if(m == 75 || m == 3 || m == 76 || m == 77)
+            //printf("%e ", Y[m]);
           /***** END FOR GNUPLOT *****/
 
 					if(checkAsy(FminusSum[m], Y[m], dt))
@@ -743,7 +780,7 @@ void integrateNetwork(
 				}
 
           /***** FOR GNUPLOT *****/
-          //printf("\n");
+          printf("\n");
           /***** END FOR GNUPLOT *****/
 
 
@@ -756,7 +793,8 @@ void integrateNetwork(
 				}
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
-				//printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+      //  printf("maxFlux: %e\n", maxFlux);
+			//	printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
 				outputCount++;
 			}
 		}
@@ -780,23 +818,29 @@ void integrateNetwork(
 		
 		for (int i = 0; i < numberReactions; i++)
 		{
-			int nr = network.numReactingSpecies[i];
-			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
-      //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(first-body)\n", i, Flux[i], network.reactant[0][i], Y[network.reactant[0][i]]);
-			switch (nr)
-			{
-			case 3:
-				/* 3-body; flux = rate x Y x Y x Y */
-				Flux[i] *= Y[network.reactant[2][i]];
-				Flux[i] *= Y[network.reactant[1][i]];
+      if(reacType[i] != 2) {
+	  		int nr = network.numReactingSpecies[i];
+  			Flux[i] = Rate[i] * Y[network.reactant[0][i]];
+        //printf("reaction[%d] with rate %e causes a flux of %e because we some abundance of species[%d]: %e(first-body)\n", i, Rate[i], Flux[i], network.reactant[0][i], Y[network.reactant[0][i]]);
+		  	switch (nr)
+	  		{
+  			case 3:
+				  /* 3-body; flux = rate x Y x Y x Y */
+			  	Flux[i] *= Y[network.reactant[2][i]];
+		  		Flux[i] *= Y[network.reactant[1][i]];
           //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(second) and species[%d]: %e(third-body)\n", i, Flux[i], network.reactant[1][i], Y[network.reactant[2][i]], network.reactant[2][i], Y[network.reactant[2][i]]);
 				
-			case 2:
-				/* 2-body; flux = rate x Y x Y */
-				Flux[i] *= Y[network.reactant[1][i]];
-        //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(second-body)\n", i, Flux[i], network.reactant[1][i], Y[network.reactant[1][i]]);
-				break;
-			}
+  			case 2:
+				  /* 2-body; flux = rate x Y x Y */
+			  	Flux[i] *= Y[network.reactant[1][i]];
+          //printf("reaction[%d] causes a flux of %e because we some abundance of species[%d]: %e(second-body)\n", i, Flux[i], network.reactant[1][i], Y[network.reactant[1][i]]);
+	  			break;
+  			}
+      } else {
+        //this is a photolytic reaction, and is first order, ie flux is determined only by the first reactant
+        Flux[i] = Rate[i] * Y[network.reactant[0][i]];
+        //printf("reaction[%d] with rate %e causes a flux of %e because we some abundance of species[%d]: %e(first-body)\n", i, Rate[i], Flux[i], network.reactant[0][i], Y[network.reactant[0][i]]);
+      }
 		}
 		
 		/* Populate the F+ and F- arrays in parallel from the master Flux array. */
@@ -957,10 +1001,23 @@ void integrateNetwork(
 				dt *= (massTol / (fmax(massChecker, upbumper)));
 			}
 		#endif
-		
-	dt = dtFlux;	
-//    dt = 0.0001;  
 
+      if(dtFlux > dtFloor) {		
+	      dt = dtFloor;	
+      } else {
+        dt = dtFlux;
+      }
+      
+//      printf("maxflux: %e, dt: %e\n", maxFlux, dt);
+
+
+/*    if(log10(t) < 0) { 
+      dt = 0.00001*t;  
+    }
+    if(log10(t) >= 0 ) { 
+      dt = 0.000001*t;  
+    }
+*/
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		

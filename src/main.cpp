@@ -12,11 +12,11 @@ int main(int argc, char const *argv[])
 	integrator.network.photoparams = 40;
 	integrator.network.photolytic = 26;
 	integrator.network.numRG = 101;
-	integrator.network.massTol = 1.0e-7;
-	integrator.network.fluxFrac = 1e8;
+	integrator.network.massTol = 1.0e-7; //not really necessary as sumX is always 1 by definition
+	integrator.network.fluxFrac = 1e7; // disallows dtFlux, and thus dt from being larger than fluxFrac/maxFlux
 
 	integrator.network.allocate();
-	integrator.network.loadNetwork("newAtmSpec_polluted.inp");
+	integrator.network.loadNetwork("AtmSpec_case0.inp");
 	integrator.network.loadReactions("rateLibrary_atmosCHASER.data");
   integrator.network.loadPhotolytic("rateLibrary_atmosCHASER_photo.data");
 
@@ -25,18 +25,18 @@ int main(int argc, char const *argv[])
 	{
 		IntegrationData integrationData;
 		integrationData.allocate(integrator.network.species);
-		integrationData.loadAbundances("newAtmSpec_polluted.inp");
+		integrationData.loadAbundances("AtmSpec_case0.inp");
 		
 		integrationData.T = 290; //temp in Kelvin
-    integrationData.H2O = 1.0; //water vapor density (cm^-3)
-    integrationData.M = 1.0; // air number density (cm^-3)
+    integrationData.M = 2.53e+19; // air number density (cm^-3)
+    integrationData.H2O = 3.87E+17; //water vapor density (cm^-3)
     integrationData.Patm = 1.0; //atmospheric pressure in atm
-    integrationData.pmb = 1000; //air pressure in millibar, for Y conversion from ppb to molecules/cm^3
+    integrationData.pmb = 1013; //air pressure in millibar, for Y conversion from ppb to molecules/cm^3
     integrationData.zenith = 0.0; //0.0 indicates sun is overhead, pi/2 indicates sundown
     integrationData.alt = 2000; //up to 12000m
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 3.0e+2;
-		integrationData.dt_init = 1e-10;
+		integrationData.t_max = 3.00e+2;
+		integrationData.dt_init = 1e-25;
 		integrationData.rho = 1.0;
 
 		// Launch the integrator

@@ -79,6 +79,7 @@ void IntegrationData::print()
 	for (unsigned short i = 0; i < species; i++){
     //convert back to ppb
     Yppb = (Y[i]*1e9)/(pmb*7.2428e+18/T); //Y[i] in ppb  
-		printf("%d: %e\n", i, Yppb);
+		//printf("%d: %e\n", i, Yppb);
+		printf("%d: %e\n", i, Y[i]); //in molecules/cm^3
   }
 }
