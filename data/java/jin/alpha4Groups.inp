@@ -1,0 +1,35 @@
+File specifying reaction groups for partial equilibrium approx. Anything
+before triple dollar signs taken as comments.  First put integer specifying
+number of groups.  Follow with number of reaction elements in group,
+followed by one line for each reaction element of the group specifying Z, N,
+reaction serial index, and reaction label (reaction labels will be ignored on
+read-in but must have NO BLANK SPACES). Repeat for each reaction group.
+Entries are white-space delimited; extra whitespace and blank lines ignored.
+See method readReactionGroups() in StochasticElements for details,
+and see the inner class Reactions defined in StochasticElements.java
+for the definition of Reaction objects used to form the reaction groups.
+
+$$$
+
+4
+
+4
+2 2 14983   he4+he4+he4-->c12
+2 2 14984   he4+he4+he4-->c12
+6 6 5   c12-->he4+he4+he4
+6 6 6   c12-->he4+he4+he4
+
+4
+6 6 10   he4+c12-->o16
+6 6 11   he4+c12-->o16
+8 8 2   o16-->he4+c12
+8 8 3   o16-->he4+c12
+
+1
+6 6 21   c12+c12-->he4+ne20
+
+4
+8 8 6   he4+o16-->ne20
+8 8 7   he4+o16-->ne20
+10 10 3   ne20-->he4+o16
+10 10 4   ne20-->he4+o16

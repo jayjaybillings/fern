@@ -1,0 +1,98 @@
+File specifying reaction groups for partial equilibrium approx. Anything
+before triple dollar signs taken as comments.  First put integer specifying
+number of groups.  Follow with number of reaction elements in group,
+followed by one line for each reaction element of the group specifying Z, N,
+reaction serial index, and reaction label (reaction labels will be ignored on
+read-in but must have NO BLANK SPACES). Repeat for each reaction group.
+Entries are white-space delimited; extra whitespace and blank lines ignored.
+See method readReactionGroups() in StochasticElements for details.
+
+$$$
+
+19
+
+4 3
+2 2 14986   he4+he4+he4-->c12
+2 2 14987   he4+he4+he4-->c12
+6 6 5   c12-->he4+he4+he4
+6 6 6   c12-->he4+he4+he4
+
+4 2
+6 6 10   he4+c12-->o16
+6 6 11   he4+c12-->o16
+8 8 2   o16-->he4+c12
+8 8 3   o16-->he4+c12
+
+2 4
+6 6 21   c12+c12-->he4+ne20
+10 10 18   he4+ne20-->c12+c12
+
+4 2
+8 8 6   he4+o16-->ne20
+8 8 7   he4+o16-->ne20
+10 10 3   ne20-->he4+o16
+10 10 4   ne20-->he4+o16
+
+2 4
+8 8 18   c12+o16-->he4+mg24
+12 12 18   he4+mg24-->c12+o16
+
+2 4
+8 8 21   o16+o16-->he4+si28
+14 14 22   he4+si28-->o16+o16
+
+4 2
+10 10 9   he4+ne20-->mg24
+10 10 10   he4+ne20-->mg24
+12 12 3   mg24-->he4+ne20
+12 12 4   mg24-->he4+ne20
+
+2 4
+10 10 21   c12+ne20-->he4+si28
+14 14 21   he4+si28-->c12+ne20
+
+4 2
+12 12 8   he4+mg24-->si28
+12 12 9   he4+mg24-->si28
+14 14 4   si28-->he4+mg24
+14 14 5   si28-->he4+mg24
+
+2 2
+14 14 9   he4+si28-->s32
+16 16 2   s32-->he4+si28
+
+2 2
+16 16 8   he4+s32-->ar36
+18 18 2   ar36-->he4+s32
+
+2 2
+18 18 5   he4+ar36-->ca40
+20 20 2   ca40-->he4+ar36
+
+2 2
+20 20 6   he4+ca40-->ti44
+22 22 3   ti44-->he4+ca40
+
+2 2
+22 22 8   he4+ti44-->cr48
+24 24 3   cr48-->he4+ti44
+
+2 2
+24 24 6   he4+cr48-->fe52
+26 26 3   fe52-->he4+cr48
+
+2 2
+26 26 6   he4+fe52-->ni56
+28 28 3   ni56-->he4+fe52
+
+2 2
+28 28 8   he4+ni56-->zn60
+30 30 3   zn60-->he4+ni56
+
+2 2
+30 30 8   he4+zn60-->ge64
+32 32 3   ge64-->he4+zn60
+
+2 2
+32 32 6   he4+ge64-->se68
+34 34 3   se68-->he4+ge64

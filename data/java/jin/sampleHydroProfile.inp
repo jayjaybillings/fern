@@ -1,0 +1,12 @@
+Step     time[s]          T[K]     rho[g/cm^3]
+1	1.00E-25	1.70E+09      1.0e9
+2	1.00E-16	1.70E+09      1.0e9
+3	1.10E-15	1.70E+09      1.0e9
+4	1.11E-14	1.70E+09      1.0e9
+
+
+Notes:  This is a sample hydro profile (remove these notes to use).  It is
+white-space delimited.  First row is ignored when read, but must
+have four labels without whitespace.  The first column of each data row is
+an arbitrary index that is ignored, but it must be present.  Any number of
+rows may be entered, but it is assumed that the time increases with each row.

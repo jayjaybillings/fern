@@ -1,0 +1,1782 @@
+REACTIONS FROM FILE:
+RObject[0][1][0]   n --> p + e + nubar  Z=0 N=1 Noff=0 index=0 serialIndex=0 Active=true
+RObject[1][0][0]   n + p --> d  Z=1 N=0 Noff=0 index=0 serialIndex=0 Active=true
+RObject[1][0][1]   p + p + e --> d + nu  (electron capture)  Z=1 N=0 Noff=0 index=1 serialIndex=1 Active=true
+RObject[1][0][2]   p + p --> d + e+ + nu  Z=1 N=0 Noff=0 index=2 serialIndex=2 Active=true
+RObject[1][1][0]   d --> n + p  Z=1 N=1 Noff=0 index=0 serialIndex=0 Active=true
+RObject[1][1][1]   n + d --> t  Z=1 N=1 Noff=0 index=1 serialIndex=1 Active=true
+RObject[1][1][2]   p + d --> he3  Z=1 N=1 Noff=0 index=2 serialIndex=2 Active=true
+RObject[1][1][3]   d + d --> he4  Z=1 N=1 Noff=0 index=3 serialIndex=3 Active=true
+RObject[1][1][4]   d + d --> n + he3  Z=1 N=1 Noff=0 index=4 serialIndex=6 Active=true
+RObject[1][2][0]   t --> he3 + e + nubar  Z=1 N=2 Noff=0 index=0 serialIndex=0 Active=true
+RObject[1][2][1]   t --> n + d  Z=1 N=2 Noff=0 index=1 serialIndex=1 Active=true
+RObject[1][2][2]   p + t --> he4  Z=1 N=2 Noff=0 index=2 serialIndex=2 Active=true
+RObject[1][2][3]   p + t --> n + he3  Z=1 N=2 Noff=0 index=3 serialIndex=4 Active=true
+RObject[1][2][4]   p + t --> d + d  Z=1 N=2 Noff=0 index=4 serialIndex=5 Active=true
+RObject[1][2][5]   d + t --> n + he4  Z=1 N=2 Noff=0 index=5 serialIndex=6 Active=true
+RObject[1][2][6]   d + t --> n + he4  Z=1 N=2 Noff=0 index=6 serialIndex=7 Active=true
+RObject[2][1][0]   he3 + e --> t + nu  (electron capture)  Z=2 N=1 Noff=0 index=0 serialIndex=0 Active=true
+RObject[2][1][1]   he3 --> p + d  Z=2 N=1 Noff=0 index=1 serialIndex=1 Active=true
+RObject[2][1][2]   n + he3 --> he4  Z=2 N=1 Noff=0 index=2 serialIndex=2 Active=true
+RObject[2][1][3]   p + he3 --> he4 + e+ + nu  Z=2 N=1 Noff=0 index=3 serialIndex=3 Active=true
+RObject[2][1][4]   n + he3 --> p + t  Z=2 N=1 Noff=0 index=4 serialIndex=5 Active=true
+RObject[2][1][5]   n + he3 --> d + d  Z=2 N=1 Noff=0 index=5 serialIndex=6 Active=true
+RObject[2][1][6]   d + he3 --> p + he4  Z=2 N=1 Noff=0 index=6 serialIndex=7 Active=true
+RObject[2][1][7]   d + he3 --> p + he4  Z=2 N=1 Noff=0 index=7 serialIndex=8 Active=true
+RObject[2][1][8]   t + he3 --> d + he4  Z=2 N=1 Noff=0 index=8 serialIndex=9 Active=true
+RObject[2][2][0]   he4 --> n + he3  Z=2 N=2 Noff=0 index=0 serialIndex=0 Active=true
+RObject[2][2][1]   he4 --> p + t  Z=2 N=2 Noff=0 index=1 serialIndex=1 Active=true
+RObject[2][2][2]   he4 --> d + d  Z=2 N=2 Noff=0 index=2 serialIndex=2 Active=true
+RObject[2][2][3]   d + he4 --> li6  Z=2 N=2 Noff=0 index=3 serialIndex=3 Active=true
+RObject[2][2][4]   d + he4 --> li6  Z=2 N=2 Noff=0 index=4 serialIndex=4 Active=true
+RObject[2][2][5]   t + he4 --> li7  Z=2 N=2 Noff=0 index=5 serialIndex=5 Active=true
+RObject[2][2][6]   he3 + he4 --> be7  Z=2 N=2 Noff=0 index=6 serialIndex=6 Active=true
+RObject[2][2][7]   n + he4 --> d + t  Z=2 N=2 Noff=0 index=7 serialIndex=5020 Active=true
+RObject[2][2][8]   n + he4 --> d + t  Z=2 N=2 Noff=0 index=8 serialIndex=5021 Active=true
+RObject[2][2][9]   p + he4 --> d + he3  Z=2 N=2 Noff=0 index=9 serialIndex=5022 Active=true
+RObject[2][2][10]   p + he4 --> d + he3  Z=2 N=2 Noff=0 index=10 serialIndex=5023 Active=true
+RObject[2][2][11]   d + he4 --> t + he3  Z=2 N=2 Noff=0 index=11 serialIndex=5024 Active=true
+RObject[2][2][12]   t + he4 --> n + li6  Z=2 N=2 Noff=0 index=12 serialIndex=5025 Active=true
+RObject[2][2][13]   t + he4 --> n + li6  Z=2 N=2 Noff=0 index=13 serialIndex=5026 Active=true
+RObject[2][2][14]   he3 + he4 --> p + li6  Z=2 N=2 Noff=0 index=14 serialIndex=5027 Active=true
+RObject[2][2][15]   he3 + he4 --> p + li6  Z=2 N=2 Noff=0 index=15 serialIndex=5028 Active=true
+RObject[2][2][16]   he4 + he4 --> n + be7  Z=2 N=2 Noff=0 index=16 serialIndex=5029 Active=true
+RObject[2][2][17]   he4 + he4 --> p + li7  Z=2 N=2 Noff=0 index=17 serialIndex=5030 Active=true
+RObject[2][2][18]   he4 + he4 --> p + li7  Z=2 N=2 Noff=0 index=18 serialIndex=5031 Active=true
+RObject[2][2][19]   n + n + he4 --> t + t  Z=2 N=2 Noff=0 index=19 serialIndex=14966 Active=true
+RObject[2][2][20]   n + p + he4 --> t + he3  Z=2 N=2 Noff=0 index=20 serialIndex=14968 Active=false
+RObject[2][2][21]   n + p + he4 --> li6  Z=2 N=2 Noff=0 index=21 serialIndex=14969 Active=true
+RObject[2][2][22]   p + p + he4 --> he3 + he3  Z=2 N=2 Noff=0 index=22 serialIndex=14970 Active=true
+RObject[2][2][23]   n + he4 + he4 --> d + li7  Z=2 N=2 Noff=0 index=23 serialIndex=14976 Active=true
+RObject[2][2][24]   p + he4 + he4 --> d + be7  Z=2 N=2 Noff=0 index=24 serialIndex=14977 Active=false
+RObject[2][2][25]   p + he4 + he4 --> n + b8  Z=2 N=2 Noff=0 index=25 serialIndex=14978 Active=false
+RObject[2][2][26]   he4 + he4 + he4 --> n + c11  Z=2 N=2 Noff=0 index=26 serialIndex=14981 Active=false
+RObject[2][2][27]   he4 + he4 + he4 --> n + c11  Z=2 N=2 Noff=0 index=27 serialIndex=14982 Active=false
+RObject[2][2][28]   he4 + he4 + he4 --> p + b11  Z=2 N=2 Noff=0 index=28 serialIndex=14983 Active=false
+RObject[2][2][29]   he4 + he4 + he4 --> p + b11  Z=2 N=2 Noff=0 index=29 serialIndex=14984 Active=true
+RObject[2][2][30]   he4 + he4 + he4 --> p + b11  Z=2 N=2 Noff=0 index=30 serialIndex=14985 Active=true
+RObject[2][2][31]   he4 + he4 + he4 --> c12  Z=2 N=2 Noff=0 index=31 serialIndex=14986 Active=true
+RObject[2][2][32]   he4 + he4 + he4 --> c12  Z=2 N=2 Noff=0 index=32 serialIndex=14987 Active=false
+RObject[3][0][0]   li6 --> d + he4  Z=3 N=3 Noff=3 index=0 serialIndex=0 Active=false
+RObject[3][0][1]   li6 --> d + he4  Z=3 N=3 Noff=3 index=1 serialIndex=1 Active=false
+RObject[3][0][2]   li6 --> n + p + he4  Z=3 N=3 Noff=3 index=2 serialIndex=2 Active=false
+RObject[3][0][3]   n + li6 --> li7  Z=3 N=3 Noff=3 index=3 serialIndex=3 Active=false
+RObject[3][0][4]   p + li6 --> be7  Z=3 N=3 Noff=3 index=4 serialIndex=4 Active=false
+RObject[3][0][5]   n + li6 --> t + he4  Z=3 N=3 Noff=3 index=5 serialIndex=7 Active=false
+RObject[3][0][6]   n + li6 --> t + he4  Z=3 N=3 Noff=3 index=6 serialIndex=8 Active=false
+RObject[3][0][7]   p + li6 --> he3 + he4  Z=3 N=3 Noff=3 index=7 serialIndex=9 Active=false
+RObject[3][0][8]   p + li6 --> he3 + he4  Z=3 N=3 Noff=3 index=8 serialIndex=10 Active=false
+RObject[3][0][9]   d + li6 --> n + be7  Z=3 N=3 Noff=3 index=9 serialIndex=11 Active=false
+RObject[3][0][10]   d + li6 --> p + li7  Z=3 N=3 Noff=3 index=10 serialIndex=12 Active=false
+RObject[3][1][0]   li7 --> n + li6  Z=3 N=4 Noff=3 index=0 serialIndex=0 Active=false
+RObject[3][1][1]   li7 --> t + he4  Z=3 N=4 Noff=3 index=1 serialIndex=1 Active=false
+RObject[3][1][2]   he4 + li7 --> b11  Z=3 N=4 Noff=3 index=2 serialIndex=4 Active=false
+RObject[3][1][3]   he4 + li7 --> b11  Z=3 N=4 Noff=3 index=3 serialIndex=5 Active=false
+RObject[3][1][4]   p + li7 --> n + be7  Z=3 N=4 Noff=3 index=4 serialIndex=6 Active=false
+RObject[3][1][5]   p + li7 --> n + be7  Z=3 N=4 Noff=3 index=5 serialIndex=7 Active=false
+RObject[3][1][6]   p + li7 --> d + li6  Z=3 N=4 Noff=3 index=6 serialIndex=8 Active=false
+RObject[3][1][7]   p + li7 --> he4 + he4  Z=3 N=4 Noff=3 index=7 serialIndex=9 Active=false
+RObject[3][1][8]   p + li7 --> he4 + he4  Z=3 N=4 Noff=3 index=8 serialIndex=10 Active=false
+RObject[3][1][9]   d + li7 --> n + he4 + he4  Z=3 N=4 Noff=3 index=9 serialIndex=16 Active=false
+RObject[3][1][10]   t + li7 --> n + n + he4 + he4  Z=3 N=4 Noff=3 index=10 serialIndex=17 Active=false
+RObject[3][1][11]   he3 + li7 --> n + p + he4 + he4  Z=3 N=4 Noff=3 index=11 serialIndex=18 Active=false
+RObject[4][0][0]   be7 + e --> li7 + nu  (electron capture)  Z=4 N=3 Noff=3 index=0 serialIndex=0 Active=false
+RObject[4][0][1]   be7 --> p + li6  Z=4 N=3 Noff=3 index=1 serialIndex=1 Active=false
+RObject[4][0][2]   be7 --> he3 + he4  Z=4 N=3 Noff=3 index=2 serialIndex=2 Active=false
+RObject[4][0][3]   p + be7 --> b8  Z=4 N=3 Noff=3 index=3 serialIndex=3 Active=false
+RObject[4][0][4]   p + be7 --> b8  Z=4 N=3 Noff=3 index=4 serialIndex=4 Active=false
+RObject[4][0][5]   he4 + be7 --> c11  Z=4 N=3 Noff=3 index=5 serialIndex=5 Active=false
+RObject[4][0][6]   he4 + be7 --> c11  Z=4 N=3 Noff=3 index=6 serialIndex=6 Active=false
+RObject[4][0][7]   n + be7 --> p + li7  Z=4 N=3 Noff=3 index=7 serialIndex=7 Active=false
+RObject[4][0][8]   n + be7 --> p + li7  Z=4 N=3 Noff=3 index=8 serialIndex=8 Active=false
+RObject[4][0][9]   n + be7 --> d + li6  Z=4 N=3 Noff=3 index=9 serialIndex=9 Active=false
+RObject[4][0][10]   n + be7 --> he4 + he4  Z=4 N=3 Noff=3 index=10 serialIndex=10 Active=false
+RObject[4][0][11]   d + be7 --> p + he4 + he4  Z=4 N=3 Noff=3 index=11 serialIndex=13 Active=false
+RObject[4][0][12]   t + be7 --> n + p + he4 + he4  Z=4 N=3 Noff=3 index=12 serialIndex=14 Active=false
+RObject[4][0][13]   he3 + be7 --> p + p + he4 + he4  Z=4 N=3 Noff=3 index=13 serialIndex=15 Active=false
+RObject[5][0][0]   b8 --> p + be7  Z=5 N=3 Noff=3 index=0 serialIndex=0 Active=false
+RObject[5][0][1]   b8 --> p + be7  Z=5 N=3 Noff=3 index=1 serialIndex=1 Active=false
+RObject[5][0][2]   b8 --> he4 + he4 + e+ + nu  Z=5 N=3 Noff=3 index=2 serialIndex=2 Active=false
+RObject[5][0][3]   p + b8 --> c9  Z=5 N=3 Noff=3 index=3 serialIndex=3 Active=false
+RObject[5][0][4]   p + b8 --> c9  Z=5 N=3 Noff=3 index=4 serialIndex=4 Active=false
+RObject[5][0][5]   he4 + b8 --> p + c11  Z=5 N=3 Noff=3 index=5 serialIndex=5 Active=false
+RObject[5][0][6]   he4 + b8 --> p + c11  Z=5 N=3 Noff=3 index=6 serialIndex=6 Active=false
+RObject[5][0][7]   n + b8 --> p + he4 + he4  Z=5 N=3 Noff=3 index=7 serialIndex=7 Active=false
+RObject[5][3][0]   b11 --> he4 + li7  Z=5 N=6 Noff=3 index=0 serialIndex=2 Active=true
+RObject[5][3][1]   b11 --> he4 + li7  Z=5 N=6 Noff=3 index=1 serialIndex=3 Active=true
+RObject[5][3][2]   p + b11 --> c12  Z=5 N=6 Noff=3 index=2 serialIndex=6 Active=true
+RObject[5][3][3]   p + b11 --> c12  Z=5 N=6 Noff=3 index=3 serialIndex=7 Active=true
+RObject[5][3][4]   p + b11 --> n + c11  Z=5 N=6 Noff=3 index=4 serialIndex=11 Active=true
+RObject[5][3][5]   p + b11 --> n + c11  Z=5 N=6 Noff=3 index=5 serialIndex=12 Active=true
+RObject[5][3][6]   p + b11 --> n + c11  Z=5 N=6 Noff=3 index=6 serialIndex=13 Active=true
+RObject[5][3][7]   he4 + b11 --> n + n14  Z=5 N=6 Noff=3 index=7 serialIndex=14 Active=true
+RObject[5][3][8]   he4 + b11 --> n + n14  Z=5 N=6 Noff=3 index=8 serialIndex=15 Active=false
+RObject[5][3][9]   he4 + b11 --> n + n14  Z=5 N=6 Noff=3 index=9 serialIndex=16 Active=false
+RObject[5][3][10]   he4 + b11 --> n + n14  Z=5 N=6 Noff=3 index=10 serialIndex=17 Active=false
+RObject[5][3][11]   he4 + b11 --> n + n14  Z=5 N=6 Noff=3 index=11 serialIndex=18 Active=false
+RObject[5][3][12]   he4 + b11 --> p + c14  Z=5 N=6 Noff=3 index=12 serialIndex=19 Active=false
+RObject[5][3][13]   he4 + b11 --> p + c14  Z=5 N=6 Noff=3 index=13 serialIndex=20 Active=false
+RObject[5][3][14]   he4 + b11 --> p + c14  Z=5 N=6 Noff=3 index=14 serialIndex=21 Active=false
+RObject[5][3][15]   he4 + b11 --> p + c14  Z=5 N=6 Noff=3 index=15 serialIndex=22 Active=false
+RObject[5][3][16]   he4 + b11 --> p + c14  Z=5 N=6 Noff=3 index=16 serialIndex=23 Active=false
+RObject[5][3][17]   p + b11 --> he4 + he4 + he4  Z=5 N=6 Noff=3 index=17 serialIndex=24 Active=false
+RObject[5][3][18]   p + b11 --> he4 + he4 + he4  Z=5 N=6 Noff=3 index=18 serialIndex=25 Active=false
+RObject[5][3][19]   p + b11 --> he4 + he4 + he4  Z=5 N=6 Noff=3 index=19 serialIndex=26 Active=false
+RObject[6][0][0]   c9 --> p + b8  Z=6 N=3 Noff=3 index=0 serialIndex=0 Active=false
+RObject[6][0][1]   c9 --> p + b8  Z=6 N=3 Noff=3 index=1 serialIndex=1 Active=false
+RObject[6][0][2]   c9 --> p + he4 + he4 + e+ + nu  Z=6 N=3 Noff=3 index=2 serialIndex=2 Active=false
+RObject[6][0][3]   he4 + c9 --> p + n12  Z=6 N=3 Noff=3 index=3 serialIndex=3 Active=false
+RObject[6][0][4]   he4 + c9 --> p + n12  Z=6 N=3 Noff=3 index=4 serialIndex=4 Active=false
+RObject[6][0][5]   he4 + c9 --> p + n12  Z=6 N=3 Noff=3 index=5 serialIndex=5 Active=false
+RObject[6][2][0]   c11 --> b11 + e+ + nu  Z=6 N=5 Noff=3 index=0 serialIndex=0 Active=false
+RObject[6][2][1]   c11 --> he4 + be7  Z=6 N=5 Noff=3 index=1 serialIndex=3 Active=false
+RObject[6][2][2]   c11 --> he4 + be7  Z=6 N=5 Noff=3 index=2 serialIndex=4 Active=false
+RObject[6][2][3]   n + c11 --> c12  Z=6 N=5 Noff=3 index=3 serialIndex=5 Active=false
+RObject[6][2][4]   n + c11 --> c12  Z=6 N=5 Noff=3 index=4 serialIndex=6 Active=false
+RObject[6][2][5]   n + c11 --> c12  Z=6 N=5 Noff=3 index=5 serialIndex=7 Active=false
+RObject[6][2][6]   p + c11 --> n12  Z=6 N=5 Noff=3 index=6 serialIndex=8 Active=false
+RObject[6][2][7]   p + c11 --> n12  Z=6 N=5 Noff=3 index=7 serialIndex=9 Active=false
+RObject[6][2][8]   n + c11 --> p + b11  Z=6 N=5 Noff=3 index=8 serialIndex=10 Active=false
+RObject[6][2][9]   n + c11 --> p + b11  Z=6 N=5 Noff=3 index=9 serialIndex=11 Active=false
+RObject[6][2][10]   n + c11 --> p + b11  Z=6 N=5 Noff=3 index=10 serialIndex=12 Active=false
+RObject[6][2][11]   p + c11 --> he4 + b8  Z=6 N=5 Noff=3 index=11 serialIndex=16 Active=false
+RObject[6][2][12]   p + c11 --> he4 + b8  Z=6 N=5 Noff=3 index=12 serialIndex=17 Active=false
+RObject[6][2][13]   he4 + c11 --> p + n14  Z=6 N=5 Noff=3 index=13 serialIndex=18 Active=false
+RObject[6][2][14]   n + c11 --> he4 + he4 + he4  Z=6 N=5 Noff=3 index=14 serialIndex=19 Active=false
+RObject[6][2][15]   n + c11 --> he4 + he4 + he4  Z=6 N=5 Noff=3 index=15 serialIndex=20 Active=false
+RObject[6][3][0]   c12 --> n + c11  Z=6 N=6 Noff=3 index=0 serialIndex=0 Active=true
+RObject[6][3][1]   c12 --> n + c11  Z=6 N=6 Noff=3 index=1 serialIndex=1 Active=true
+RObject[6][3][2]   c12 --> n + c11  Z=6 N=6 Noff=3 index=2 serialIndex=2 Active=true
+RObject[6][3][3]   c12 --> p + b11  Z=6 N=6 Noff=3 index=3 serialIndex=3 Active=true
+RObject[6][3][4]   c12 --> p + b11  Z=6 N=6 Noff=3 index=4 serialIndex=4 Active=true
+RObject[6][3][5]   c12 --> he4 + he4 + he4  Z=6 N=6 Noff=3 index=5 serialIndex=5 Active=true
+RObject[6][3][6]   c12 --> he4 + he4 + he4  Z=6 N=6 Noff=3 index=6 serialIndex=6 Active=false
+RObject[6][3][7]   n + c12 --> c13  Z=6 N=6 Noff=3 index=7 serialIndex=7 Active=false
+RObject[6][3][8]   p + c12 --> n13  Z=6 N=6 Noff=3 index=8 serialIndex=8 Active=false
+RObject[6][3][9]   p + c12 --> n13  Z=6 N=6 Noff=3 index=9 serialIndex=9 Active=false
+RObject[6][3][10]   he4 + c12 --> o16  Z=6 N=6 Noff=3 index=10 serialIndex=10 Active=false
+RObject[6][3][11]   he4 + c12 --> o16  Z=6 N=6 Noff=3 index=11 serialIndex=11 Active=false
+RObject[6][3][12]   he4 + c12 --> n + o15  Z=6 N=6 Noff=3 index=12 serialIndex=16 Active=false
+RObject[6][3][13]   he4 + c12 --> p + n15  Z=6 N=6 Noff=3 index=13 serialIndex=17 Active=false
+RObject[6][3][14]   he4 + c12 --> p + n15  Z=6 N=6 Noff=3 index=14 serialIndex=18 Active=false
+RObject[6][3][15]   c12 + c12 --> n + mg23  Z=6 N=6 Noff=3 index=15 serialIndex=19 Active=false
+RObject[6][3][16]   c12 + c12 --> p + na23  Z=6 N=6 Noff=3 index=16 serialIndex=20 Active=false
+RObject[6][3][17]   c12 + c12 --> he4 + ne20  Z=6 N=6 Noff=3 index=17 serialIndex=21 Active=false
+RObject[6][4][0]   c13 --> n + c12  Z=6 N=7 Noff=3 index=0 serialIndex=0 Active=false
+RObject[6][4][1]   n + c13 --> c14  Z=6 N=7 Noff=3 index=1 serialIndex=1 Active=false
+RObject[6][4][2]   n + c13 --> c14  Z=6 N=7 Noff=3 index=2 serialIndex=2 Active=false
+RObject[6][4][3]   p + c13 --> n14  Z=6 N=7 Noff=3 index=3 serialIndex=3 Active=false
+RObject[6][4][4]   p + c13 --> n14  Z=6 N=7 Noff=3 index=4 serialIndex=4 Active=false
+RObject[6][4][5]   p + c13 --> n + n13  Z=6 N=7 Noff=3 index=5 serialIndex=6 Active=false
+RObject[6][4][6]   d + c13 --> n + n14  Z=6 N=7 Noff=3 index=6 serialIndex=8 Active=false
+RObject[6][4][7]   he4 + c13 --> n + o16  Z=6 N=7 Noff=3 index=7 serialIndex=9 Active=false
+RObject[6][4][8]   he4 + c13 --> n + o16  Z=6 N=7 Noff=3 index=8 serialIndex=10 Active=false
+RObject[6][4][9]   he4 + c13 --> n + o16  Z=6 N=7 Noff=3 index=9 serialIndex=11 Active=false
+RObject[6][4][10]   he4 + c13 --> p + n16  Z=6 N=7 Noff=3 index=10 serialIndex=12 Active=false
+RObject[6][5][0]   c14 --> n14 + e + nubar  Z=6 N=8 Noff=3 index=0 serialIndex=0 Active=true
+RObject[6][5][1]   c14 --> n + c13  Z=6 N=8 Noff=3 index=1 serialIndex=1 Active=false
+RObject[6][5][2]   c14 --> n + c13  Z=6 N=8 Noff=3 index=2 serialIndex=2 Active=false
+RObject[6][5][3]   p + c14 --> n15  Z=6 N=8 Noff=3 index=3 serialIndex=6 Active=true
+RObject[6][5][4]   p + c14 --> n15  Z=6 N=8 Noff=3 index=4 serialIndex=7 Active=true
+RObject[6][5][5]   he4 + c14 --> o18  Z=6 N=8 Noff=3 index=5 serialIndex=8 Active=true
+RObject[6][5][6]   he4 + c14 --> o18  Z=6 N=8 Noff=3 index=6 serialIndex=9 Active=true
+RObject[6][5][7]   he4 + c14 --> o18  Z=6 N=8 Noff=3 index=7 serialIndex=10 Active=true
+RObject[6][5][8]   p + c14 --> n + n14  Z=6 N=8 Noff=3 index=8 serialIndex=12 Active=true
+RObject[6][5][9]   p + c14 --> n + n14  Z=6 N=8 Noff=3 index=9 serialIndex=13 Active=true
+RObject[6][5][10]   p + c14 --> he4 + b11  Z=6 N=8 Noff=3 index=10 serialIndex=14 Active=true
+RObject[6][5][11]   p + c14 --> he4 + b11  Z=6 N=8 Noff=3 index=11 serialIndex=15 Active=true
+RObject[6][5][12]   p + c14 --> he4 + b11  Z=6 N=8 Noff=3 index=12 serialIndex=16 Active=true
+RObject[6][5][13]   p + c14 --> he4 + b11  Z=6 N=8 Noff=3 index=13 serialIndex=17 Active=false
+RObject[6][5][14]   p + c14 --> he4 + b11  Z=6 N=8 Noff=3 index=14 serialIndex=18 Active=false
+RObject[6][5][15]   d + c14 --> n + n15  Z=6 N=8 Noff=3 index=15 serialIndex=19 Active=false
+RObject[7][0][0]   n12 --> c12 + e+ + nu  Z=7 N=5 Noff=5 index=0 serialIndex=0 Active=false
+RObject[7][0][1]   n12 --> p + c11  Z=7 N=5 Noff=5 index=1 serialIndex=1 Active=false
+RObject[7][0][2]   n12 --> p + c11  Z=7 N=5 Noff=5 index=2 serialIndex=2 Active=false
+RObject[7][0][3]   p + n12 --> he4 + c9  Z=7 N=5 Noff=5 index=3 serialIndex=5 Active=false
+RObject[7][0][4]   p + n12 --> he4 + c9  Z=7 N=5 Noff=5 index=4 serialIndex=6 Active=false
+RObject[7][0][5]   p + n12 --> he4 + c9  Z=7 N=5 Noff=5 index=5 serialIndex=7 Active=false
+RObject[7][1][0]   n13 --> c13 + e+ + nu  Z=7 N=6 Noff=5 index=0 serialIndex=0 Active=false
+RObject[7][1][1]   n13 --> p + c12  Z=7 N=6 Noff=5 index=1 serialIndex=1 Active=false
+RObject[7][1][2]   n13 --> p + c12  Z=7 N=6 Noff=5 index=2 serialIndex=2 Active=false
+RObject[7][1][3]   n + n13 --> n14  Z=7 N=6 Noff=5 index=3 serialIndex=3 Active=false
+RObject[7][1][4]   n + n13 --> n14  Z=7 N=6 Noff=5 index=4 serialIndex=4 Active=false
+RObject[7][1][5]   p + n13 --> o14  Z=7 N=6 Noff=5 index=5 serialIndex=5 Active=false
+RObject[7][1][6]   p + n13 --> o14  Z=7 N=6 Noff=5 index=6 serialIndex=6 Active=false
+RObject[7][1][7]   n + n13 --> p + c13  Z=7 N=6 Noff=5 index=7 serialIndex=7 Active=false
+RObject[7][1][8]   he4 + n13 --> p + o16  Z=7 N=6 Noff=5 index=8 serialIndex=9 Active=false
+RObject[7][2][0]   n14 --> n + n13  Z=7 N=7 Noff=5 index=0 serialIndex=0 Active=false
+RObject[7][2][1]   n14 --> n + n13  Z=7 N=7 Noff=5 index=1 serialIndex=1 Active=false
+RObject[7][2][2]   n14 --> p + c13  Z=7 N=7 Noff=5 index=2 serialIndex=2 Active=false
+RObject[7][2][3]   n14 --> p + c13  Z=7 N=7 Noff=5 index=3 serialIndex=3 Active=false
+RObject[7][2][4]   n + n14 --> n15  Z=7 N=7 Noff=5 index=4 serialIndex=4 Active=false
+RObject[7][2][5]   p + n14 --> o15  Z=7 N=7 Noff=5 index=5 serialIndex=5 Active=false
+RObject[7][2][6]   p + n14 --> o15  Z=7 N=7 Noff=5 index=6 serialIndex=6 Active=false
+RObject[7][2][7]   he4 + n14 --> f18  Z=7 N=7 Noff=5 index=7 serialIndex=7 Active=false
+RObject[7][2][8]   he4 + n14 --> f18  Z=7 N=7 Noff=5 index=8 serialIndex=8 Active=false
+RObject[7][2][9]   he4 + n14 --> f18  Z=7 N=7 Noff=5 index=9 serialIndex=9 Active=false
+RObject[7][2][10]   n + n14 --> p + c14  Z=7 N=7 Noff=5 index=10 serialIndex=10 Active=false
+RObject[7][2][11]   n + n14 --> p + c14  Z=7 N=7 Noff=5 index=11 serialIndex=11 Active=false
+RObject[7][2][12]   n + n14 --> d + c13  Z=7 N=7 Noff=5 index=12 serialIndex=12 Active=false
+RObject[7][2][13]   n + n14 --> he4 + b11  Z=7 N=7 Noff=5 index=13 serialIndex=13 Active=false
+RObject[7][2][14]   n + n14 --> he4 + b11  Z=7 N=7 Noff=5 index=14 serialIndex=14 Active=false
+RObject[7][2][15]   n + n14 --> he4 + b11  Z=7 N=7 Noff=5 index=15 serialIndex=15 Active=false
+RObject[7][2][16]   n + n14 --> he4 + b11  Z=7 N=7 Noff=5 index=16 serialIndex=16 Active=false
+RObject[7][2][17]   n + n14 --> he4 + b11  Z=7 N=7 Noff=5 index=17 serialIndex=17 Active=false
+RObject[7][2][18]   p + n14 --> n + o14  Z=7 N=7 Noff=5 index=18 serialIndex=18 Active=false
+RObject[7][2][19]   p + n14 --> he4 + c11  Z=7 N=7 Noff=5 index=19 serialIndex=19 Active=false
+RObject[7][2][20]   he4 + n14 --> n + f17  Z=7 N=7 Noff=5 index=20 serialIndex=20 Active=false
+RObject[7][2][21]   he4 + n14 --> n + f17  Z=7 N=7 Noff=5 index=21 serialIndex=21 Active=false
+RObject[7][2][22]   he4 + n14 --> p + o17  Z=7 N=7 Noff=5 index=22 serialIndex=22 Active=false
+RObject[7][2][23]   he4 + n14 --> p + o17  Z=7 N=7 Noff=5 index=23 serialIndex=23 Active=false
+RObject[7][2][24]   he4 + n14 --> p + o17  Z=7 N=7 Noff=5 index=24 serialIndex=24 Active=false
+RObject[7][3][0]   n15 --> n + n14  Z=7 N=8 Noff=5 index=0 serialIndex=0 Active=false
+RObject[7][3][1]   n15 --> p + c14  Z=7 N=8 Noff=5 index=1 serialIndex=1 Active=false
+RObject[7][3][2]   n15 --> p + c14  Z=7 N=8 Noff=5 index=2 serialIndex=2 Active=false
+RObject[7][3][3]   n + n15 --> n16  Z=7 N=8 Noff=5 index=3 serialIndex=3 Active=false
+RObject[7][3][4]   p + n15 --> o16  Z=7 N=8 Noff=5 index=4 serialIndex=4 Active=false
+RObject[7][3][5]   p + n15 --> o16  Z=7 N=8 Noff=5 index=5 serialIndex=5 Active=false
+RObject[7][3][6]   he4 + n15 --> f19  Z=7 N=8 Noff=5 index=6 serialIndex=6 Active=false
+RObject[7][3][7]   he4 + n15 --> f19  Z=7 N=8 Noff=5 index=7 serialIndex=7 Active=false
+RObject[7][3][8]   he4 + n15 --> f19  Z=7 N=8 Noff=5 index=8 serialIndex=8 Active=false
+RObject[7][3][9]   n + n15 --> d + c14  Z=7 N=8 Noff=5 index=9 serialIndex=10 Active=false
+RObject[7][3][10]   p + n15 --> n + o15  Z=7 N=8 Noff=5 index=10 serialIndex=12 Active=false
+RObject[7][3][11]   p + n15 --> he4 + c12  Z=7 N=8 Noff=5 index=11 serialIndex=13 Active=false
+RObject[7][3][12]   p + n15 --> he4 + c12  Z=7 N=8 Noff=5 index=12 serialIndex=14 Active=false
+RObject[7][3][13]   he4 + n15 --> n + f18  Z=7 N=8 Noff=5 index=13 serialIndex=15 Active=false
+RObject[7][3][14]   he4 + n15 --> p + o18  Z=7 N=8 Noff=5 index=14 serialIndex=16 Active=false
+RObject[7][3][15]   he4 + n15 --> p + o18  Z=7 N=8 Noff=5 index=15 serialIndex=17 Active=false
+RObject[7][3][16]   he4 + n15 --> p + o18  Z=7 N=8 Noff=5 index=16 serialIndex=18 Active=false
+RObject[7][4][0]   n16 --> o16 + e + nubar  Z=7 N=9 Noff=5 index=0 serialIndex=0 Active=false
+RObject[7][4][1]   n16 --> n + n15  Z=7 N=9 Noff=5 index=1 serialIndex=1 Active=false
+RObject[7][4][2]   p + n16 --> n + o16  Z=7 N=9 Noff=5 index=2 serialIndex=4 Active=false
+RObject[7][4][3]   p + n16 --> he4 + c13  Z=7 N=9 Noff=5 index=3 serialIndex=5 Active=false
+RObject[7][4][4]   he4 + n16 --> n + f19  Z=7 N=9 Noff=5 index=4 serialIndex=6 Active=false
+RObject[8][0][0]   o14 --> n14 + e+ + nu  Z=8 N=6 Noff=6 index=0 serialIndex=0 Active=false
+RObject[8][0][1]   o14 --> p + n13  Z=8 N=6 Noff=6 index=1 serialIndex=1 Active=false
+RObject[8][0][2]   o14 --> p + n13  Z=8 N=6 Noff=6 index=2 serialIndex=2 Active=false
+RObject[8][0][3]   he4 + o14 --> ne18  Z=8 N=6 Noff=6 index=3 serialIndex=3 Active=false
+RObject[8][0][4]   he4 + o14 --> ne18  Z=8 N=6 Noff=6 index=4 serialIndex=4 Active=false
+RObject[8][0][5]   he4 + o14 --> ne18  Z=8 N=6 Noff=6 index=5 serialIndex=5 Active=false
+RObject[8][0][6]   n + o14 --> p + n14  Z=8 N=6 Noff=6 index=6 serialIndex=6 Active=false
+RObject[8][0][7]   he4 + o14 --> p + f17  Z=8 N=6 Noff=6 index=7 serialIndex=8 Active=false
+RObject[8][0][8]   he4 + o14 --> p + f17  Z=8 N=6 Noff=6 index=8 serialIndex=9 Active=false
+RObject[8][0][9]   he4 + o14 --> p + f17  Z=8 N=6 Noff=6 index=9 serialIndex=10 Active=false
+RObject[8][1][0]   o15 --> n15 + e+ + nu  Z=8 N=7 Noff=6 index=0 serialIndex=0 Active=false
+RObject[8][1][1]   o15 --> p + n14  Z=8 N=7 Noff=6 index=1 serialIndex=1 Active=false
+RObject[8][1][2]   o15 --> p + n14  Z=8 N=7 Noff=6 index=2 serialIndex=2 Active=false
+RObject[8][1][3]   he4 + o15 --> ne19  Z=8 N=7 Noff=6 index=3 serialIndex=3 Active=false
+RObject[8][1][4]   he4 + o15 --> ne19  Z=8 N=7 Noff=6 index=4 serialIndex=4 Active=false
+RObject[8][1][5]   n + o15 --> p + n15  Z=8 N=7 Noff=6 index=5 serialIndex=5 Active=false
+RObject[8][1][6]   n + o15 --> he4 + c12  Z=8 N=7 Noff=6 index=6 serialIndex=6 Active=false
+RObject[8][1][7]   p + o15 --> he4 + n12  Z=8 N=7 Noff=6 index=7 serialIndex=7 Active=false
+RObject[8][1][8]   he4 + o15 --> n + ne18  Z=8 N=7 Noff=6 index=8 serialIndex=8 Active=false
+RObject[8][1][9]   he4 + o15 --> p + f18  Z=8 N=7 Noff=6 index=9 serialIndex=9 Active=false
+RObject[8][1][10]   he4 + o15 --> p + f18  Z=8 N=7 Noff=6 index=10 serialIndex=10 Active=false
+RObject[8][2][0]   o16 --> p + n15  Z=8 N=8 Noff=6 index=0 serialIndex=0 Active=false
+RObject[8][2][1]   o16 --> p + n15  Z=8 N=8 Noff=6 index=1 serialIndex=1 Active=false
+RObject[8][2][2]   o16 --> he4 + c12  Z=8 N=8 Noff=6 index=2 serialIndex=2 Active=false
+RObject[8][2][3]   o16 --> he4 + c12  Z=8 N=8 Noff=6 index=3 serialIndex=3 Active=false
+RObject[8][2][4]   n + o16 --> o17  Z=8 N=8 Noff=6 index=4 serialIndex=4 Active=false
+RObject[8][2][5]   p + o16 --> f17  Z=8 N=8 Noff=6 index=5 serialIndex=5 Active=false
+RObject[8][2][6]   he4 + o16 --> ne20  Z=8 N=8 Noff=6 index=6 serialIndex=6 Active=false
+RObject[8][2][7]   he4 + o16 --> ne20  Z=8 N=8 Noff=6 index=7 serialIndex=7 Active=false
+RObject[8][2][8]   n + o16 --> p + n16  Z=8 N=8 Noff=6 index=8 serialIndex=8 Active=false
+RObject[8][2][9]   n + o16 --> he4 + c13  Z=8 N=8 Noff=6 index=9 serialIndex=9 Active=false
+RObject[8][2][10]   n + o16 --> he4 + c13  Z=8 N=8 Noff=6 index=10 serialIndex=10 Active=false
+RObject[8][2][11]   n + o16 --> he4 + c13  Z=8 N=8 Noff=6 index=11 serialIndex=11 Active=false
+RObject[8][2][12]   p + o16 --> he4 + n13  Z=8 N=8 Noff=6 index=12 serialIndex=12 Active=false
+RObject[8][2][13]   he4 + o16 --> n + ne19  Z=8 N=8 Noff=6 index=13 serialIndex=13 Active=false
+RObject[8][2][14]   he4 + o16 --> p + f19  Z=8 N=8 Noff=6 index=14 serialIndex=14 Active=false
+RObject[8][2][15]   he4 + o16 --> p + f19  Z=8 N=8 Noff=6 index=15 serialIndex=15 Active=false
+RObject[8][2][16]   c12 + o16 --> n + si27  Z=8 N=8 Noff=6 index=16 serialIndex=16 Active=false
+RObject[8][2][17]   c12 + o16 --> p + al27  Z=8 N=8 Noff=6 index=17 serialIndex=17 Active=false
+RObject[8][2][18]   c12 + o16 --> he4 + mg24  Z=8 N=8 Noff=6 index=18 serialIndex=18 Active=false
+RObject[8][2][19]   o16 + o16 --> n + s31  Z=8 N=8 Noff=6 index=19 serialIndex=19 Active=false
+RObject[8][2][20]   o16 + o16 --> p + p31  Z=8 N=8 Noff=6 index=20 serialIndex=20 Active=false
+RObject[8][2][21]   o16 + o16 --> he4 + si28  Z=8 N=8 Noff=6 index=21 serialIndex=21 Active=false
+RObject[8][3][0]   o17 --> n + o16  Z=8 N=9 Noff=6 index=0 serialIndex=0 Active=false
+RObject[8][3][1]   n + o17 --> o18  Z=8 N=9 Noff=6 index=1 serialIndex=1 Active=false
+RObject[8][3][2]   n + o17 --> o18  Z=8 N=9 Noff=6 index=2 serialIndex=2 Active=false
+RObject[8][3][3]   p + o17 --> f18  Z=8 N=9 Noff=6 index=3 serialIndex=3 Active=false
+RObject[8][3][4]   p + o17 --> f18  Z=8 N=9 Noff=6 index=4 serialIndex=4 Active=false
+RObject[8][3][5]   p + o17 --> f18  Z=8 N=9 Noff=6 index=5 serialIndex=5 Active=false
+RObject[8][3][6]   he4 + o17 --> ne21  Z=8 N=9 Noff=6 index=6 serialIndex=6 Active=false
+RObject[8][3][7]   p + o17 --> n + f17  Z=8 N=9 Noff=6 index=7 serialIndex=8 Active=false
+RObject[8][3][8]   p + o17 --> he4 + n14  Z=8 N=9 Noff=6 index=8 serialIndex=9 Active=false
+RObject[8][3][9]   p + o17 --> he4 + n14  Z=8 N=9 Noff=6 index=9 serialIndex=10 Active=false
+RObject[8][3][10]   p + o17 --> he4 + n14  Z=8 N=9 Noff=6 index=10 serialIndex=11 Active=false
+RObject[8][3][11]   he4 + o17 --> n + ne20  Z=8 N=9 Noff=6 index=11 serialIndex=12 Active=false
+RObject[8][3][12]   he4 + o17 --> p + f20  Z=8 N=9 Noff=6 index=12 serialIndex=13 Active=false
+RObject[8][4][0]   o18 --> n + o17  Z=8 N=10 Noff=6 index=0 serialIndex=0 Active=false
+RObject[8][4][1]   o18 --> n + o17  Z=8 N=10 Noff=6 index=1 serialIndex=1 Active=false
+RObject[8][4][2]   o18 --> he4 + c14  Z=8 N=10 Noff=6 index=2 serialIndex=2 Active=false
+RObject[8][4][3]   o18 --> he4 + c14  Z=8 N=10 Noff=6 index=3 serialIndex=3 Active=false
+RObject[8][4][4]   o18 --> he4 + c14  Z=8 N=10 Noff=6 index=4 serialIndex=4 Active=false
+RObject[8][4][5]   p + o18 --> f19  Z=8 N=10 Noff=6 index=5 serialIndex=9 Active=false
+RObject[8][4][6]   p + o18 --> f19  Z=8 N=10 Noff=6 index=6 serialIndex=10 Active=false
+RObject[8][4][7]   p + o18 --> f19  Z=8 N=10 Noff=6 index=7 serialIndex=11 Active=false
+RObject[8][4][8]   he4 + o18 --> ne22  Z=8 N=10 Noff=6 index=8 serialIndex=12 Active=false
+RObject[8][4][9]   he4 + o18 --> ne22  Z=8 N=10 Noff=6 index=9 serialIndex=13 Active=false
+RObject[8][4][10]   he4 + o18 --> ne22  Z=8 N=10 Noff=6 index=10 serialIndex=14 Active=false
+RObject[8][4][11]   p + o18 --> n + f18  Z=8 N=10 Noff=6 index=11 serialIndex=16 Active=false
+RObject[8][4][12]   p + o18 --> he4 + n15  Z=8 N=10 Noff=6 index=12 serialIndex=17 Active=false
+RObject[8][4][13]   p + o18 --> he4 + n15  Z=8 N=10 Noff=6 index=13 serialIndex=18 Active=false
+RObject[8][4][14]   p + o18 --> he4 + n15  Z=8 N=10 Noff=6 index=14 serialIndex=19 Active=false
+RObject[8][4][15]   he4 + o18 --> n + ne21  Z=8 N=10 Noff=6 index=15 serialIndex=20 Active=false
+RObject[9][0][0]   p + f16 --> n + ne16  Z=9 N=7 Noff=7 index=0 serialIndex=0 Active=false
+RObject[9][0][1]   he4 + f16 --> n + na19  Z=9 N=7 Noff=7 index=1 serialIndex=1 Active=false
+RObject[9][1][0]   f17 --> o17 + e+ + nu  Z=9 N=8 Noff=7 index=0 serialIndex=0 Active=false
+RObject[9][1][1]   f17 --> p + o16  Z=9 N=8 Noff=7 index=1 serialIndex=1 Active=false
+RObject[9][1][2]   n + f17 --> f18  Z=9 N=8 Noff=7 index=2 serialIndex=2 Active=false
+RObject[9][1][3]   p + f17 --> ne18  Z=9 N=8 Noff=7 index=3 serialIndex=3 Active=false
+RObject[9][1][4]   p + f17 --> ne18  Z=9 N=8 Noff=7 index=4 serialIndex=4 Active=false
+RObject[9][1][5]   n + f17 --> p + o17  Z=9 N=8 Noff=7 index=5 serialIndex=5 Active=false
+RObject[9][1][6]   n + f17 --> he4 + n14  Z=9 N=8 Noff=7 index=6 serialIndex=6 Active=false
+RObject[9][1][7]   n + f17 --> he4 + n14  Z=9 N=8 Noff=7 index=7 serialIndex=7 Active=false
+RObject[9][1][8]   p + f17 --> he4 + o14  Z=9 N=8 Noff=7 index=8 serialIndex=9 Active=false
+RObject[9][1][9]   p + f17 --> he4 + o14  Z=9 N=8 Noff=7 index=9 serialIndex=10 Active=false
+RObject[9][1][10]   p + f17 --> he4 + o14  Z=9 N=8 Noff=7 index=10 serialIndex=11 Active=false
+RObject[9][1][11]   he4 + f17 --> n + na20  Z=9 N=8 Noff=7 index=11 serialIndex=12 Active=false
+RObject[9][1][12]   he4 + f17 --> p + ne20  Z=9 N=8 Noff=7 index=12 serialIndex=13 Active=false
+RObject[9][2][0]   f18 --> o18 + e+ + nu  Z=9 N=9 Noff=7 index=0 serialIndex=0 Active=false
+RObject[9][2][1]   f18 --> n + f17  Z=9 N=9 Noff=7 index=1 serialIndex=1 Active=false
+RObject[9][2][2]   f18 --> p + o17  Z=9 N=9 Noff=7 index=2 serialIndex=2 Active=false
+RObject[9][2][3]   f18 --> p + o17  Z=9 N=9 Noff=7 index=3 serialIndex=3 Active=false
+RObject[9][2][4]   f18 --> p + o17  Z=9 N=9 Noff=7 index=4 serialIndex=4 Active=false
+RObject[9][2][5]   f18 --> he4 + n14  Z=9 N=9 Noff=7 index=5 serialIndex=5 Active=false
+RObject[9][2][6]   f18 --> he4 + n14  Z=9 N=9 Noff=7 index=6 serialIndex=6 Active=false
+RObject[9][2][7]   f18 --> he4 + n14  Z=9 N=9 Noff=7 index=7 serialIndex=7 Active=false
+RObject[9][2][8]   n + f18 --> f19  Z=9 N=9 Noff=7 index=8 serialIndex=8 Active=false
+RObject[9][2][9]   p + f18 --> ne19  Z=9 N=9 Noff=7 index=9 serialIndex=9 Active=false
+RObject[9][2][10]   p + f18 --> ne19  Z=9 N=9 Noff=7 index=10 serialIndex=10 Active=false
+RObject[9][2][11]   n + f18 --> p + o18  Z=9 N=9 Noff=7 index=11 serialIndex=11 Active=false
+RObject[9][2][12]   n + f18 --> he4 + n15  Z=9 N=9 Noff=7 index=12 serialIndex=12 Active=false
+RObject[9][2][13]   p + f18 --> n + ne18  Z=9 N=9 Noff=7 index=13 serialIndex=13 Active=false
+RObject[9][2][14]   p + f18 --> he4 + o15  Z=9 N=9 Noff=7 index=14 serialIndex=14 Active=false
+RObject[9][2][15]   p + f18 --> he4 + o15  Z=9 N=9 Noff=7 index=15 serialIndex=15 Active=false
+RObject[9][2][16]   he4 + f18 --> n + na21  Z=9 N=9 Noff=7 index=16 serialIndex=16 Active=false
+RObject[9][3][0]   f19 --> n + f18  Z=9 N=10 Noff=7 index=0 serialIndex=0 Active=false
+RObject[9][3][1]   f19 --> p + o18  Z=9 N=10 Noff=7 index=1 serialIndex=1 Active=false
+RObject[9][3][2]   f19 --> p + o18  Z=9 N=10 Noff=7 index=2 serialIndex=2 Active=false
+RObject[9][3][3]   f19 --> p + o18  Z=9 N=10 Noff=7 index=3 serialIndex=3 Active=false
+RObject[9][3][4]   f19 --> he4 + n15  Z=9 N=10 Noff=7 index=4 serialIndex=4 Active=false
+RObject[9][3][5]   f19 --> he4 + n15  Z=9 N=10 Noff=7 index=5 serialIndex=5 Active=false
+RObject[9][3][6]   f19 --> he4 + n15  Z=9 N=10 Noff=7 index=6 serialIndex=6 Active=false
+RObject[9][3][7]   n + f19 --> f20  Z=9 N=10 Noff=7 index=7 serialIndex=7 Active=false
+RObject[9][3][8]   p + f19 --> ne20  Z=9 N=10 Noff=7 index=8 serialIndex=8 Active=false
+RObject[9][3][9]   p + f19 --> ne20  Z=9 N=10 Noff=7 index=9 serialIndex=9 Active=false
+RObject[9][3][10]   n + f19 --> he4 + n16  Z=9 N=10 Noff=7 index=10 serialIndex=11 Active=false
+RObject[9][3][11]   p + f19 --> n + ne19  Z=9 N=10 Noff=7 index=11 serialIndex=12 Active=false
+RObject[9][3][12]   p + f19 --> he4 + o16  Z=9 N=10 Noff=7 index=12 serialIndex=13 Active=false
+RObject[9][3][13]   p + f19 --> he4 + o16  Z=9 N=10 Noff=7 index=13 serialIndex=14 Active=false
+RObject[9][3][14]   he4 + f19 --> n + na22  Z=9 N=10 Noff=7 index=14 serialIndex=15 Active=false
+RObject[9][3][15]   he4 + f19 --> p + ne22  Z=9 N=10 Noff=7 index=15 serialIndex=16 Active=false
+RObject[9][3][16]   he4 + f19 --> p + ne22  Z=9 N=10 Noff=7 index=16 serialIndex=17 Active=false
+RObject[9][4][0]   f20 --> ne20 + e + nubar  Z=9 N=11 Noff=7 index=0 serialIndex=0 Active=false
+RObject[9][4][1]   f20 --> n + f19  Z=9 N=11 Noff=7 index=1 serialIndex=1 Active=false
+RObject[9][4][2]   p + f20 --> he4 + o17  Z=9 N=11 Noff=7 index=2 serialIndex=3 Active=false
+RObject[10][0][0]   n + ne16 --> p + f16  Z=10 N=6 Noff=6 index=0 serialIndex=2 Active=false
+RObject[10][2][0]   ne18 --> f18 + e+ + nu  Z=10 N=8 Noff=6 index=0 serialIndex=0 Active=false
+RObject[10][2][1]   ne18 --> p + f17  Z=10 N=8 Noff=6 index=1 serialIndex=2 Active=false
+RObject[10][2][2]   ne18 --> p + f17  Z=10 N=8 Noff=6 index=2 serialIndex=3 Active=false
+RObject[10][2][3]   ne18 --> he4 + o14  Z=10 N=8 Noff=6 index=3 serialIndex=4 Active=false
+RObject[10][2][4]   ne18 --> he4 + o14  Z=10 N=8 Noff=6 index=4 serialIndex=5 Active=false
+RObject[10][2][5]   ne18 --> he4 + o14  Z=10 N=8 Noff=6 index=5 serialIndex=6 Active=false
+RObject[10][2][6]   n + ne18 --> ne19  Z=10 N=8 Noff=6 index=6 serialIndex=7 Active=false
+RObject[10][2][7]   p + ne18 --> na19  Z=10 N=8 Noff=6 index=7 serialIndex=8 Active=false
+RObject[10][2][8]   he4 + ne18 --> mg22  Z=10 N=8 Noff=6 index=8 serialIndex=9 Active=false
+RObject[10][2][9]   n + ne18 --> p + f18  Z=10 N=8 Noff=6 index=9 serialIndex=10 Active=false
+RObject[10][2][10]   n + ne18 --> he4 + o15  Z=10 N=8 Noff=6 index=10 serialIndex=11 Active=false
+RObject[10][2][11]   he4 + ne18 --> n + mg21  Z=10 N=8 Noff=6 index=11 serialIndex=13 Active=false
+RObject[10][2][12]   he4 + ne18 --> p + na21  Z=10 N=8 Noff=6 index=12 serialIndex=14 Active=false
+RObject[10][3][0]   ne19 --> f19 + e+ + nu  Z=10 N=9 Noff=6 index=0 serialIndex=0 Active=false
+RObject[10][3][1]   ne19 --> n + ne18  Z=10 N=9 Noff=6 index=1 serialIndex=1 Active=false
+RObject[10][3][2]   ne19 --> p + f18  Z=10 N=9 Noff=6 index=2 serialIndex=2 Active=false
+RObject[10][3][3]   ne19 --> p + f18  Z=10 N=9 Noff=6 index=3 serialIndex=3 Active=false
+RObject[10][3][4]   ne19 --> he4 + o15  Z=10 N=9 Noff=6 index=4 serialIndex=4 Active=false
+RObject[10][3][5]   ne19 --> he4 + o15  Z=10 N=9 Noff=6 index=5 serialIndex=5 Active=false
+RObject[10][3][6]   n + ne19 --> ne20  Z=10 N=9 Noff=6 index=6 serialIndex=6 Active=false
+RObject[10][3][7]   p + ne19 --> na20  Z=10 N=9 Noff=6 index=7 serialIndex=7 Active=false
+RObject[10][3][8]   p + ne19 --> na20  Z=10 N=9 Noff=6 index=8 serialIndex=8 Active=false
+RObject[10][3][9]   he4 + ne19 --> mg23  Z=10 N=9 Noff=6 index=9 serialIndex=9 Active=false
+RObject[10][3][10]   n + ne19 --> p + f19  Z=10 N=9 Noff=6 index=10 serialIndex=10 Active=false
+RObject[10][3][11]   n + ne19 --> he4 + o16  Z=10 N=9 Noff=6 index=11 serialIndex=11 Active=false
+RObject[10][3][12]   p + ne19 --> n + na19  Z=10 N=9 Noff=6 index=12 serialIndex=12 Active=false
+RObject[10][3][13]   he4 + ne19 --> n + mg22  Z=10 N=9 Noff=6 index=13 serialIndex=13 Active=false
+RObject[10][3][14]   he4 + ne19 --> p + na22  Z=10 N=9 Noff=6 index=14 serialIndex=14 Active=false
+RObject[10][4][0]   ne20 --> n + ne19  Z=10 N=10 Noff=6 index=0 serialIndex=0 Active=false
+RObject[10][4][1]   ne20 --> p + f19  Z=10 N=10 Noff=6 index=1 serialIndex=1 Active=false
+RObject[10][4][2]   ne20 --> p + f19  Z=10 N=10 Noff=6 index=2 serialIndex=2 Active=false
+RObject[10][4][3]   ne20 --> he4 + o16  Z=10 N=10 Noff=6 index=3 serialIndex=3 Active=false
+RObject[10][4][4]   ne20 --> he4 + o16  Z=10 N=10 Noff=6 index=4 serialIndex=4 Active=false
+RObject[10][4][5]   n + ne20 --> ne21  Z=10 N=10 Noff=6 index=5 serialIndex=5 Active=false
+RObject[10][4][6]   p + ne20 --> na21  Z=10 N=10 Noff=6 index=6 serialIndex=6 Active=false
+RObject[10][4][7]   p + ne20 --> na21  Z=10 N=10 Noff=6 index=7 serialIndex=7 Active=false
+RObject[10][4][8]   p + ne20 --> na21  Z=10 N=10 Noff=6 index=8 serialIndex=8 Active=false
+RObject[10][4][9]   he4 + ne20 --> mg24  Z=10 N=10 Noff=6 index=9 serialIndex=9 Active=false
+RObject[10][4][10]   he4 + ne20 --> mg24  Z=10 N=10 Noff=6 index=10 serialIndex=10 Active=false
+RObject[10][4][11]   n + ne20 --> he4 + o17  Z=10 N=10 Noff=6 index=11 serialIndex=11 Active=false
+RObject[10][4][12]   p + ne20 --> n + na20  Z=10 N=10 Noff=6 index=12 serialIndex=12 Active=false
+RObject[10][4][13]   p + ne20 --> he4 + f17  Z=10 N=10 Noff=6 index=13 serialIndex=13 Active=false
+RObject[10][4][14]   he4 + ne20 --> n + mg23  Z=10 N=10 Noff=6 index=14 serialIndex=14 Active=false
+RObject[10][4][15]   he4 + ne20 --> p + na23  Z=10 N=10 Noff=6 index=15 serialIndex=15 Active=false
+RObject[10][4][16]   he4 + ne20 --> p + na23  Z=10 N=10 Noff=6 index=16 serialIndex=16 Active=false
+RObject[10][4][17]   he4 + ne20 --> p + na23  Z=10 N=10 Noff=6 index=17 serialIndex=17 Active=false
+RObject[10][4][18]   he4 + ne20 --> c12 + c12  Z=10 N=10 Noff=6 index=18 serialIndex=18 Active=false
+RObject[10][4][19]   c12 + ne20 --> n + s31  Z=10 N=10 Noff=6 index=19 serialIndex=19 Active=false
+RObject[10][4][20]   c12 + ne20 --> p + p31  Z=10 N=10 Noff=6 index=20 serialIndex=20 Active=false
+RObject[10][4][21]   c12 + ne20 --> he4 + si28  Z=10 N=10 Noff=6 index=21 serialIndex=21 Active=false
+RObject[10][5][0]   ne21 --> n + ne20  Z=10 N=11 Noff=6 index=0 serialIndex=0 Active=false
+RObject[10][5][1]   ne21 --> he4 + o17  Z=10 N=11 Noff=6 index=1 serialIndex=1 Active=false
+RObject[10][5][2]   n + ne21 --> ne22  Z=10 N=11 Noff=6 index=2 serialIndex=2 Active=false
+RObject[10][5][3]   p + ne21 --> na22  Z=10 N=11 Noff=6 index=3 serialIndex=3 Active=false
+RObject[10][5][4]   p + ne21 --> na22  Z=10 N=11 Noff=6 index=4 serialIndex=4 Active=false
+RObject[10][5][5]   p + ne21 --> na22  Z=10 N=11 Noff=6 index=5 serialIndex=5 Active=false
+RObject[10][5][6]   he4 + ne21 --> mg25  Z=10 N=11 Noff=6 index=6 serialIndex=6 Active=false
+RObject[10][5][7]   he4 + ne21 --> mg25  Z=10 N=11 Noff=6 index=7 serialIndex=7 Active=false
+RObject[10][5][8]   n + ne21 --> he4 + o18  Z=10 N=11 Noff=6 index=8 serialIndex=8 Active=false
+RObject[10][5][9]   p + ne21 --> n + na21  Z=10 N=11 Noff=6 index=9 serialIndex=9 Active=false
+RObject[10][5][10]   he4 + ne21 --> n + mg24  Z=10 N=11 Noff=6 index=10 serialIndex=10 Active=false
+RObject[10][5][11]   he4 + ne21 --> n + mg24  Z=10 N=11 Noff=6 index=11 serialIndex=11 Active=false
+RObject[10][5][12]   he4 + ne21 --> p + na24  Z=10 N=11 Noff=6 index=12 serialIndex=12 Active=false
+RObject[10][6][0]   ne22 --> n + ne21  Z=10 N=12 Noff=6 index=0 serialIndex=0 Active=false
+RObject[10][6][1]   ne22 --> he4 + o18  Z=10 N=12 Noff=6 index=1 serialIndex=1 Active=false
+RObject[10][6][2]   ne22 --> he4 + o18  Z=10 N=12 Noff=6 index=2 serialIndex=2 Active=true
+RObject[10][6][3]   ne22 --> he4 + o18  Z=10 N=12 Noff=6 index=3 serialIndex=3 Active=false
+RObject[10][6][4]   n + ne22 --> ne23  Z=10 N=12 Noff=6 index=4 serialIndex=4 Active=false
+RObject[10][6][5]   n + ne22 --> ne23  Z=10 N=12 Noff=6 index=5 serialIndex=5 Active=false
+RObject[10][6][6]   p + ne22 --> na23  Z=10 N=12 Noff=6 index=6 serialIndex=6 Active=false
+RObject[10][6][7]   p + ne22 --> na23  Z=10 N=12 Noff=6 index=7 serialIndex=7 Active=false
+RObject[10][6][8]   p + ne22 --> na23  Z=10 N=12 Noff=6 index=8 serialIndex=8 Active=false
+RObject[10][6][9]   he4 + ne22 --> mg26  Z=10 N=12 Noff=6 index=9 serialIndex=9 Active=false
+RObject[10][6][10]   p + ne22 --> n + na22  Z=10 N=12 Noff=6 index=10 serialIndex=11 Active=false
+RObject[10][6][11]   p + ne22 --> he4 + f19  Z=10 N=12 Noff=6 index=11 serialIndex=12 Active=false
+RObject[10][6][12]   p + ne22 --> he4 + f19  Z=10 N=12 Noff=6 index=12 serialIndex=13 Active=false
+RObject[10][6][13]   he4 + ne22 --> n + mg25  Z=10 N=12 Noff=6 index=13 serialIndex=14 Active=false
+RObject[10][7][0]   ne23 --> na23 + e + nubar  Z=10 N=13 Noff=6 index=0 serialIndex=0 Active=false
+RObject[10][7][1]   ne23 --> n + ne22  Z=10 N=13 Noff=6 index=1 serialIndex=1 Active=false
+RObject[10][7][2]   ne23 --> n + ne22  Z=10 N=13 Noff=6 index=2 serialIndex=2 Active=false
+RObject[10][7][3]   p + ne23 --> na24  Z=10 N=13 Noff=6 index=3 serialIndex=4 Active=false
+RObject[10][7][4]   he4 + ne23 --> mg27  Z=10 N=13 Noff=6 index=4 serialIndex=5 Active=false
+RObject[10][7][5]   p + ne23 --> n + na23  Z=10 N=13 Noff=6 index=5 serialIndex=6 Active=false
+RObject[10][7][6]   he4 + ne23 --> n + mg26  Z=10 N=13 Noff=6 index=6 serialIndex=7 Active=false
+RObject[11][0][0]   n + na18 --> na19  Z=11 N=7 Noff=7 index=0 serialIndex=2 Active=false
+RObject[11][0][1]   he4 + na18 --> al22  Z=11 N=7 Noff=7 index=1 serialIndex=3 Active=false
+RObject[11][0][2]   n + na18 --> p + ne18  Z=11 N=7 Noff=7 index=2 serialIndex=4 Active=false
+RObject[11][0][3]   he4 + na18 --> p + mg21  Z=11 N=7 Noff=7 index=3 serialIndex=6 Active=false
+RObject[11][1][0]   na19 --> n + na18  Z=11 N=8 Noff=7 index=0 serialIndex=0 Active=false
+RObject[11][1][1]   na19 --> p + ne18  Z=11 N=8 Noff=7 index=1 serialIndex=1 Active=false
+RObject[11][1][2]   n + na19 --> na20  Z=11 N=8 Noff=7 index=2 serialIndex=2 Active=false
+RObject[11][1][3]   p + na19 --> mg20  Z=11 N=8 Noff=7 index=3 serialIndex=3 Active=false
+RObject[11][1][4]   he4 + na19 --> al23  Z=11 N=8 Noff=7 index=4 serialIndex=4 Active=false
+RObject[11][1][5]   n + na19 --> p + ne19  Z=11 N=8 Noff=7 index=5 serialIndex=5 Active=false
+RObject[11][1][6]   n + na19 --> he4 + f16  Z=11 N=8 Noff=7 index=6 serialIndex=6 Active=false
+RObject[11][1][7]   p + na19 --> n + mg19  Z=11 N=8 Noff=7 index=7 serialIndex=7 Active=false
+RObject[11][1][8]   he4 + na19 --> n + al22  Z=11 N=8 Noff=7 index=8 serialIndex=8 Active=false
+RObject[11][1][9]   he4 + na19 --> p + mg22  Z=11 N=8 Noff=7 index=9 serialIndex=9 Active=false
+RObject[11][2][0]   na20 --> ne20 + e+ + nu  Z=11 N=9 Noff=7 index=0 serialIndex=0 Active=false
+RObject[11][2][1]   na20 --> p + ne19  Z=11 N=9 Noff=7 index=1 serialIndex=1 Active=false
+RObject[11][2][2]   na20 --> p + ne19  Z=11 N=9 Noff=7 index=2 serialIndex=2 Active=false
+RObject[11][2][3]   na20 --> n + na19  Z=11 N=9 Noff=7 index=3 serialIndex=3 Active=false
+RObject[11][2][4]   n + na20 --> na21  Z=11 N=9 Noff=7 index=4 serialIndex=4 Active=false
+RObject[11][2][5]   p + na20 --> mg21  Z=11 N=9 Noff=7 index=5 serialIndex=5 Active=false
+RObject[11][2][6]   p + na20 --> mg21  Z=11 N=9 Noff=7 index=6 serialIndex=6 Active=false
+RObject[11][2][7]   p + na20 --> mg21  Z=11 N=9 Noff=7 index=7 serialIndex=7 Active=false
+RObject[11][2][8]   p + na20 --> mg21  Z=11 N=9 Noff=7 index=8 serialIndex=8 Active=false
+RObject[11][2][9]   he4 + na20 --> al24  Z=11 N=9 Noff=7 index=9 serialIndex=9 Active=false
+RObject[11][2][10]   n + na20 --> p + ne20  Z=11 N=9 Noff=7 index=10 serialIndex=10 Active=false
+RObject[11][2][11]   n + na20 --> he4 + f17  Z=11 N=9 Noff=7 index=11 serialIndex=11 Active=false
+RObject[11][2][12]   p + na20 --> n + mg20  Z=11 N=9 Noff=7 index=12 serialIndex=12 Active=false
+RObject[11][2][13]   he4 + na20 --> n + al23  Z=11 N=9 Noff=7 index=13 serialIndex=14 Active=false
+RObject[11][2][14]   he4 + na20 --> p + mg23  Z=11 N=9 Noff=7 index=14 serialIndex=15 Active=false
+RObject[11][3][0]   na21 --> ne21 + e+ + nu  Z=11 N=10 Noff=7 index=0 serialIndex=0 Active=false
+RObject[11][3][1]   na21 --> n + na20  Z=11 N=10 Noff=7 index=1 serialIndex=1 Active=false
+RObject[11][3][2]   na21 --> p + ne20  Z=11 N=10 Noff=7 index=2 serialIndex=2 Active=false
+RObject[11][3][3]   na21 --> p + ne20  Z=11 N=10 Noff=7 index=3 serialIndex=3 Active=false
+RObject[11][3][4]   na21 --> p + ne20  Z=11 N=10 Noff=7 index=4 serialIndex=4 Active=false
+RObject[11][3][5]   n + na21 --> na22  Z=11 N=10 Noff=7 index=5 serialIndex=5 Active=false
+RObject[11][3][6]   p + na21 --> mg22  Z=11 N=10 Noff=7 index=6 serialIndex=6 Active=false
+RObject[11][3][7]   p + na21 --> mg22  Z=11 N=10 Noff=7 index=7 serialIndex=7 Active=false
+RObject[11][3][8]   he4 + na21 --> al25  Z=11 N=10 Noff=7 index=8 serialIndex=8 Active=false
+RObject[11][3][9]   n + na21 --> p + ne21  Z=11 N=10 Noff=7 index=9 serialIndex=9 Active=false
+RObject[11][3][10]   n + na21 --> he4 + f18  Z=11 N=10 Noff=7 index=10 serialIndex=10 Active=false
+RObject[11][3][11]   p + na21 --> n + mg21  Z=11 N=10 Noff=7 index=11 serialIndex=11 Active=false
+RObject[11][3][12]   p + na21 --> he4 + ne18  Z=11 N=10 Noff=7 index=12 serialIndex=12 Active=false
+RObject[11][3][13]   he4 + na21 --> n + al24  Z=11 N=10 Noff=7 index=13 serialIndex=13 Active=false
+RObject[11][3][14]   he4 + na21 --> p + mg24  Z=11 N=10 Noff=7 index=14 serialIndex=14 Active=false
+RObject[11][4][0]   na22 --> ne22 + e+ + nu  Z=11 N=11 Noff=7 index=0 serialIndex=0 Active=false
+RObject[11][4][1]   na22 --> n + na21  Z=11 N=11 Noff=7 index=1 serialIndex=1 Active=false
+RObject[11][4][2]   na22 --> p + ne21  Z=11 N=11 Noff=7 index=2 serialIndex=2 Active=false
+RObject[11][4][3]   na22 --> p + ne21  Z=11 N=11 Noff=7 index=3 serialIndex=3 Active=false
+RObject[11][4][4]   na22 --> p + ne21  Z=11 N=11 Noff=7 index=4 serialIndex=4 Active=false
+RObject[11][4][5]   n + na22 --> na23  Z=11 N=11 Noff=7 index=5 serialIndex=5 Active=false
+RObject[11][4][6]   p + na22 --> mg23  Z=11 N=11 Noff=7 index=6 serialIndex=6 Active=false
+RObject[11][4][7]   he4 + na22 --> al26  Z=11 N=11 Noff=7 index=7 serialIndex=7 Active=false
+RObject[11][4][8]   n + na22 --> p + ne22  Z=11 N=11 Noff=7 index=8 serialIndex=9 Active=false
+RObject[11][4][9]   n + na22 --> he4 + f19  Z=11 N=11 Noff=7 index=9 serialIndex=10 Active=false
+RObject[11][4][10]   p + na22 --> n + mg22  Z=11 N=11 Noff=7 index=10 serialIndex=11 Active=false
+RObject[11][4][11]   p + na22 --> he4 + ne19  Z=11 N=11 Noff=7 index=11 serialIndex=12 Active=false
+RObject[11][4][12]   he4 + na22 --> n + al25  Z=11 N=11 Noff=7 index=12 serialIndex=13 Active=false
+RObject[11][4][13]   he4 + na22 --> p + mg25  Z=11 N=11 Noff=7 index=13 serialIndex=14 Active=false
+RObject[11][5][0]   na23 --> n + na22  Z=11 N=12 Noff=7 index=0 serialIndex=0 Active=false
+RObject[11][5][1]   na23 --> p + ne22  Z=11 N=12 Noff=7 index=1 serialIndex=1 Active=false
+RObject[11][5][2]   na23 --> p + ne22  Z=11 N=12 Noff=7 index=2 serialIndex=2 Active=false
+RObject[11][5][3]   na23 --> p + ne22  Z=11 N=12 Noff=7 index=3 serialIndex=3 Active=false
+RObject[11][5][4]   n + na23 --> na24  Z=11 N=12 Noff=7 index=4 serialIndex=4 Active=false
+RObject[11][5][5]   p + na23 --> mg24  Z=11 N=12 Noff=7 index=5 serialIndex=5 Active=false
+RObject[11][5][6]   p + na23 --> mg24  Z=11 N=12 Noff=7 index=6 serialIndex=6 Active=false
+RObject[11][5][7]   he4 + na23 --> al27  Z=11 N=12 Noff=7 index=7 serialIndex=7 Active=false
+RObject[11][5][8]   n + na23 --> p + ne23  Z=11 N=12 Noff=7 index=8 serialIndex=8 Active=false
+RObject[11][5][9]   p + na23 --> n + mg23  Z=11 N=12 Noff=7 index=9 serialIndex=9 Active=false
+RObject[11][5][10]   p + na23 --> he4 + ne20  Z=11 N=12 Noff=7 index=10 serialIndex=10 Active=false
+RObject[11][5][11]   p + na23 --> he4 + ne20  Z=11 N=12 Noff=7 index=11 serialIndex=11 Active=false
+RObject[11][5][12]   p + na23 --> he4 + ne20  Z=11 N=12 Noff=7 index=12 serialIndex=12 Active=false
+RObject[11][5][13]   he4 + na23 --> n + al26  Z=11 N=12 Noff=7 index=13 serialIndex=13 Active=false
+RObject[11][5][14]   he4 + na23 --> p + mg26  Z=11 N=12 Noff=7 index=14 serialIndex=16 Active=false
+RObject[11][6][0]   na24 --> mg24 + e + nubar  Z=11 N=13 Noff=7 index=0 serialIndex=0 Active=false
+RObject[11][6][1]   na24 --> n + na23  Z=11 N=13 Noff=7 index=1 serialIndex=1 Active=false
+RObject[11][6][2]   na24 --> p + ne23  Z=11 N=13 Noff=7 index=2 serialIndex=2 Active=false
+RObject[11][6][3]   p + na24 --> mg25  Z=11 N=13 Noff=7 index=3 serialIndex=4 Active=false
+RObject[11][6][4]   he4 + na24 --> al28  Z=11 N=13 Noff=7 index=4 serialIndex=5 Active=false
+RObject[11][6][5]   p + na24 --> n + mg24  Z=11 N=13 Noff=7 index=5 serialIndex=7 Active=false
+RObject[11][6][6]   p + na24 --> he4 + ne21  Z=11 N=13 Noff=7 index=6 serialIndex=8 Active=false
+RObject[11][6][7]   he4 + na24 --> n + al27  Z=11 N=13 Noff=7 index=7 serialIndex=9 Active=false
+RObject[11][6][8]   he4 + na24 --> p + mg27  Z=11 N=13 Noff=7 index=8 serialIndex=10 Active=false
+RObject[12][0][0]   n + mg19 --> mg20  Z=12 N=7 Noff=7 index=0 serialIndex=1 Active=false
+RObject[12][0][1]   n + mg19 --> p + na19  Z=12 N=7 Noff=7 index=1 serialIndex=3 Active=false
+RObject[12][0][2]   n + mg19 --> he4 + ne16  Z=12 N=7 Noff=7 index=2 serialIndex=4 Active=false
+RObject[12][0][3]   he4 + mg19 --> p + al22  Z=12 N=7 Noff=7 index=3 serialIndex=6 Active=false
+RObject[12][1][0]   mg20 --> na20 + e+ + nu  Z=12 N=8 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][1][1]   mg20 --> n + mg19  Z=12 N=8 Noff=7 index=1 serialIndex=1 Active=false
+RObject[12][1][2]   mg20 --> he4 + ne16  Z=12 N=8 Noff=7 index=2 serialIndex=2 Active=false
+RObject[12][1][3]   mg20 --> p + na19  Z=12 N=8 Noff=7 index=3 serialIndex=3 Active=false
+RObject[12][1][4]   n + mg20 --> mg21  Z=12 N=8 Noff=7 index=4 serialIndex=4 Active=false
+RObject[12][1][5]   he4 + mg20 --> si24  Z=12 N=8 Noff=7 index=5 serialIndex=5 Active=false
+RObject[12][1][6]   n + mg20 --> p + na20  Z=12 N=8 Noff=7 index=6 serialIndex=6 Active=false
+RObject[12][1][7]   he4 + mg20 --> p + al23  Z=12 N=8 Noff=7 index=7 serialIndex=9 Active=false
+RObject[12][2][0]   mg21 --> na21 + e+ + nu  Z=12 N=9 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][2][1]   mg21 --> n + mg20  Z=12 N=9 Noff=7 index=1 serialIndex=1 Active=false
+RObject[12][2][2]   mg21 --> p + na20  Z=12 N=9 Noff=7 index=2 serialIndex=2 Active=false
+RObject[12][2][3]   mg21 --> p + na20  Z=12 N=9 Noff=7 index=3 serialIndex=3 Active=false
+RObject[12][2][4]   mg21 --> p + na20  Z=12 N=9 Noff=7 index=4 serialIndex=4 Active=false
+RObject[12][2][5]   mg21 --> p + na20  Z=12 N=9 Noff=7 index=5 serialIndex=5 Active=false
+RObject[12][2][6]   n + mg21 --> mg22  Z=12 N=9 Noff=7 index=6 serialIndex=7 Active=false
+RObject[12][2][7]   p + mg21 --> al22  Z=12 N=9 Noff=7 index=7 serialIndex=8 Active=false
+RObject[12][2][8]   he4 + mg21 --> si25  Z=12 N=9 Noff=7 index=8 serialIndex=9 Active=false
+RObject[12][2][9]   n + mg21 --> p + na21  Z=12 N=9 Noff=7 index=9 serialIndex=10 Active=false
+RObject[12][2][10]   n + mg21 --> he4 + ne18  Z=12 N=9 Noff=7 index=10 serialIndex=11 Active=false
+RObject[12][2][11]   p + mg21 --> he4 + na18  Z=12 N=9 Noff=7 index=11 serialIndex=13 Active=false
+RObject[12][2][12]   he4 + mg21 --> n + si24  Z=12 N=9 Noff=7 index=12 serialIndex=14 Active=false
+RObject[12][2][13]   he4 + mg21 --> p + al24  Z=12 N=9 Noff=7 index=13 serialIndex=15 Active=false
+RObject[12][3][0]   mg22 --> na22 + e+ + nu  Z=12 N=10 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][3][1]   mg22 --> n + mg21  Z=12 N=10 Noff=7 index=1 serialIndex=1 Active=false
+RObject[12][3][2]   mg22 --> p + na21  Z=12 N=10 Noff=7 index=2 serialIndex=2 Active=false
+RObject[12][3][3]   mg22 --> p + na21  Z=12 N=10 Noff=7 index=3 serialIndex=3 Active=false
+RObject[12][3][4]   mg22 --> he4 + ne18  Z=12 N=10 Noff=7 index=4 serialIndex=4 Active=false
+RObject[12][3][5]   n + mg22 --> mg23  Z=12 N=10 Noff=7 index=5 serialIndex=5 Active=false
+RObject[12][3][6]   p + mg22 --> al23  Z=12 N=10 Noff=7 index=6 serialIndex=6 Active=false
+RObject[12][3][7]   p + mg22 --> al23  Z=12 N=10 Noff=7 index=7 serialIndex=7 Active=false
+RObject[12][3][8]   he4 + mg22 --> si26  Z=12 N=10 Noff=7 index=8 serialIndex=8 Active=false
+RObject[12][3][9]   n + mg22 --> p + na22  Z=12 N=10 Noff=7 index=9 serialIndex=9 Active=false
+RObject[12][3][10]   n + mg22 --> he4 + ne19  Z=12 N=10 Noff=7 index=10 serialIndex=10 Active=false
+RObject[12][3][11]   p + mg22 --> n + al22  Z=12 N=10 Noff=7 index=11 serialIndex=11 Active=false
+RObject[12][3][12]   p + mg22 --> he4 + na19  Z=12 N=10 Noff=7 index=12 serialIndex=12 Active=false
+RObject[12][3][13]   he4 + mg22 --> n + si25  Z=12 N=10 Noff=7 index=13 serialIndex=13 Active=false
+RObject[12][3][14]   he4 + mg22 --> p + al25  Z=12 N=10 Noff=7 index=14 serialIndex=14 Active=false
+RObject[12][4][0]   mg23 --> na23 + e+ + nu  Z=12 N=11 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][4][1]   mg23 --> n + mg22  Z=12 N=11 Noff=7 index=1 serialIndex=1 Active=false
+RObject[12][4][2]   mg23 --> p + na22  Z=12 N=11 Noff=7 index=2 serialIndex=2 Active=false
+RObject[12][4][3]   mg23 --> he4 + ne19  Z=12 N=11 Noff=7 index=3 serialIndex=3 Active=false
+RObject[12][4][4]   n + mg23 --> mg24  Z=12 N=11 Noff=7 index=4 serialIndex=4 Active=false
+RObject[12][4][5]   p + mg23 --> al24  Z=12 N=11 Noff=7 index=5 serialIndex=5 Active=false
+RObject[12][4][6]   p + mg23 --> al24  Z=12 N=11 Noff=7 index=6 serialIndex=6 Active=false
+RObject[12][4][7]   he4 + mg23 --> si27  Z=12 N=11 Noff=7 index=7 serialIndex=7 Active=false
+RObject[12][4][8]   n + mg23 --> p + na23  Z=12 N=11 Noff=7 index=8 serialIndex=8 Active=false
+RObject[12][4][9]   n + mg23 --> he4 + ne20  Z=12 N=11 Noff=7 index=9 serialIndex=9 Active=false
+RObject[12][4][10]   p + mg23 --> n + al23  Z=12 N=11 Noff=7 index=10 serialIndex=10 Active=false
+RObject[12][4][11]   p + mg23 --> he4 + na20  Z=12 N=11 Noff=7 index=11 serialIndex=11 Active=false
+RObject[12][4][12]   he4 + mg23 --> n + si26  Z=12 N=11 Noff=7 index=12 serialIndex=12 Active=false
+RObject[12][4][13]   he4 + mg23 --> p + al26  Z=12 N=11 Noff=7 index=13 serialIndex=13 Active=false
+RObject[12][5][0]   mg24 --> n + mg23  Z=12 N=12 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][5][1]   mg24 --> p + na23  Z=12 N=12 Noff=7 index=1 serialIndex=1 Active=false
+RObject[12][5][2]   mg24 --> p + na23  Z=12 N=12 Noff=7 index=2 serialIndex=2 Active=false
+RObject[12][5][3]   mg24 --> he4 + ne20  Z=12 N=12 Noff=7 index=3 serialIndex=3 Active=false
+RObject[12][5][4]   mg24 --> he4 + ne20  Z=12 N=12 Noff=7 index=4 serialIndex=4 Active=false
+RObject[12][5][5]   n + mg24 --> mg25  Z=12 N=12 Noff=7 index=5 serialIndex=5 Active=false
+RObject[12][5][6]   p + mg24 --> al25  Z=12 N=12 Noff=7 index=6 serialIndex=6 Active=false
+RObject[12][5][7]   p + mg24 --> al25  Z=12 N=12 Noff=7 index=7 serialIndex=7 Active=false
+RObject[12][5][8]   he4 + mg24 --> si28  Z=12 N=12 Noff=7 index=8 serialIndex=8 Active=false
+RObject[12][5][9]   he4 + mg24 --> si28  Z=12 N=12 Noff=7 index=9 serialIndex=9 Active=false
+RObject[12][5][10]   n + mg24 --> p + na24  Z=12 N=12 Noff=7 index=10 serialIndex=10 Active=false
+RObject[12][5][11]   n + mg24 --> he4 + ne21  Z=12 N=12 Noff=7 index=11 serialIndex=11 Active=false
+RObject[12][5][12]   n + mg24 --> he4 + ne21  Z=12 N=12 Noff=7 index=12 serialIndex=12 Active=false
+RObject[12][5][13]   p + mg24 --> n + al24  Z=12 N=12 Noff=7 index=13 serialIndex=13 Active=false
+RObject[12][5][14]   p + mg24 --> he4 + na21  Z=12 N=12 Noff=7 index=14 serialIndex=14 Active=false
+RObject[12][5][15]   he4 + mg24 --> n + si27  Z=12 N=12 Noff=7 index=15 serialIndex=15 Active=false
+RObject[12][5][16]   he4 + mg24 --> p + al27  Z=12 N=12 Noff=7 index=16 serialIndex=16 Active=false
+RObject[12][5][17]   he4 + mg24 --> p + al27  Z=12 N=12 Noff=7 index=17 serialIndex=17 Active=false
+RObject[12][5][18]   he4 + mg24 --> c12 + o16  Z=12 N=12 Noff=7 index=18 serialIndex=18 Active=false
+RObject[12][6][0]   mg25 --> n + mg24  Z=12 N=13 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][6][1]   mg25 --> p + na24  Z=12 N=13 Noff=7 index=1 serialIndex=1 Active=false
+RObject[12][6][2]   mg25 --> he4 + ne21  Z=12 N=13 Noff=7 index=2 serialIndex=2 Active=false
+RObject[12][6][3]   mg25 --> he4 + ne21  Z=12 N=13 Noff=7 index=3 serialIndex=3 Active=false
+RObject[12][6][4]   n + mg25 --> mg26  Z=12 N=13 Noff=7 index=4 serialIndex=4 Active=false
+RObject[12][6][5]   p + mg25 --> al26  Z=12 N=13 Noff=7 index=5 serialIndex=5 Active=false
+RObject[12][6][6]   p + mg25 --> al26  Z=12 N=13 Noff=7 index=6 serialIndex=6 Active=false
+RObject[12][6][7]   p + mg25 --> al26  Z=12 N=13 Noff=7 index=7 serialIndex=7 Active=false
+RObject[12][6][8]   he4 + mg25 --> si29  Z=12 N=13 Noff=7 index=8 serialIndex=14 Active=false
+RObject[12][6][9]   n + mg25 --> he4 + ne22  Z=12 N=13 Noff=7 index=9 serialIndex=16 Active=false
+RObject[12][6][10]   p + mg25 --> n + al25  Z=12 N=13 Noff=7 index=10 serialIndex=17 Active=false
+RObject[12][6][11]   p + mg25 --> he4 + na22  Z=12 N=13 Noff=7 index=11 serialIndex=18 Active=false
+RObject[12][6][12]   he4 + mg25 --> n + si28  Z=12 N=13 Noff=7 index=12 serialIndex=19 Active=false
+RObject[12][6][13]   he4 + mg25 --> p + al28  Z=12 N=13 Noff=7 index=13 serialIndex=20 Active=false
+RObject[12][7][0]   mg26 --> n + mg25  Z=12 N=14 Noff=7 index=0 serialIndex=0 Active=false
+RObject[12][7][1]   mg26 --> he4 + ne22  Z=12 N=14 Noff=7 index=1 serialIndex=2 Active=true
+RObject[12][7][2]   n + mg26 --> mg27  Z=12 N=14 Noff=7 index=2 serialIndex=3 Active=false
+RObject[12][7][3]   p + mg26 --> al27  Z=12 N=14 Noff=7 index=3 serialIndex=4 Active=true
+RObject[12][7][4]   p + mg26 --> al27  Z=12 N=14 Noff=7 index=4 serialIndex=5 Active=true
+RObject[12][7][5]   he4 + mg26 --> si30  Z=12 N=14 Noff=7 index=5 serialIndex=6 Active=false
+RObject[12][7][6]   n + mg26 --> he4 + ne23  Z=12 N=14 Noff=7 index=6 serialIndex=8 Active=true
+RObject[12][7][7]   p + mg26 --> n + al26  Z=12 N=14 Noff=7 index=7 serialIndex=9 Active=false
+RObject[12][7][8]   p + mg26 --> he4 + na23  Z=12 N=14 Noff=7 index=8 serialIndex=12 Active=false
+RObject[12][7][9]   he4 + mg26 --> n + si29  Z=12 N=14 Noff=7 index=9 serialIndex=13 Active=false
+RObject[12][7][10]   he4 + mg26 --> p + al29  Z=12 N=14 Noff=7 index=10 serialIndex=14 Active=false
+RObject[12][7][11]   he4 + mg26 --> p + al29  Z=12 N=14 Noff=7 index=11 serialIndex=15 Active=false
+RObject[12][8][0]   mg27 --> al27 + e + nubar  Z=12 N=15 Noff=7 index=0 serialIndex=0 Active=true
+RObject[12][8][1]   mg27 --> n + mg26  Z=12 N=15 Noff=7 index=1 serialIndex=1 Active=true
+RObject[12][8][2]   mg27 --> he4 + ne23  Z=12 N=15 Noff=7 index=2 serialIndex=3 Active=true
+RObject[12][8][3]   p + mg27 --> al28  Z=12 N=15 Noff=7 index=3 serialIndex=5 Active=true
+RObject[12][8][4]   he4 + mg27 --> si31  Z=12 N=15 Noff=7 index=4 serialIndex=6 Active=true
+RObject[12][8][5]   p + mg27 --> n + al27  Z=12 N=15 Noff=7 index=5 serialIndex=9 Active=true
+RObject[12][8][6]   p + mg27 --> he4 + na24  Z=12 N=15 Noff=7 index=6 serialIndex=10 Active=true
+RObject[12][8][7]   he4 + mg27 --> n + si30  Z=12 N=15 Noff=7 index=7 serialIndex=11 Active=false
+RObject[13][0][0]   al22 --> mg22 + e+ + nu  Z=13 N=9 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][0][1]   al22 --> p + mg21  Z=13 N=9 Noff=9 index=1 serialIndex=1 Active=false
+RObject[13][0][2]   al22 --> he4 + na18  Z=13 N=9 Noff=9 index=2 serialIndex=3 Active=false
+RObject[13][0][3]   n + al22 --> al23  Z=13 N=9 Noff=9 index=3 serialIndex=4 Active=false
+RObject[13][0][4]   he4 + al22 --> p26  Z=13 N=9 Noff=9 index=4 serialIndex=6 Active=false
+RObject[13][0][5]   n + al22 --> p + mg22  Z=13 N=9 Noff=9 index=5 serialIndex=7 Active=false
+RObject[13][0][6]   n + al22 --> he4 + na19  Z=13 N=9 Noff=9 index=6 serialIndex=8 Active=false
+RObject[13][0][7]   p + al22 --> he4 + mg19  Z=13 N=9 Noff=9 index=7 serialIndex=10 Active=false
+RObject[13][0][8]   he4 + al22 --> p + si25  Z=13 N=9 Noff=9 index=8 serialIndex=12 Active=false
+RObject[13][1][0]   al23 --> mg23 + e+ + nu  Z=13 N=10 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][1][1]   al23 --> n + al22  Z=13 N=10 Noff=9 index=1 serialIndex=1 Active=false
+RObject[13][1][2]   al23 --> p + mg22  Z=13 N=10 Noff=9 index=2 serialIndex=2 Active=false
+RObject[13][1][3]   al23 --> p + mg22  Z=13 N=10 Noff=9 index=3 serialIndex=3 Active=false
+RObject[13][1][4]   al23 --> he4 + na19  Z=13 N=10 Noff=9 index=4 serialIndex=4 Active=false
+RObject[13][1][5]   n + al23 --> al24  Z=13 N=10 Noff=9 index=5 serialIndex=5 Active=false
+RObject[13][1][6]   p + al23 --> si24  Z=13 N=10 Noff=9 index=6 serialIndex=6 Active=false
+RObject[13][1][7]   p + al23 --> si24  Z=13 N=10 Noff=9 index=7 serialIndex=7 Active=false
+RObject[13][1][8]   he4 + al23 --> p27  Z=13 N=10 Noff=9 index=8 serialIndex=8 Active=false
+RObject[13][1][9]   n + al23 --> p + mg23  Z=13 N=10 Noff=9 index=9 serialIndex=9 Active=false
+RObject[13][1][10]   n + al23 --> he4 + na20  Z=13 N=10 Noff=9 index=10 serialIndex=10 Active=false
+RObject[13][1][11]   p + al23 --> he4 + mg20  Z=13 N=10 Noff=9 index=11 serialIndex=12 Active=false
+RObject[13][1][12]   he4 + al23 --> n + p26  Z=13 N=10 Noff=9 index=12 serialIndex=13 Active=false
+RObject[13][1][13]   he4 + al23 --> p + si26  Z=13 N=10 Noff=9 index=13 serialIndex=14 Active=false
+RObject[13][2][0]   al24 --> mg24 + e+ + nu  Z=13 N=11 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][2][1]   al24 --> n + al23  Z=13 N=11 Noff=9 index=1 serialIndex=1 Active=false
+RObject[13][2][2]   al24 --> p + mg23  Z=13 N=11 Noff=9 index=2 serialIndex=2 Active=false
+RObject[13][2][3]   al24 --> p + mg23  Z=13 N=11 Noff=9 index=3 serialIndex=3 Active=false
+RObject[13][2][4]   al24 --> he4 + na20  Z=13 N=11 Noff=9 index=4 serialIndex=4 Active=false
+RObject[13][2][5]   n + al24 --> al25  Z=13 N=11 Noff=9 index=5 serialIndex=5 Active=false
+RObject[13][2][6]   p + al24 --> si25  Z=13 N=11 Noff=9 index=6 serialIndex=6 Active=false
+RObject[13][2][7]   p + al24 --> si25  Z=13 N=11 Noff=9 index=7 serialIndex=7 Active=false
+RObject[13][2][8]   p + al24 --> si25  Z=13 N=11 Noff=9 index=8 serialIndex=8 Active=false
+RObject[13][2][9]   he4 + al24 --> p28  Z=13 N=11 Noff=9 index=9 serialIndex=9 Active=false
+RObject[13][2][10]   n + al24 --> p + mg24  Z=13 N=11 Noff=9 index=10 serialIndex=10 Active=false
+RObject[13][2][11]   n + al24 --> he4 + na21  Z=13 N=11 Noff=9 index=11 serialIndex=11 Active=false
+RObject[13][2][12]   p + al24 --> n + si24  Z=13 N=11 Noff=9 index=12 serialIndex=12 Active=false
+RObject[13][2][13]   p + al24 --> he4 + mg21  Z=13 N=11 Noff=9 index=13 serialIndex=13 Active=false
+RObject[13][2][14]   he4 + al24 --> n + p27  Z=13 N=11 Noff=9 index=14 serialIndex=14 Active=false
+RObject[13][2][15]   he4 + al24 --> p + si27  Z=13 N=11 Noff=9 index=15 serialIndex=15 Active=false
+RObject[13][3][0]   al25 --> mg25 + e+ + nu  Z=13 N=12 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][3][1]   al25 --> n + al24  Z=13 N=12 Noff=9 index=1 serialIndex=1 Active=false
+RObject[13][3][2]   al25 --> p + mg24  Z=13 N=12 Noff=9 index=2 serialIndex=2 Active=false
+RObject[13][3][3]   al25 --> p + mg24  Z=13 N=12 Noff=9 index=3 serialIndex=3 Active=false
+RObject[13][3][4]   al25 --> he4 + na21  Z=13 N=12 Noff=9 index=4 serialIndex=4 Active=false
+RObject[13][3][5]   n + al25 --> al26  Z=13 N=12 Noff=9 index=5 serialIndex=5 Active=false
+RObject[13][3][6]   p + al25 --> si26  Z=13 N=12 Noff=9 index=6 serialIndex=7 Active=false
+RObject[13][3][7]   p + al25 --> si26  Z=13 N=12 Noff=9 index=7 serialIndex=8 Active=false
+RObject[13][3][8]   he4 + al25 --> p29  Z=13 N=12 Noff=9 index=8 serialIndex=9 Active=false
+RObject[13][3][9]   n + al25 --> p + mg25  Z=13 N=12 Noff=9 index=9 serialIndex=10 Active=false
+RObject[13][3][10]   n + al25 --> he4 + na22  Z=13 N=12 Noff=9 index=10 serialIndex=11 Active=false
+RObject[13][3][11]   p + al25 --> n + si25  Z=13 N=12 Noff=9 index=11 serialIndex=12 Active=false
+RObject[13][3][12]   p + al25 --> he4 + mg22  Z=13 N=12 Noff=9 index=12 serialIndex=13 Active=false
+RObject[13][3][13]   he4 + al25 --> n + p28  Z=13 N=12 Noff=9 index=13 serialIndex=14 Active=false
+RObject[13][3][14]   he4 + al25 --> p + si28  Z=13 N=12 Noff=9 index=14 serialIndex=15 Active=false
+RObject[13][4][0]   al26 --> mg26 + e+ + nu  Z=13 N=13 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][4][1]   al26 --> n + al25  Z=13 N=13 Noff=9 index=1 serialIndex=3 Active=false
+RObject[13][4][2]   al26 --> p + mg25  Z=13 N=13 Noff=9 index=2 serialIndex=4 Active=false
+RObject[13][4][3]   al26 --> p + mg25  Z=13 N=13 Noff=9 index=3 serialIndex=5 Active=false
+RObject[13][4][4]   al26 --> p + mg25  Z=13 N=13 Noff=9 index=4 serialIndex=6 Active=false
+RObject[13][4][5]   al26 --> he4 + na22  Z=13 N=13 Noff=9 index=5 serialIndex=7 Active=false
+RObject[13][4][6]   n + al26 --> al27  Z=13 N=13 Noff=9 index=6 serialIndex=16 Active=false
+RObject[13][4][7]   p + al26 --> si27  Z=13 N=13 Noff=9 index=7 serialIndex=17 Active=false
+RObject[13][4][8]   p + al26 --> si27  Z=13 N=13 Noff=9 index=8 serialIndex=18 Active=false
+RObject[13][4][9]   he4 + al26 --> p30  Z=13 N=13 Noff=9 index=9 serialIndex=19 Active=false
+RObject[13][4][10]   n + al26 --> p + mg26  Z=13 N=13 Noff=9 index=10 serialIndex=25 Active=false
+RObject[13][4][11]   n + al26 --> he4 + na23  Z=13 N=13 Noff=9 index=11 serialIndex=26 Active=false
+RObject[13][4][12]   p + al26 --> n + si26  Z=13 N=13 Noff=9 index=12 serialIndex=27 Active=false
+RObject[13][4][13]   p + al26 --> he4 + mg23  Z=13 N=13 Noff=9 index=13 serialIndex=28 Active=false
+RObject[13][4][14]   he4 + al26 --> n + p29  Z=13 N=13 Noff=9 index=14 serialIndex=29 Active=false
+RObject[13][4][15]   he4 + al26 --> p + si29  Z=13 N=13 Noff=9 index=15 serialIndex=30 Active=false
+RObject[13][5][0]   al27 --> n + al26  Z=13 N=14 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][5][1]   al27 --> p + mg26  Z=13 N=14 Noff=9 index=1 serialIndex=2 Active=false
+RObject[13][5][2]   al27 --> p + mg26  Z=13 N=14 Noff=9 index=2 serialIndex=3 Active=false
+RObject[13][5][3]   al27 --> he4 + na23  Z=13 N=14 Noff=9 index=3 serialIndex=4 Active=false
+RObject[13][5][4]   n + al27 --> al28  Z=13 N=14 Noff=9 index=4 serialIndex=5 Active=false
+RObject[13][5][5]   p + al27 --> si28  Z=13 N=14 Noff=9 index=5 serialIndex=6 Active=false
+RObject[13][5][6]   p + al27 --> si28  Z=13 N=14 Noff=9 index=6 serialIndex=7 Active=false
+RObject[13][5][7]   p + al27 --> si28  Z=13 N=14 Noff=9 index=7 serialIndex=8 Active=false
+RObject[13][5][8]   he4 + al27 --> p31  Z=13 N=14 Noff=9 index=8 serialIndex=9 Active=false
+RObject[13][5][9]   n + al27 --> p + mg27  Z=13 N=14 Noff=9 index=9 serialIndex=10 Active=false
+RObject[13][5][10]   n + al27 --> he4 + na24  Z=13 N=14 Noff=9 index=10 serialIndex=11 Active=false
+RObject[13][5][11]   p + al27 --> n + si27  Z=13 N=14 Noff=9 index=11 serialIndex=12 Active=false
+RObject[13][5][12]   p + al27 --> he4 + mg24  Z=13 N=14 Noff=9 index=12 serialIndex=13 Active=false
+RObject[13][5][13]   p + al27 --> he4 + mg24  Z=13 N=14 Noff=9 index=13 serialIndex=14 Active=false
+RObject[13][5][14]   he4 + al27 --> n + p30  Z=13 N=14 Noff=9 index=14 serialIndex=15 Active=false
+RObject[13][5][15]   he4 + al27 --> n + p30  Z=13 N=14 Noff=9 index=15 serialIndex=16 Active=false
+RObject[13][5][16]   he4 + al27 --> p + si30  Z=13 N=14 Noff=9 index=16 serialIndex=17 Active=false
+RObject[13][6][0]   al28 --> si28 + e + nubar  Z=13 N=15 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][6][1]   al28 --> n + al27  Z=13 N=15 Noff=9 index=1 serialIndex=1 Active=false
+RObject[13][6][2]   al28 --> p + mg27  Z=13 N=15 Noff=9 index=2 serialIndex=2 Active=false
+RObject[13][6][3]   al28 --> he4 + na24  Z=13 N=15 Noff=9 index=3 serialIndex=3 Active=false
+RObject[13][6][4]   n + al28 --> al29  Z=13 N=15 Noff=9 index=4 serialIndex=4 Active=false
+RObject[13][6][5]   p + al28 --> si29  Z=13 N=15 Noff=9 index=5 serialIndex=5 Active=false
+RObject[13][6][6]   he4 + al28 --> p32  Z=13 N=15 Noff=9 index=6 serialIndex=6 Active=false
+RObject[13][6][7]   p + al28 --> n + si28  Z=13 N=15 Noff=9 index=7 serialIndex=9 Active=false
+RObject[13][6][8]   p + al28 --> he4 + mg25  Z=13 N=15 Noff=9 index=8 serialIndex=10 Active=false
+RObject[13][6][9]   he4 + al28 --> n + p31  Z=13 N=15 Noff=9 index=9 serialIndex=11 Active=false
+RObject[13][6][10]   he4 + al28 --> p + si31  Z=13 N=15 Noff=9 index=10 serialIndex=12 Active=false
+RObject[13][7][0]   al29 --> si29 + e + nubar  Z=13 N=16 Noff=9 index=0 serialIndex=0 Active=false
+RObject[13][7][1]   al29 --> n + al28  Z=13 N=16 Noff=9 index=1 serialIndex=1 Active=false
+RObject[13][7][2]   p + al29 --> si30  Z=13 N=16 Noff=9 index=2 serialIndex=5 Active=false
+RObject[13][7][3]   he4 + al29 --> p33  Z=13 N=16 Noff=9 index=3 serialIndex=6 Active=false
+RObject[13][7][4]   p + al29 --> n + si29  Z=13 N=16 Noff=9 index=4 serialIndex=9 Active=false
+RObject[13][7][5]   p + al29 --> he4 + mg26  Z=13 N=16 Noff=9 index=5 serialIndex=10 Active=false
+RObject[13][7][6]   p + al29 --> he4 + mg26  Z=13 N=16 Noff=9 index=6 serialIndex=11 Active=false
+RObject[13][7][7]   he4 + al29 --> n + p32  Z=13 N=16 Noff=9 index=7 serialIndex=12 Active=false
+RObject[13][7][8]   he4 + al29 --> p + si32  Z=13 N=16 Noff=9 index=8 serialIndex=13 Active=false
+RObject[14][0][0]   si24 --> al24 + e+ + nu  Z=14 N=10 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][0][1]   si24 --> p + al23  Z=14 N=10 Noff=10 index=1 serialIndex=2 Active=false
+RObject[14][0][2]   si24 --> p + al23  Z=14 N=10 Noff=10 index=2 serialIndex=3 Active=false
+RObject[14][0][3]   si24 --> he4 + mg20  Z=14 N=10 Noff=10 index=3 serialIndex=4 Active=false
+RObject[14][0][4]   n + si24 --> si25  Z=14 N=10 Noff=10 index=4 serialIndex=5 Active=false
+RObject[14][0][5]   he4 + si24 --> s28  Z=14 N=10 Noff=10 index=5 serialIndex=7 Active=false
+RObject[14][0][6]   n + si24 --> p + al24  Z=14 N=10 Noff=10 index=6 serialIndex=8 Active=false
+RObject[14][0][7]   n + si24 --> he4 + mg21  Z=14 N=10 Noff=10 index=7 serialIndex=9 Active=false
+RObject[14][0][8]   he4 + si24 --> n + s27  Z=14 N=10 Noff=10 index=8 serialIndex=12 Active=false
+RObject[14][0][9]   he4 + si24 --> p + p27  Z=14 N=10 Noff=10 index=9 serialIndex=13 Active=false
+RObject[14][1][0]   si25 --> al25 + e+ + nu  Z=14 N=11 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][1][1]   si25 --> n + si24  Z=14 N=11 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][1][2]   si25 --> p + al24  Z=14 N=11 Noff=10 index=2 serialIndex=2 Active=false
+RObject[14][1][3]   si25 --> p + al24  Z=14 N=11 Noff=10 index=3 serialIndex=3 Active=false
+RObject[14][1][4]   si25 --> p + al24  Z=14 N=11 Noff=10 index=4 serialIndex=4 Active=false
+RObject[14][1][5]   si25 --> he4 + mg21  Z=14 N=11 Noff=10 index=5 serialIndex=5 Active=false
+RObject[14][1][6]   n + si25 --> si26  Z=14 N=11 Noff=10 index=6 serialIndex=6 Active=false
+RObject[14][1][7]   p + si25 --> p26  Z=14 N=11 Noff=10 index=7 serialIndex=7 Active=false
+RObject[14][1][8]   he4 + si25 --> s29  Z=14 N=11 Noff=10 index=8 serialIndex=8 Active=false
+RObject[14][1][9]   n + si25 --> p + al25  Z=14 N=11 Noff=10 index=9 serialIndex=9 Active=false
+RObject[14][1][10]   n + si25 --> he4 + mg22  Z=14 N=11 Noff=10 index=10 serialIndex=10 Active=false
+RObject[14][1][11]   p + si25 --> he4 + al22  Z=14 N=11 Noff=10 index=11 serialIndex=12 Active=false
+RObject[14][1][12]   he4 + si25 --> n + s28  Z=14 N=11 Noff=10 index=12 serialIndex=13 Active=false
+RObject[14][1][13]   he4 + si25 --> p + p28  Z=14 N=11 Noff=10 index=13 serialIndex=14 Active=false
+RObject[14][2][0]   si26 --> al26 + e+ + nu  Z=14 N=12 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][2][1]   si26 --> n + si25  Z=14 N=12 Noff=10 index=1 serialIndex=2 Active=false
+RObject[14][2][2]   si26 --> p + al25  Z=14 N=12 Noff=10 index=2 serialIndex=3 Active=false
+RObject[14][2][3]   si26 --> p + al25  Z=14 N=12 Noff=10 index=3 serialIndex=4 Active=false
+RObject[14][2][4]   si26 --> he4 + mg22  Z=14 N=12 Noff=10 index=4 serialIndex=5 Active=false
+RObject[14][2][5]   n + si26 --> si27  Z=14 N=12 Noff=10 index=5 serialIndex=6 Active=false
+RObject[14][2][6]   p + si26 --> p27  Z=14 N=12 Noff=10 index=6 serialIndex=7 Active=false
+RObject[14][2][7]   p + si26 --> p27  Z=14 N=12 Noff=10 index=7 serialIndex=8 Active=false
+RObject[14][2][8]   he4 + si26 --> s30  Z=14 N=12 Noff=10 index=8 serialIndex=9 Active=false
+RObject[14][2][9]   n + si26 --> p + al26  Z=14 N=12 Noff=10 index=9 serialIndex=10 Active=false
+RObject[14][2][10]   n + si26 --> he4 + mg23  Z=14 N=12 Noff=10 index=10 serialIndex=12 Active=false
+RObject[14][2][11]   p + si26 --> n + p26  Z=14 N=12 Noff=10 index=11 serialIndex=13 Active=false
+RObject[14][2][12]   p + si26 --> he4 + al23  Z=14 N=12 Noff=10 index=12 serialIndex=14 Active=false
+RObject[14][2][13]   he4 + si26 --> n + s29  Z=14 N=12 Noff=10 index=13 serialIndex=15 Active=false
+RObject[14][2][14]   he4 + si26 --> p + p29  Z=14 N=12 Noff=10 index=14 serialIndex=16 Active=false
+RObject[14][3][0]   si27 --> al27 + e+ + nu  Z=14 N=13 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][3][1]   si27 --> n + si26  Z=14 N=13 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][3][2]   si27 --> p + al26  Z=14 N=13 Noff=10 index=2 serialIndex=2 Active=false
+RObject[14][3][3]   si27 --> p + al26  Z=14 N=13 Noff=10 index=3 serialIndex=3 Active=false
+RObject[14][3][4]   si27 --> he4 + mg23  Z=14 N=13 Noff=10 index=4 serialIndex=7 Active=false
+RObject[14][3][5]   n + si27 --> si28  Z=14 N=13 Noff=10 index=5 serialIndex=8 Active=false
+RObject[14][3][6]   p + si27 --> p28  Z=14 N=13 Noff=10 index=6 serialIndex=9 Active=false
+RObject[14][3][7]   p + si27 --> p28  Z=14 N=13 Noff=10 index=7 serialIndex=10 Active=false
+RObject[14][3][8]   p + si27 --> p28  Z=14 N=13 Noff=10 index=8 serialIndex=11 Active=false
+RObject[14][3][9]   he4 + si27 --> s31  Z=14 N=13 Noff=10 index=9 serialIndex=12 Active=false
+RObject[14][3][10]   n + si27 --> p + al27  Z=14 N=13 Noff=10 index=10 serialIndex=13 Active=false
+RObject[14][3][11]   n + si27 --> he4 + mg24  Z=14 N=13 Noff=10 index=11 serialIndex=14 Active=false
+RObject[14][3][12]   p + si27 --> n + p27  Z=14 N=13 Noff=10 index=12 serialIndex=15 Active=false
+RObject[14][3][13]   p + si27 --> he4 + al24  Z=14 N=13 Noff=10 index=13 serialIndex=16 Active=false
+RObject[14][3][14]   he4 + si27 --> n + s30  Z=14 N=13 Noff=10 index=14 serialIndex=17 Active=false
+RObject[14][3][15]   he4 + si27 --> p + p30  Z=14 N=13 Noff=10 index=15 serialIndex=18 Active=false
+RObject[14][4][0]   si28 --> n + si27  Z=14 N=14 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][4][1]   si28 --> p + al27  Z=14 N=14 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][4][2]   si28 --> p + al27  Z=14 N=14 Noff=10 index=2 serialIndex=2 Active=false
+RObject[14][4][3]   si28 --> p + al27  Z=14 N=14 Noff=10 index=3 serialIndex=3 Active=false
+RObject[14][4][4]   si28 --> he4 + mg24  Z=14 N=14 Noff=10 index=4 serialIndex=4 Active=false
+RObject[14][4][5]   si28 --> he4 + mg24  Z=14 N=14 Noff=10 index=5 serialIndex=5 Active=false
+RObject[14][4][6]   n + si28 --> si29  Z=14 N=14 Noff=10 index=6 serialIndex=6 Active=false
+RObject[14][4][7]   p + si28 --> p29  Z=14 N=14 Noff=10 index=7 serialIndex=7 Active=false
+RObject[14][4][8]   p + si28 --> p29  Z=14 N=14 Noff=10 index=8 serialIndex=8 Active=false
+RObject[14][4][9]   he4 + si28 --> s32  Z=14 N=14 Noff=10 index=9 serialIndex=9 Active=false
+RObject[14][4][10]   n + si28 --> p + al28  Z=14 N=14 Noff=10 index=10 serialIndex=10 Active=false
+RObject[14][4][11]   n + si28 --> he4 + mg25  Z=14 N=14 Noff=10 index=11 serialIndex=11 Active=false
+RObject[14][4][12]   p + si28 --> n + p28  Z=14 N=14 Noff=10 index=12 serialIndex=12 Active=false
+RObject[14][4][13]   p + si28 --> he4 + al25  Z=14 N=14 Noff=10 index=13 serialIndex=13 Active=false
+RObject[14][4][14]   he4 + si28 --> n + s31  Z=14 N=14 Noff=10 index=14 serialIndex=14 Active=false
+RObject[14][4][15]   he4 + si28 --> p + p31  Z=14 N=14 Noff=10 index=15 serialIndex=15 Active=false
+RObject[14][4][16]   he4 + si28 --> p + p31  Z=14 N=14 Noff=10 index=16 serialIndex=16 Active=false
+RObject[14][4][17]   he4 + si28 --> p + p31  Z=14 N=14 Noff=10 index=17 serialIndex=17 Active=false
+RObject[14][4][18]   he4 + si28 --> p + p31  Z=14 N=14 Noff=10 index=18 serialIndex=18 Active=false
+RObject[14][4][19]   he4 + si28 --> p + p31  Z=14 N=14 Noff=10 index=19 serialIndex=19 Active=false
+RObject[14][4][20]   he4 + si28 --> p + p31  Z=14 N=14 Noff=10 index=20 serialIndex=20 Active=false
+RObject[14][4][21]   he4 + si28 --> c12 + ne20  Z=14 N=14 Noff=10 index=21 serialIndex=21 Active=false
+RObject[14][4][22]   he4 + si28 --> o16 + o16  Z=14 N=14 Noff=10 index=22 serialIndex=22 Active=false
+RObject[14][5][0]   si29 --> n + si28  Z=14 N=15 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][5][1]   si29 --> p + al28  Z=14 N=15 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][5][2]   si29 --> he4 + mg25  Z=14 N=15 Noff=10 index=2 serialIndex=2 Active=false
+RObject[14][5][3]   n + si29 --> si30  Z=14 N=15 Noff=10 index=3 serialIndex=3 Active=false
+RObject[14][5][4]   p + si29 --> p30  Z=14 N=15 Noff=10 index=4 serialIndex=4 Active=false
+RObject[14][5][5]   p + si29 --> p30  Z=14 N=15 Noff=10 index=5 serialIndex=5 Active=false
+RObject[14][5][6]   he4 + si29 --> s33  Z=14 N=15 Noff=10 index=6 serialIndex=6 Active=false
+RObject[14][5][7]   n + si29 --> p + al29  Z=14 N=15 Noff=10 index=7 serialIndex=7 Active=false
+RObject[14][5][8]   n + si29 --> he4 + mg26  Z=14 N=15 Noff=10 index=8 serialIndex=8 Active=false
+RObject[14][5][9]   p + si29 --> n + p29  Z=14 N=15 Noff=10 index=9 serialIndex=9 Active=false
+RObject[14][5][10]   p + si29 --> he4 + al26  Z=14 N=15 Noff=10 index=10 serialIndex=10 Active=false
+RObject[14][5][11]   he4 + si29 --> n + s32  Z=14 N=15 Noff=10 index=11 serialIndex=12 Active=false
+RObject[14][5][12]   he4 + si29 --> p + p32  Z=14 N=15 Noff=10 index=12 serialIndex=13 Active=false
+RObject[14][6][0]   si30 --> n + si29  Z=14 N=16 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][6][1]   si30 --> p + al29  Z=14 N=16 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][6][2]   si30 --> he4 + mg26  Z=14 N=16 Noff=10 index=2 serialIndex=2 Active=false
+RObject[14][6][3]   n + si30 --> si31  Z=14 N=16 Noff=10 index=3 serialIndex=3 Active=false
+RObject[14][6][4]   p + si30 --> p31  Z=14 N=16 Noff=10 index=4 serialIndex=4 Active=false
+RObject[14][6][5]   p + si30 --> p31  Z=14 N=16 Noff=10 index=5 serialIndex=5 Active=false
+RObject[14][6][6]   he4 + si30 --> s34  Z=14 N=16 Noff=10 index=6 serialIndex=6 Active=false
+RObject[14][6][7]   n + si30 --> he4 + mg27  Z=14 N=16 Noff=10 index=7 serialIndex=8 Active=false
+RObject[14][6][8]   p + si30 --> n + p30  Z=14 N=16 Noff=10 index=8 serialIndex=9 Active=false
+RObject[14][6][9]   p + si30 --> he4 + al27  Z=14 N=16 Noff=10 index=9 serialIndex=10 Active=false
+RObject[14][6][10]   he4 + si30 --> n + s33  Z=14 N=16 Noff=10 index=10 serialIndex=11 Active=false
+RObject[14][6][11]   he4 + si30 --> p + p33  Z=14 N=16 Noff=10 index=11 serialIndex=12 Active=false
+RObject[14][7][0]   si31 --> p31 + e + nubar  Z=14 N=17 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][7][1]   si31 --> n + si30  Z=14 N=17 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][7][2]   si31 --> he4 + mg27  Z=14 N=17 Noff=10 index=2 serialIndex=3 Active=false
+RObject[14][7][3]   n + si31 --> si32  Z=14 N=17 Noff=10 index=3 serialIndex=4 Active=false
+RObject[14][7][4]   p + si31 --> p32  Z=14 N=17 Noff=10 index=4 serialIndex=5 Active=false
+RObject[14][7][5]   he4 + si31 --> s35  Z=14 N=17 Noff=10 index=5 serialIndex=6 Active=false
+RObject[14][7][6]   p + si31 --> n + p31  Z=14 N=17 Noff=10 index=6 serialIndex=9 Active=false
+RObject[14][7][7]   p + si31 --> he4 + al28  Z=14 N=17 Noff=10 index=7 serialIndex=10 Active=false
+RObject[14][7][8]   he4 + si31 --> n + s34  Z=14 N=17 Noff=10 index=8 serialIndex=11 Active=false
+RObject[14][8][0]   si32 --> p32 + e + nubar  Z=14 N=18 Noff=10 index=0 serialIndex=0 Active=false
+RObject[14][8][1]   si32 --> n + si31  Z=14 N=18 Noff=10 index=1 serialIndex=1 Active=false
+RObject[14][8][2]   p + si32 --> p33  Z=14 N=18 Noff=10 index=2 serialIndex=5 Active=false
+RObject[14][8][3]   he4 + si32 --> s36  Z=14 N=18 Noff=10 index=3 serialIndex=6 Active=false
+RObject[14][8][4]   p + si32 --> n + p32  Z=14 N=18 Noff=10 index=4 serialIndex=9 Active=false
+RObject[14][8][5]   p + si32 --> he4 + al29  Z=14 N=18 Noff=10 index=5 serialIndex=10 Active=false
+RObject[14][8][6]   he4 + si32 --> n + s35  Z=14 N=18 Noff=10 index=6 serialIndex=11 Active=false
+RObject[15][0][0]   p26 --> p + si25  Z=15 N=11 Noff=11 index=0 serialIndex=1 Active=false
+RObject[15][0][1]   p26 --> he4 + al22  Z=15 N=11 Noff=11 index=1 serialIndex=2 Active=false
+RObject[15][0][2]   n + p26 --> p27  Z=15 N=11 Noff=11 index=2 serialIndex=3 Active=false
+RObject[15][0][3]   p + p26 --> s27  Z=15 N=11 Noff=11 index=3 serialIndex=4 Active=false
+RObject[15][0][4]   he4 + p26 --> cl30  Z=15 N=11 Noff=11 index=4 serialIndex=5 Active=false
+RObject[15][0][5]   n + p26 --> p + si26  Z=15 N=11 Noff=11 index=5 serialIndex=6 Active=false
+RObject[15][0][6]   n + p26 --> he4 + al23  Z=15 N=11 Noff=11 index=6 serialIndex=7 Active=false
+RObject[15][0][7]   he4 + p26 --> p + s29  Z=15 N=11 Noff=11 index=7 serialIndex=11 Active=false
+RObject[15][1][0]   p27 --> si27 + e+ + nu  Z=15 N=12 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][1][1]   p27 --> n + p26  Z=15 N=12 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][1][2]   p27 --> he4 + al23  Z=15 N=12 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][1][3]   p27 --> p + si26  Z=15 N=12 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][1][4]   p27 --> p + si26  Z=15 N=12 Noff=11 index=4 serialIndex=4 Active=false
+RObject[15][1][5]   n + p27 --> p28  Z=15 N=12 Noff=11 index=5 serialIndex=5 Active=false
+RObject[15][1][6]   p + p27 --> s28  Z=15 N=12 Noff=11 index=6 serialIndex=6 Active=false
+RObject[15][1][7]   p + p27 --> s28  Z=15 N=12 Noff=11 index=7 serialIndex=7 Active=false
+RObject[15][1][8]   he4 + p27 --> cl31  Z=15 N=12 Noff=11 index=8 serialIndex=8 Active=false
+RObject[15][1][9]   n + p27 --> p + si27  Z=15 N=12 Noff=11 index=9 serialIndex=9 Active=false
+RObject[15][1][10]   n + p27 --> he4 + al24  Z=15 N=12 Noff=11 index=10 serialIndex=10 Active=false
+RObject[15][1][11]   p + p27 --> n + s27  Z=15 N=12 Noff=11 index=11 serialIndex=11 Active=false
+RObject[15][1][12]   p + p27 --> he4 + si24  Z=15 N=12 Noff=11 index=12 serialIndex=12 Active=false
+RObject[15][1][13]   he4 + p27 --> n + cl30  Z=15 N=12 Noff=11 index=13 serialIndex=13 Active=false
+RObject[15][1][14]   he4 + p27 --> p + s30  Z=15 N=12 Noff=11 index=14 serialIndex=14 Active=false
+RObject[15][2][0]   p28 --> si28 + e+ + nu  Z=15 N=13 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][2][1]   p28 --> n + p27  Z=15 N=13 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][2][2]   p28 --> p + si27  Z=15 N=13 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][2][3]   p28 --> p + si27  Z=15 N=13 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][2][4]   p28 --> p + si27  Z=15 N=13 Noff=11 index=4 serialIndex=4 Active=false
+RObject[15][2][5]   p28 --> he4 + al24  Z=15 N=13 Noff=11 index=5 serialIndex=5 Active=false
+RObject[15][2][6]   n + p28 --> p29  Z=15 N=13 Noff=11 index=6 serialIndex=6 Active=false
+RObject[15][2][7]   p + p28 --> s29  Z=15 N=13 Noff=11 index=7 serialIndex=7 Active=false
+RObject[15][2][8]   he4 + p28 --> cl32  Z=15 N=13 Noff=11 index=8 serialIndex=8 Active=false
+RObject[15][2][9]   n + p28 --> p + si28  Z=15 N=13 Noff=11 index=9 serialIndex=9 Active=false
+RObject[15][2][10]   n + p28 --> he4 + al25  Z=15 N=13 Noff=11 index=10 serialIndex=10 Active=false
+RObject[15][2][11]   p + p28 --> n + s28  Z=15 N=13 Noff=11 index=11 serialIndex=11 Active=false
+RObject[15][2][12]   p + p28 --> he4 + si25  Z=15 N=13 Noff=11 index=12 serialIndex=12 Active=false
+RObject[15][2][13]   he4 + p28 --> n + cl31  Z=15 N=13 Noff=11 index=13 serialIndex=13 Active=false
+RObject[15][2][14]   he4 + p28 --> p + s31  Z=15 N=13 Noff=11 index=14 serialIndex=14 Active=false
+RObject[15][3][0]   p29 --> si29 + e+ + nu  Z=15 N=14 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][3][1]   p29 --> n + p28  Z=15 N=14 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][3][2]   p29 --> p + si28  Z=15 N=14 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][3][3]   p29 --> p + si28  Z=15 N=14 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][3][4]   p29 --> he4 + al25  Z=15 N=14 Noff=11 index=4 serialIndex=4 Active=false
+RObject[15][3][5]   n + p29 --> p30  Z=15 N=14 Noff=11 index=5 serialIndex=5 Active=false
+RObject[15][3][6]   p + p29 --> s30  Z=15 N=14 Noff=11 index=6 serialIndex=6 Active=false
+RObject[15][3][7]   p + p29 --> s30  Z=15 N=14 Noff=11 index=7 serialIndex=7 Active=false
+RObject[15][3][8]   p + p29 --> s30  Z=15 N=14 Noff=11 index=8 serialIndex=8 Active=false
+RObject[15][3][9]   he4 + p29 --> cl33  Z=15 N=14 Noff=11 index=9 serialIndex=9 Active=false
+RObject[15][3][10]   n + p29 --> p + si29  Z=15 N=14 Noff=11 index=10 serialIndex=10 Active=false
+RObject[15][3][11]   n + p29 --> he4 + al26  Z=15 N=14 Noff=11 index=11 serialIndex=11 Active=false
+RObject[15][3][12]   p + p29 --> n + s29  Z=15 N=14 Noff=11 index=12 serialIndex=13 Active=false
+RObject[15][3][13]   p + p29 --> he4 + si26  Z=15 N=14 Noff=11 index=13 serialIndex=14 Active=false
+RObject[15][3][14]   he4 + p29 --> n + cl32  Z=15 N=14 Noff=11 index=14 serialIndex=15 Active=false
+RObject[15][3][15]   he4 + p29 --> p + s32  Z=15 N=14 Noff=11 index=15 serialIndex=16 Active=false
+RObject[15][4][0]   p30 --> si30 + e+ + nu  Z=15 N=15 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][4][1]   p30 --> n + p29  Z=15 N=15 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][4][2]   p30 --> p + si29  Z=15 N=15 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][4][3]   p30 --> p + si29  Z=15 N=15 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][4][4]   p30 --> he4 + al26  Z=15 N=15 Noff=11 index=4 serialIndex=4 Active=false
+RObject[15][4][5]   n + p30 --> p31  Z=15 N=15 Noff=11 index=5 serialIndex=6 Active=false
+RObject[15][4][6]   p + p30 --> s31  Z=15 N=15 Noff=11 index=6 serialIndex=7 Active=false
+RObject[15][4][7]   he4 + p30 --> cl34  Z=15 N=15 Noff=11 index=7 serialIndex=8 Active=false
+RObject[15][4][8]   n + p30 --> p + si30  Z=15 N=15 Noff=11 index=8 serialIndex=9 Active=false
+RObject[15][4][9]   n + p30 --> he4 + al27  Z=15 N=15 Noff=11 index=9 serialIndex=10 Active=false
+RObject[15][4][10]   n + p30 --> he4 + al27  Z=15 N=15 Noff=11 index=10 serialIndex=11 Active=false
+RObject[15][4][11]   p + p30 --> n + s30  Z=15 N=15 Noff=11 index=11 serialIndex=12 Active=false
+RObject[15][4][12]   p + p30 --> he4 + si27  Z=15 N=15 Noff=11 index=12 serialIndex=13 Active=false
+RObject[15][4][13]   he4 + p30 --> n + cl33  Z=15 N=15 Noff=11 index=13 serialIndex=14 Active=false
+RObject[15][4][14]   he4 + p30 --> p + s33  Z=15 N=15 Noff=11 index=14 serialIndex=15 Active=false
+RObject[15][5][0]   p31 --> n + p30  Z=15 N=16 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][5][1]   p31 --> p + si30  Z=15 N=16 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][5][2]   p31 --> p + si30  Z=15 N=16 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][5][3]   p31 --> he4 + al27  Z=15 N=16 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][5][4]   n + p31 --> p32  Z=15 N=16 Noff=11 index=4 serialIndex=4 Active=false
+RObject[15][5][5]   p + p31 --> s32  Z=15 N=16 Noff=11 index=5 serialIndex=5 Active=false
+RObject[15][5][6]   he4 + p31 --> cl35  Z=15 N=16 Noff=11 index=6 serialIndex=6 Active=false
+RObject[15][5][7]   n + p31 --> p + si31  Z=15 N=16 Noff=11 index=7 serialIndex=7 Active=false
+RObject[15][5][8]   n + p31 --> he4 + al28  Z=15 N=16 Noff=11 index=8 serialIndex=8 Active=false
+RObject[15][5][9]   p + p31 --> n + s31  Z=15 N=16 Noff=11 index=9 serialIndex=9 Active=false
+RObject[15][5][10]   p + p31 --> he4 + si28  Z=15 N=16 Noff=11 index=10 serialIndex=10 Active=false
+RObject[15][5][11]   p + p31 --> he4 + si28  Z=15 N=16 Noff=11 index=11 serialIndex=11 Active=false
+RObject[15][5][12]   p + p31 --> he4 + si28  Z=15 N=16 Noff=11 index=12 serialIndex=12 Active=false
+RObject[15][5][13]   p + p31 --> he4 + si28  Z=15 N=16 Noff=11 index=13 serialIndex=13 Active=false
+RObject[15][5][14]   p + p31 --> he4 + si28  Z=15 N=16 Noff=11 index=14 serialIndex=14 Active=false
+RObject[15][5][15]   p + p31 --> he4 + si28  Z=15 N=16 Noff=11 index=15 serialIndex=15 Active=false
+RObject[15][5][16]   p + p31 --> c12 + ne20  Z=15 N=16 Noff=11 index=16 serialIndex=16 Active=false
+RObject[15][5][17]   he4 + p31 --> n + cl34  Z=15 N=16 Noff=11 index=17 serialIndex=17 Active=false
+RObject[15][5][18]   he4 + p31 --> p + s34  Z=15 N=16 Noff=11 index=18 serialIndex=18 Active=false
+RObject[15][6][0]   p32 --> s32 + e + nubar  Z=15 N=17 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][6][1]   p32 --> n + p31  Z=15 N=17 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][6][2]   p32 --> p + si31  Z=15 N=17 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][6][3]   p32 --> he4 + al28  Z=15 N=17 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][6][4]   n + p32 --> p33  Z=15 N=17 Noff=11 index=4 serialIndex=4 Active=false
+RObject[15][6][5]   p + p32 --> s33  Z=15 N=17 Noff=11 index=5 serialIndex=5 Active=false
+RObject[15][6][6]   he4 + p32 --> cl36  Z=15 N=17 Noff=11 index=6 serialIndex=6 Active=false
+RObject[15][6][7]   n + p32 --> p + si32  Z=15 N=17 Noff=11 index=7 serialIndex=7 Active=false
+RObject[15][6][8]   n + p32 --> he4 + al29  Z=15 N=17 Noff=11 index=8 serialIndex=8 Active=false
+RObject[15][6][9]   p + p32 --> n + s32  Z=15 N=17 Noff=11 index=9 serialIndex=9 Active=false
+RObject[15][6][10]   p + p32 --> he4 + si29  Z=15 N=17 Noff=11 index=10 serialIndex=10 Active=false
+RObject[15][6][11]   he4 + p32 --> n + cl35  Z=15 N=17 Noff=11 index=11 serialIndex=11 Active=false
+RObject[15][6][12]   he4 + p32 --> p + s35  Z=15 N=17 Noff=11 index=12 serialIndex=12 Active=false
+RObject[15][7][0]   p33 --> s33 + e + nubar  Z=15 N=18 Noff=11 index=0 serialIndex=0 Active=false
+RObject[15][7][1]   p33 --> n + p32  Z=15 N=18 Noff=11 index=1 serialIndex=1 Active=false
+RObject[15][7][2]   p33 --> p + si32  Z=15 N=18 Noff=11 index=2 serialIndex=2 Active=false
+RObject[15][7][3]   p33 --> he4 + al29  Z=15 N=18 Noff=11 index=3 serialIndex=3 Active=false
+RObject[15][7][4]   p + p33 --> s34  Z=15 N=18 Noff=11 index=4 serialIndex=5 Active=false
+RObject[15][7][5]   he4 + p33 --> cl37  Z=15 N=18 Noff=11 index=5 serialIndex=6 Active=false
+RObject[15][7][6]   p + p33 --> n + s33  Z=15 N=18 Noff=11 index=6 serialIndex=9 Active=false
+RObject[15][7][7]   p + p33 --> he4 + si30  Z=15 N=18 Noff=11 index=7 serialIndex=10 Active=false
+RObject[15][7][8]   he4 + p33 --> n + cl36  Z=15 N=18 Noff=11 index=8 serialIndex=11 Active=false
+RObject[15][7][9]   he4 + p33 --> p + s36  Z=15 N=18 Noff=11 index=9 serialIndex=12 Active=false
+RObject[16][0][0]   s27 --> p + p26  Z=16 N=11 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][0][1]   n + s27 --> s28  Z=16 N=11 Noff=11 index=1 serialIndex=3 Active=false
+RObject[16][0][2]   he4 + s27 --> ar31  Z=16 N=11 Noff=11 index=2 serialIndex=5 Active=false
+RObject[16][0][3]   n + s27 --> p + p27  Z=16 N=11 Noff=11 index=3 serialIndex=6 Active=false
+RObject[16][0][4]   n + s27 --> he4 + si24  Z=16 N=11 Noff=11 index=4 serialIndex=7 Active=false
+RObject[16][0][5]   he4 + s27 --> p + cl30  Z=16 N=11 Noff=11 index=5 serialIndex=11 Active=false
+RObject[16][1][0]   s28 --> p28 + e+ + nu  Z=16 N=12 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][1][1]   s28 --> n + s27  Z=16 N=12 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][1][2]   s28 --> p + p27  Z=16 N=12 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][1][3]   s28 --> p + p27  Z=16 N=12 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][1][4]   s28 --> he4 + si24  Z=16 N=12 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][1][5]   n + s28 --> s29  Z=16 N=12 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][1][6]   he4 + s28 --> ar32  Z=16 N=12 Noff=11 index=6 serialIndex=7 Active=false
+RObject[16][1][7]   n + s28 --> p + p28  Z=16 N=12 Noff=11 index=7 serialIndex=8 Active=false
+RObject[16][1][8]   n + s28 --> he4 + si25  Z=16 N=12 Noff=11 index=8 serialIndex=9 Active=false
+RObject[16][1][9]   he4 + s28 --> n + ar31  Z=16 N=12 Noff=11 index=9 serialIndex=12 Active=false
+RObject[16][1][10]   he4 + s28 --> p + cl31  Z=16 N=12 Noff=11 index=10 serialIndex=13 Active=false
+RObject[16][2][0]   s29 --> p29 + e+ + nu  Z=16 N=13 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][2][1]   s29 --> n + s28  Z=16 N=13 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][2][2]   s29 --> p + p28  Z=16 N=13 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][2][3]   s29 --> he4 + si25  Z=16 N=13 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][2][4]   n + s29 --> s30  Z=16 N=13 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][2][5]   p + s29 --> cl30  Z=16 N=13 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][2][6]   he4 + s29 --> ar33  Z=16 N=13 Noff=11 index=6 serialIndex=6 Active=false
+RObject[16][2][7]   n + s29 --> p + p29  Z=16 N=13 Noff=11 index=7 serialIndex=7 Active=false
+RObject[16][2][8]   n + s29 --> he4 + si26  Z=16 N=13 Noff=11 index=8 serialIndex=8 Active=false
+RObject[16][2][9]   p + s29 --> he4 + p26  Z=16 N=13 Noff=11 index=9 serialIndex=10 Active=false
+RObject[16][2][10]   he4 + s29 --> n + ar32  Z=16 N=13 Noff=11 index=10 serialIndex=11 Active=false
+RObject[16][2][11]   he4 + s29 --> p + cl32  Z=16 N=13 Noff=11 index=11 serialIndex=12 Active=false
+RObject[16][3][0]   s30 --> p30 + e+ + nu  Z=16 N=14 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][3][1]   s30 --> n + s29  Z=16 N=14 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][3][2]   s30 --> p + p29  Z=16 N=14 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][3][3]   s30 --> p + p29  Z=16 N=14 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][3][4]   s30 --> p + p29  Z=16 N=14 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][3][5]   s30 --> he4 + si26  Z=16 N=14 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][3][6]   n + s30 --> s31  Z=16 N=14 Noff=11 index=6 serialIndex=6 Active=false
+RObject[16][3][7]   he4 + s30 --> ar34  Z=16 N=14 Noff=11 index=7 serialIndex=8 Active=false
+RObject[16][3][8]   n + s30 --> p + p30  Z=16 N=14 Noff=11 index=8 serialIndex=9 Active=false
+RObject[16][3][9]   n + s30 --> he4 + si27  Z=16 N=14 Noff=11 index=9 serialIndex=10 Active=false
+RObject[16][3][10]   p + s30 --> n + cl30  Z=16 N=14 Noff=11 index=10 serialIndex=11 Active=false
+RObject[16][3][11]   p + s30 --> he4 + p27  Z=16 N=14 Noff=11 index=11 serialIndex=12 Active=false
+RObject[16][3][12]   he4 + s30 --> n + ar33  Z=16 N=14 Noff=11 index=12 serialIndex=13 Active=false
+RObject[16][3][13]   he4 + s30 --> p + cl33  Z=16 N=14 Noff=11 index=13 serialIndex=14 Active=false
+RObject[16][4][0]   s31 --> p31 + e+ + nu  Z=16 N=15 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][4][1]   s31 --> n + s30  Z=16 N=15 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][4][2]   s31 --> p + p30  Z=16 N=15 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][4][3]   s31 --> he4 + si27  Z=16 N=15 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][4][4]   n + s31 --> s32  Z=16 N=15 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][4][5]   p + s31 --> cl32  Z=16 N=15 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][4][6]   p + s31 --> cl32  Z=16 N=15 Noff=11 index=6 serialIndex=6 Active=false
+RObject[16][4][7]   he4 + s31 --> ar35  Z=16 N=15 Noff=11 index=7 serialIndex=7 Active=false
+RObject[16][4][8]   n + s31 --> p + p31  Z=16 N=15 Noff=11 index=8 serialIndex=8 Active=false
+RObject[16][4][9]   n + s31 --> he4 + si28  Z=16 N=15 Noff=11 index=9 serialIndex=9 Active=false
+RObject[16][4][10]   n + s31 --> c12 + ne20  Z=16 N=15 Noff=11 index=10 serialIndex=10 Active=false
+RObject[16][4][11]   p + s31 --> n + cl31  Z=16 N=15 Noff=11 index=11 serialIndex=11 Active=false
+RObject[16][4][12]   p + s31 --> he4 + p28  Z=16 N=15 Noff=11 index=12 serialIndex=12 Active=false
+RObject[16][4][13]   he4 + s31 --> n + ar34  Z=16 N=15 Noff=11 index=13 serialIndex=13 Active=false
+RObject[16][4][14]   he4 + s31 --> p + cl34  Z=16 N=15 Noff=11 index=14 serialIndex=14 Active=false
+RObject[16][5][0]   s32 --> n + s31  Z=16 N=16 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][5][1]   s32 --> p + p31  Z=16 N=16 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][5][2]   s32 --> he4 + si28  Z=16 N=16 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][5][3]   n + s32 --> s33  Z=16 N=16 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][5][4]   p + s32 --> cl33  Z=16 N=16 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][5][5]   p + s32 --> cl33  Z=16 N=16 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][5][6]   p + s32 --> cl33  Z=16 N=16 Noff=11 index=6 serialIndex=6 Active=false
+RObject[16][5][7]   p + s32 --> cl33  Z=16 N=16 Noff=11 index=7 serialIndex=7 Active=false
+RObject[16][5][8]   he4 + s32 --> ar36  Z=16 N=16 Noff=11 index=8 serialIndex=8 Active=false
+RObject[16][5][9]   n + s32 --> p + p32  Z=16 N=16 Noff=11 index=9 serialIndex=9 Active=false
+RObject[16][5][10]   n + s32 --> he4 + si29  Z=16 N=16 Noff=11 index=10 serialIndex=10 Active=false
+RObject[16][5][11]   p + s32 --> n + cl32  Z=16 N=16 Noff=11 index=11 serialIndex=11 Active=false
+RObject[16][5][12]   p + s32 --> he4 + p29  Z=16 N=16 Noff=11 index=12 serialIndex=12 Active=false
+RObject[16][5][13]   he4 + s32 --> n + ar35  Z=16 N=16 Noff=11 index=13 serialIndex=13 Active=false
+RObject[16][5][14]   he4 + s32 --> p + cl35  Z=16 N=16 Noff=11 index=14 serialIndex=14 Active=false
+RObject[16][6][0]   s33 --> n + s32  Z=16 N=17 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][6][1]   s33 --> p + p32  Z=16 N=17 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][6][2]   s33 --> he4 + si29  Z=16 N=17 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][6][3]   n + s33 --> s34  Z=16 N=17 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][6][4]   p + s33 --> cl34  Z=16 N=17 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][6][5]   he4 + s33 --> ar37  Z=16 N=17 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][6][6]   n + s33 --> p + p33  Z=16 N=17 Noff=11 index=6 serialIndex=6 Active=false
+RObject[16][6][7]   n + s33 --> he4 + si30  Z=16 N=17 Noff=11 index=7 serialIndex=7 Active=false
+RObject[16][6][8]   p + s33 --> n + cl33  Z=16 N=17 Noff=11 index=8 serialIndex=8 Active=false
+RObject[16][6][9]   p + s33 --> he4 + p30  Z=16 N=17 Noff=11 index=9 serialIndex=9 Active=false
+RObject[16][6][10]   he4 + s33 --> n + ar36  Z=16 N=17 Noff=11 index=10 serialIndex=10 Active=false
+RObject[16][6][11]   he4 + s33 --> p + cl36  Z=16 N=17 Noff=11 index=11 serialIndex=11 Active=false
+RObject[16][7][0]   s34 --> n + s33  Z=16 N=18 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][7][1]   s34 --> p + p33  Z=16 N=18 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][7][2]   s34 --> he4 + si30  Z=16 N=18 Noff=11 index=2 serialIndex=2 Active=false
+RObject[16][7][3]   n + s34 --> s35  Z=16 N=18 Noff=11 index=3 serialIndex=3 Active=false
+RObject[16][7][4]   p + s34 --> cl35  Z=16 N=18 Noff=11 index=4 serialIndex=4 Active=false
+RObject[16][7][5]   he4 + s34 --> ar38  Z=16 N=18 Noff=11 index=5 serialIndex=5 Active=false
+RObject[16][7][6]   n + s34 --> he4 + si31  Z=16 N=18 Noff=11 index=6 serialIndex=7 Active=false
+RObject[16][7][7]   p + s34 --> n + cl34  Z=16 N=18 Noff=11 index=7 serialIndex=8 Active=false
+RObject[16][7][8]   p + s34 --> he4 + p31  Z=16 N=18 Noff=11 index=8 serialIndex=9 Active=false
+RObject[16][7][9]   he4 + s34 --> n + ar37  Z=16 N=18 Noff=11 index=9 serialIndex=10 Active=false
+RObject[16][7][10]   he4 + s34 --> p + cl37  Z=16 N=18 Noff=11 index=10 serialIndex=11 Active=false
+RObject[16][8][0]   s35 --> cl35 + e + nubar  Z=16 N=19 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][8][1]   s35 --> n + s34  Z=16 N=19 Noff=11 index=1 serialIndex=1 Active=false
+RObject[16][8][2]   s35 --> he4 + si31  Z=16 N=19 Noff=11 index=2 serialIndex=3 Active=false
+RObject[16][8][3]   n + s35 --> s36  Z=16 N=19 Noff=11 index=3 serialIndex=4 Active=false
+RObject[16][8][4]   p + s35 --> cl36  Z=16 N=19 Noff=11 index=4 serialIndex=5 Active=false
+RObject[16][8][5]   he4 + s35 --> ar39  Z=16 N=19 Noff=11 index=5 serialIndex=6 Active=false
+RObject[16][8][6]   n + s35 --> he4 + si32  Z=16 N=19 Noff=11 index=6 serialIndex=8 Active=false
+RObject[16][8][7]   p + s35 --> n + cl35  Z=16 N=19 Noff=11 index=7 serialIndex=9 Active=false
+RObject[16][8][8]   p + s35 --> he4 + p32  Z=16 N=19 Noff=11 index=8 serialIndex=10 Active=false
+RObject[16][8][9]   he4 + s35 --> n + ar38  Z=16 N=19 Noff=11 index=9 serialIndex=11 Active=false
+RObject[16][8][10]   he4 + s35 --> p + cl38  Z=16 N=19 Noff=11 index=10 serialIndex=12 Active=false
+RObject[16][9][0]   s36 --> n + s35  Z=16 N=20 Noff=11 index=0 serialIndex=0 Active=false
+RObject[16][9][1]   s36 --> he4 + si32  Z=16 N=20 Noff=11 index=1 serialIndex=2 Active=false
+RObject[16][9][2]   p + s36 --> cl37  Z=16 N=20 Noff=11 index=2 serialIndex=4 Active=false
+RObject[16][9][3]   he4 + s36 --> ar40  Z=16 N=20 Noff=11 index=3 serialIndex=5 Active=false
+RObject[16][9][4]   p + s36 --> n + cl36  Z=16 N=20 Noff=11 index=4 serialIndex=8 Active=false
+RObject[16][9][5]   p + s36 --> he4 + p33  Z=16 N=20 Noff=11 index=5 serialIndex=9 Active=false
+RObject[16][9][6]   he4 + s36 --> n + ar39  Z=16 N=20 Noff=11 index=6 serialIndex=10 Active=false
+RObject[17][0][0]   cl30 --> p + s29  Z=17 N=13 Noff=13 index=0 serialIndex=1 Active=false
+RObject[17][0][1]   cl30 --> he4 + p26  Z=17 N=13 Noff=13 index=1 serialIndex=2 Active=false
+RObject[17][0][2]   n + cl30 --> cl31  Z=17 N=13 Noff=13 index=2 serialIndex=3 Active=false
+RObject[17][0][3]   p + cl30 --> ar31  Z=17 N=13 Noff=13 index=3 serialIndex=4 Active=false
+RObject[17][0][4]   he4 + cl30 --> k34  Z=17 N=13 Noff=13 index=4 serialIndex=5 Active=false
+RObject[17][0][5]   n + cl30 --> p + s30  Z=17 N=13 Noff=13 index=5 serialIndex=6 Active=false
+RObject[17][0][6]   n + cl30 --> he4 + p27  Z=17 N=13 Noff=13 index=6 serialIndex=7 Active=false
+RObject[17][0][7]   p + cl30 --> he4 + s27  Z=17 N=13 Noff=13 index=7 serialIndex=9 Active=false
+RObject[17][0][8]   he4 + cl30 --> p + ar33  Z=17 N=13 Noff=13 index=8 serialIndex=11 Active=false
+RObject[17][1][0]   cl31 --> s31 + e+ + nu  Z=17 N=14 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][1][1]   cl31 --> n + cl30  Z=17 N=14 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][1][2]   cl31 --> he4 + p27  Z=17 N=14 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][1][3]   n + cl31 --> cl32  Z=17 N=14 Noff=13 index=3 serialIndex=4 Active=false
+RObject[17][1][4]   p + cl31 --> ar32  Z=17 N=14 Noff=13 index=4 serialIndex=5 Active=false
+RObject[17][1][5]   p + cl31 --> ar32  Z=17 N=14 Noff=13 index=5 serialIndex=6 Active=false
+RObject[17][1][6]   he4 + cl31 --> k35  Z=17 N=14 Noff=13 index=6 serialIndex=7 Active=false
+RObject[17][1][7]   n + cl31 --> p + s31  Z=17 N=14 Noff=13 index=7 serialIndex=8 Active=false
+RObject[17][1][8]   n + cl31 --> he4 + p28  Z=17 N=14 Noff=13 index=8 serialIndex=9 Active=false
+RObject[17][1][9]   p + cl31 --> n + ar31  Z=17 N=14 Noff=13 index=9 serialIndex=10 Active=false
+RObject[17][1][10]   p + cl31 --> he4 + s28  Z=17 N=14 Noff=13 index=10 serialIndex=11 Active=false
+RObject[17][1][11]   he4 + cl31 --> n + k34  Z=17 N=14 Noff=13 index=11 serialIndex=12 Active=false
+RObject[17][1][12]   he4 + cl31 --> p + ar34  Z=17 N=14 Noff=13 index=12 serialIndex=13 Active=false
+RObject[17][2][0]   cl32 --> s32 + e+ + nu  Z=17 N=15 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][2][1]   cl32 --> n + cl31  Z=17 N=15 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][2][2]   cl32 --> p + s31  Z=17 N=15 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][2][3]   cl32 --> p + s31  Z=17 N=15 Noff=13 index=3 serialIndex=3 Active=false
+RObject[17][2][4]   cl32 --> he4 + p28  Z=17 N=15 Noff=13 index=4 serialIndex=4 Active=false
+RObject[17][2][5]   n + cl32 --> cl33  Z=17 N=15 Noff=13 index=5 serialIndex=5 Active=false
+RObject[17][2][6]   p + cl32 --> ar33  Z=17 N=15 Noff=13 index=6 serialIndex=6 Active=false
+RObject[17][2][7]   p + cl32 --> ar33  Z=17 N=15 Noff=13 index=7 serialIndex=7 Active=false
+RObject[17][2][8]   p + cl32 --> ar33  Z=17 N=15 Noff=13 index=8 serialIndex=8 Active=false
+RObject[17][2][9]   he4 + cl32 --> k36  Z=17 N=15 Noff=13 index=9 serialIndex=9 Active=false
+RObject[17][2][10]   n + cl32 --> p + s32  Z=17 N=15 Noff=13 index=10 serialIndex=10 Active=false
+RObject[17][2][11]   n + cl32 --> he4 + p29  Z=17 N=15 Noff=13 index=11 serialIndex=11 Active=false
+RObject[17][2][12]   p + cl32 --> n + ar32  Z=17 N=15 Noff=13 index=12 serialIndex=12 Active=false
+RObject[17][2][13]   p + cl32 --> he4 + s29  Z=17 N=15 Noff=13 index=13 serialIndex=13 Active=false
+RObject[17][2][14]   he4 + cl32 --> n + k35  Z=17 N=15 Noff=13 index=14 serialIndex=14 Active=false
+RObject[17][2][15]   he4 + cl32 --> p + ar35  Z=17 N=15 Noff=13 index=15 serialIndex=15 Active=false
+RObject[17][3][0]   cl33 --> s33 + e+ + nu  Z=17 N=16 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][3][1]   cl33 --> n + cl32  Z=17 N=16 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][3][2]   cl33 --> p + s32  Z=17 N=16 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][3][3]   cl33 --> p + s32  Z=17 N=16 Noff=13 index=3 serialIndex=3 Active=false
+RObject[17][3][4]   cl33 --> p + s32  Z=17 N=16 Noff=13 index=4 serialIndex=4 Active=false
+RObject[17][3][5]   cl33 --> p + s32  Z=17 N=16 Noff=13 index=5 serialIndex=5 Active=false
+RObject[17][3][6]   cl33 --> he4 + p29  Z=17 N=16 Noff=13 index=6 serialIndex=6 Active=false
+RObject[17][3][7]   n + cl33 --> cl34  Z=17 N=16 Noff=13 index=7 serialIndex=7 Active=false
+RObject[17][3][8]   p + cl33 --> ar34  Z=17 N=16 Noff=13 index=8 serialIndex=8 Active=false
+RObject[17][3][9]   he4 + cl33 --> k37  Z=17 N=16 Noff=13 index=9 serialIndex=9 Active=false
+RObject[17][3][10]   n + cl33 --> p + s33  Z=17 N=16 Noff=13 index=10 serialIndex=10 Active=false
+RObject[17][3][11]   n + cl33 --> he4 + p30  Z=17 N=16 Noff=13 index=11 serialIndex=11 Active=false
+RObject[17][3][12]   p + cl33 --> n + ar33  Z=17 N=16 Noff=13 index=12 serialIndex=12 Active=false
+RObject[17][3][13]   p + cl33 --> he4 + s30  Z=17 N=16 Noff=13 index=13 serialIndex=13 Active=false
+RObject[17][3][14]   he4 + cl33 --> n + k36  Z=17 N=16 Noff=13 index=14 serialIndex=14 Active=false
+RObject[17][3][15]   he4 + cl33 --> p + ar36  Z=17 N=16 Noff=13 index=15 serialIndex=15 Active=false
+RObject[17][4][0]   cl34 --> s34 + e+ + nu  Z=17 N=17 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][4][1]   cl34 --> n + cl33  Z=17 N=17 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][4][2]   cl34 --> p + s33  Z=17 N=17 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][4][3]   cl34 --> he4 + p30  Z=17 N=17 Noff=13 index=3 serialIndex=3 Active=false
+RObject[17][4][4]   n + cl34 --> cl35  Z=17 N=17 Noff=13 index=4 serialIndex=4 Active=false
+RObject[17][4][5]   p + cl34 --> ar35  Z=17 N=17 Noff=13 index=5 serialIndex=5 Active=false
+RObject[17][4][6]   he4 + cl34 --> k38  Z=17 N=17 Noff=13 index=6 serialIndex=6 Active=false
+RObject[17][4][7]   n + cl34 --> p + s34  Z=17 N=17 Noff=13 index=7 serialIndex=7 Active=false
+RObject[17][4][8]   n + cl34 --> he4 + p31  Z=17 N=17 Noff=13 index=8 serialIndex=8 Active=false
+RObject[17][4][9]   p + cl34 --> n + ar34  Z=17 N=17 Noff=13 index=9 serialIndex=9 Active=false
+RObject[17][4][10]   p + cl34 --> he4 + s31  Z=17 N=17 Noff=13 index=10 serialIndex=10 Active=false
+RObject[17][4][11]   he4 + cl34 --> n + k37  Z=17 N=17 Noff=13 index=11 serialIndex=11 Active=false
+RObject[17][4][12]   he4 + cl34 --> p + ar37  Z=17 N=17 Noff=13 index=12 serialIndex=12 Active=false
+RObject[17][5][0]   cl35 --> n + cl34  Z=17 N=18 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][5][1]   cl35 --> p + s34  Z=17 N=18 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][5][2]   cl35 --> he4 + p31  Z=17 N=18 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][5][3]   n + cl35 --> cl36  Z=17 N=18 Noff=13 index=3 serialIndex=3 Active=false
+RObject[17][5][4]   p + cl35 --> ar36  Z=17 N=18 Noff=13 index=4 serialIndex=4 Active=false
+RObject[17][5][5]   he4 + cl35 --> k39  Z=17 N=18 Noff=13 index=5 serialIndex=5 Active=false
+RObject[17][5][6]   n + cl35 --> p + s35  Z=17 N=18 Noff=13 index=6 serialIndex=6 Active=false
+RObject[17][5][7]   n + cl35 --> he4 + p32  Z=17 N=18 Noff=13 index=7 serialIndex=7 Active=false
+RObject[17][5][8]   p + cl35 --> n + ar35  Z=17 N=18 Noff=13 index=8 serialIndex=8 Active=false
+RObject[17][5][9]   p + cl35 --> he4 + s32  Z=17 N=18 Noff=13 index=9 serialIndex=9 Active=false
+RObject[17][5][10]   he4 + cl35 --> n + k38  Z=17 N=18 Noff=13 index=10 serialIndex=10 Active=false
+RObject[17][5][11]   he4 + cl35 --> p + ar38  Z=17 N=18 Noff=13 index=11 serialIndex=11 Active=false
+RObject[17][6][0]   cl36 --> ar36 + e + nubar  Z=17 N=19 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][6][1]   cl36 --> n + cl35  Z=17 N=19 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][6][2]   cl36 --> p + s35  Z=17 N=19 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][6][3]   cl36 --> he4 + p32  Z=17 N=19 Noff=13 index=3 serialIndex=3 Active=false
+RObject[17][6][4]   n + cl36 --> cl37  Z=17 N=19 Noff=13 index=4 serialIndex=4 Active=false
+RObject[17][6][5]   p + cl36 --> ar37  Z=17 N=19 Noff=13 index=5 serialIndex=5 Active=false
+RObject[17][6][6]   he4 + cl36 --> k40  Z=17 N=19 Noff=13 index=6 serialIndex=6 Active=false
+RObject[17][6][7]   n + cl36 --> p + s36  Z=17 N=19 Noff=13 index=7 serialIndex=7 Active=false
+RObject[17][6][8]   n + cl36 --> he4 + p33  Z=17 N=19 Noff=13 index=8 serialIndex=8 Active=false
+RObject[17][6][9]   p + cl36 --> n + ar36  Z=17 N=19 Noff=13 index=9 serialIndex=9 Active=false
+RObject[17][6][10]   p + cl36 --> he4 + s33  Z=17 N=19 Noff=13 index=10 serialIndex=10 Active=false
+RObject[17][6][11]   he4 + cl36 --> n + k39  Z=17 N=19 Noff=13 index=11 serialIndex=11 Active=false
+RObject[17][6][12]   he4 + cl36 --> p + ar39  Z=17 N=19 Noff=13 index=12 serialIndex=12 Active=false
+RObject[17][7][0]   cl37 --> n + cl36  Z=17 N=20 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][7][1]   cl37 --> p + s36  Z=17 N=20 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][7][2]   cl37 --> he4 + p33  Z=17 N=20 Noff=13 index=2 serialIndex=2 Active=false
+RObject[17][7][3]   n + cl37 --> cl38  Z=17 N=20 Noff=13 index=3 serialIndex=3 Active=false
+RObject[17][7][4]   p + cl37 --> ar38  Z=17 N=20 Noff=13 index=4 serialIndex=4 Active=false
+RObject[17][7][5]   he4 + cl37 --> k41  Z=17 N=20 Noff=13 index=5 serialIndex=5 Active=false
+RObject[17][7][6]   p + cl37 --> n + ar37  Z=17 N=20 Noff=13 index=6 serialIndex=8 Active=false
+RObject[17][7][7]   p + cl37 --> he4 + s34  Z=17 N=20 Noff=13 index=7 serialIndex=9 Active=false
+RObject[17][7][8]   he4 + cl37 --> n + k40  Z=17 N=20 Noff=13 index=8 serialIndex=10 Active=false
+RObject[17][7][9]   he4 + cl37 --> p + ar40  Z=17 N=20 Noff=13 index=9 serialIndex=11 Active=false
+RObject[17][8][0]   cl38 --> ar38 + e + nubar  Z=17 N=21 Noff=13 index=0 serialIndex=0 Active=false
+RObject[17][8][1]   cl38 --> n + cl37  Z=17 N=21 Noff=13 index=1 serialIndex=1 Active=false
+RObject[17][8][2]   p + cl38 --> ar39  Z=17 N=21 Noff=13 index=2 serialIndex=5 Active=false
+RObject[17][8][3]   p + cl38 --> n + ar38  Z=17 N=21 Noff=13 index=3 serialIndex=9 Active=false
+RObject[17][8][4]   p + cl38 --> he4 + s35  Z=17 N=21 Noff=13 index=4 serialIndex=10 Active=false
+RObject[17][8][5]   he4 + cl38 --> n + k41  Z=17 N=21 Noff=13 index=5 serialIndex=11 Active=false
+RObject[18][0][0]   ar31 --> cl31 + e+ + nu  Z=18 N=13 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][0][1]   ar31 --> p + cl30  Z=18 N=13 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][0][2]   ar31 --> he4 + s27  Z=18 N=13 Noff=13 index=2 serialIndex=3 Active=false
+RObject[18][0][3]   n + ar31 --> ar32  Z=18 N=13 Noff=13 index=3 serialIndex=4 Active=false
+RObject[18][0][4]   he4 + ar31 --> ca35  Z=18 N=13 Noff=13 index=4 serialIndex=6 Active=false
+RObject[18][0][5]   n + ar31 --> p + cl31  Z=18 N=13 Noff=13 index=5 serialIndex=7 Active=false
+RObject[18][0][6]   n + ar31 --> he4 + s28  Z=18 N=13 Noff=13 index=6 serialIndex=8 Active=false
+RObject[18][0][7]   he4 + ar31 --> p + k34  Z=18 N=13 Noff=13 index=7 serialIndex=12 Active=false
+RObject[18][1][0]   ar32 --> cl32 + e+ + nu  Z=18 N=14 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][1][1]   ar32 --> n + ar31  Z=18 N=14 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][1][2]   ar32 --> p + cl31  Z=18 N=14 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][1][3]   ar32 --> p + cl31  Z=18 N=14 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][1][4]   ar32 --> he4 + s28  Z=18 N=14 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][1][5]   n + ar32 --> ar33  Z=18 N=14 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][1][6]   he4 + ar32 --> ca36  Z=18 N=14 Noff=13 index=6 serialIndex=7 Active=false
+RObject[18][1][7]   n + ar32 --> p + cl32  Z=18 N=14 Noff=13 index=7 serialIndex=8 Active=false
+RObject[18][1][8]   n + ar32 --> he4 + s29  Z=18 N=14 Noff=13 index=8 serialIndex=9 Active=false
+RObject[18][1][9]   he4 + ar32 --> n + ca35  Z=18 N=14 Noff=13 index=9 serialIndex=12 Active=false
+RObject[18][1][10]   he4 + ar32 --> p + k35  Z=18 N=14 Noff=13 index=10 serialIndex=13 Active=false
+RObject[18][2][0]   ar33 --> cl33 + e+ + nu  Z=18 N=15 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][2][1]   ar33 --> n + ar32  Z=18 N=15 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][2][2]   ar33 --> p + cl32  Z=18 N=15 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][2][3]   ar33 --> p + cl32  Z=18 N=15 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][2][4]   ar33 --> p + cl32  Z=18 N=15 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][2][5]   ar33 --> he4 + s29  Z=18 N=15 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][2][6]   n + ar33 --> ar34  Z=18 N=15 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][2][7]   p + ar33 --> k34  Z=18 N=15 Noff=13 index=7 serialIndex=7 Active=false
+RObject[18][2][8]   he4 + ar33 --> ca37  Z=18 N=15 Noff=13 index=8 serialIndex=8 Active=false
+RObject[18][2][9]   n + ar33 --> p + cl33  Z=18 N=15 Noff=13 index=9 serialIndex=9 Active=false
+RObject[18][2][10]   n + ar33 --> he4 + s30  Z=18 N=15 Noff=13 index=10 serialIndex=10 Active=false
+RObject[18][2][11]   p + ar33 --> he4 + cl30  Z=18 N=15 Noff=13 index=11 serialIndex=12 Active=false
+RObject[18][2][12]   he4 + ar33 --> n + ca36  Z=18 N=15 Noff=13 index=12 serialIndex=13 Active=false
+RObject[18][2][13]   he4 + ar33 --> p + k36  Z=18 N=15 Noff=13 index=13 serialIndex=14 Active=false
+RObject[18][3][0]   ar34 --> cl34 + e+ + nu  Z=18 N=16 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][3][1]   ar34 --> n + ar33  Z=18 N=16 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][3][2]   ar34 --> p + cl33  Z=18 N=16 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][3][3]   ar34 --> he4 + s30  Z=18 N=16 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][3][4]   n + ar34 --> ar35  Z=18 N=16 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][3][5]   p + ar34 --> k35  Z=18 N=16 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][3][6]   p + ar34 --> k35  Z=18 N=16 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][3][7]   he4 + ar34 --> ca38  Z=18 N=16 Noff=13 index=7 serialIndex=7 Active=false
+RObject[18][3][8]   n + ar34 --> p + cl34  Z=18 N=16 Noff=13 index=8 serialIndex=8 Active=false
+RObject[18][3][9]   n + ar34 --> he4 + s31  Z=18 N=16 Noff=13 index=9 serialIndex=9 Active=false
+RObject[18][3][10]   p + ar34 --> n + k34  Z=18 N=16 Noff=13 index=10 serialIndex=10 Active=false
+RObject[18][3][11]   p + ar34 --> he4 + cl31  Z=18 N=16 Noff=13 index=11 serialIndex=11 Active=false
+RObject[18][3][12]   he4 + ar34 --> n + ca37  Z=18 N=16 Noff=13 index=12 serialIndex=12 Active=false
+RObject[18][3][13]   he4 + ar34 --> p + k37  Z=18 N=16 Noff=13 index=13 serialIndex=13 Active=false
+RObject[18][4][0]   ar35 --> cl35 + e+ + nu  Z=18 N=17 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][4][1]   ar35 --> n + ar34  Z=18 N=17 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][4][2]   ar35 --> p + cl34  Z=18 N=17 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][4][3]   ar35 --> he4 + s31  Z=18 N=17 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][4][4]   n + ar35 --> ar36  Z=18 N=17 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][4][5]   p + ar35 --> k36  Z=18 N=17 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][4][6]   p + ar35 --> k36  Z=18 N=17 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][4][7]   he4 + ar35 --> ca39  Z=18 N=17 Noff=13 index=7 serialIndex=7 Active=false
+RObject[18][4][8]   n + ar35 --> p + cl35  Z=18 N=17 Noff=13 index=8 serialIndex=8 Active=false
+RObject[18][4][9]   n + ar35 --> he4 + s32  Z=18 N=17 Noff=13 index=9 serialIndex=9 Active=false
+RObject[18][4][10]   p + ar35 --> n + k35  Z=18 N=17 Noff=13 index=10 serialIndex=10 Active=false
+RObject[18][4][11]   p + ar35 --> he4 + cl32  Z=18 N=17 Noff=13 index=11 serialIndex=11 Active=false
+RObject[18][4][12]   he4 + ar35 --> n + ca38  Z=18 N=17 Noff=13 index=12 serialIndex=12 Active=false
+RObject[18][4][13]   he4 + ar35 --> p + k38  Z=18 N=17 Noff=13 index=13 serialIndex=13 Active=false
+RObject[18][5][0]   ar36 --> n + ar35  Z=18 N=18 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][5][1]   ar36 --> p + cl35  Z=18 N=18 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][5][2]   ar36 --> he4 + s32  Z=18 N=18 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][5][3]   n + ar36 --> ar37  Z=18 N=18 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][5][4]   p + ar36 --> k37  Z=18 N=18 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][5][5]   he4 + ar36 --> ca40  Z=18 N=18 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][5][6]   n + ar36 --> p + cl36  Z=18 N=18 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][5][7]   n + ar36 --> he4 + s33  Z=18 N=18 Noff=13 index=7 serialIndex=7 Active=false
+RObject[18][5][8]   p + ar36 --> n + k36  Z=18 N=18 Noff=13 index=8 serialIndex=8 Active=false
+RObject[18][5][9]   p + ar36 --> he4 + cl33  Z=18 N=18 Noff=13 index=9 serialIndex=9 Active=false
+RObject[18][5][10]   he4 + ar36 --> n + ca39  Z=18 N=18 Noff=13 index=10 serialIndex=10 Active=false
+RObject[18][5][11]   he4 + ar36 --> p + k39  Z=18 N=18 Noff=13 index=11 serialIndex=11 Active=false
+RObject[18][6][0]   ar37 + e --> cl37 + nu  (electron capture)  Z=18 N=19 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][6][1]   ar37 --> n + ar36  Z=18 N=19 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][6][2]   ar37 --> p + cl36  Z=18 N=19 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][6][3]   ar37 --> he4 + s33  Z=18 N=19 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][6][4]   n + ar37 --> ar38  Z=18 N=19 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][6][5]   p + ar37 --> k38  Z=18 N=19 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][6][6]   he4 + ar37 --> ca41  Z=18 N=19 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][6][7]   n + ar37 --> p + cl37  Z=18 N=19 Noff=13 index=7 serialIndex=7 Active=false
+RObject[18][6][8]   n + ar37 --> he4 + s34  Z=18 N=19 Noff=13 index=8 serialIndex=8 Active=false
+RObject[18][6][9]   p + ar37 --> n + k37  Z=18 N=19 Noff=13 index=9 serialIndex=9 Active=false
+RObject[18][6][10]   p + ar37 --> he4 + cl34  Z=18 N=19 Noff=13 index=10 serialIndex=10 Active=false
+RObject[18][6][11]   he4 + ar37 --> n + ca40  Z=18 N=19 Noff=13 index=11 serialIndex=11 Active=false
+RObject[18][6][12]   he4 + ar37 --> p + k40  Z=18 N=19 Noff=13 index=12 serialIndex=12 Active=false
+RObject[18][7][0]   ar38 --> n + ar37  Z=18 N=20 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][7][1]   ar38 --> p + cl37  Z=18 N=20 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][7][2]   ar38 --> he4 + s34  Z=18 N=20 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][7][3]   n + ar38 --> ar39  Z=18 N=20 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][7][4]   p + ar38 --> k39  Z=18 N=20 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][7][5]   he4 + ar38 --> ca42  Z=18 N=20 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][7][6]   n + ar38 --> p + cl38  Z=18 N=20 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][7][7]   n + ar38 --> he4 + s35  Z=18 N=20 Noff=13 index=7 serialIndex=7 Active=false
+RObject[18][7][8]   p + ar38 --> n + k38  Z=18 N=20 Noff=13 index=8 serialIndex=8 Active=false
+RObject[18][7][9]   p + ar38 --> he4 + cl35  Z=18 N=20 Noff=13 index=9 serialIndex=9 Active=false
+RObject[18][7][10]   he4 + ar38 --> n + ca41  Z=18 N=20 Noff=13 index=10 serialIndex=10 Active=false
+RObject[18][7][11]   he4 + ar38 --> p + k41  Z=18 N=20 Noff=13 index=11 serialIndex=11 Active=false
+RObject[18][8][0]   ar39 --> k39 + e + nubar  Z=18 N=21 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][8][1]   ar39 --> n + ar38  Z=18 N=21 Noff=13 index=1 serialIndex=1 Active=false
+RObject[18][8][2]   ar39 --> p + cl38  Z=18 N=21 Noff=13 index=2 serialIndex=2 Active=false
+RObject[18][8][3]   ar39 --> he4 + s35  Z=18 N=21 Noff=13 index=3 serialIndex=3 Active=false
+RObject[18][8][4]   n + ar39 --> ar40  Z=18 N=21 Noff=13 index=4 serialIndex=4 Active=false
+RObject[18][8][5]   p + ar39 --> k40  Z=18 N=21 Noff=13 index=5 serialIndex=5 Active=false
+RObject[18][8][6]   he4 + ar39 --> ca43  Z=18 N=21 Noff=13 index=6 serialIndex=6 Active=false
+RObject[18][8][7]   n + ar39 --> he4 + s36  Z=18 N=21 Noff=13 index=7 serialIndex=8 Active=false
+RObject[18][8][8]   p + ar39 --> n + k39  Z=18 N=21 Noff=13 index=8 serialIndex=9 Active=false
+RObject[18][8][9]   p + ar39 --> he4 + cl36  Z=18 N=21 Noff=13 index=9 serialIndex=10 Active=false
+RObject[18][8][10]   he4 + ar39 --> n + ca42  Z=18 N=21 Noff=13 index=10 serialIndex=11 Active=false
+RObject[18][9][0]   ar40 --> n + ar39  Z=18 N=22 Noff=13 index=0 serialIndex=0 Active=false
+RObject[18][9][1]   ar40 --> he4 + s36  Z=18 N=22 Noff=13 index=1 serialIndex=2 Active=false
+RObject[18][9][2]   p + ar40 --> k41  Z=18 N=22 Noff=13 index=2 serialIndex=4 Active=false
+RObject[18][9][3]   he4 + ar40 --> ca44  Z=18 N=22 Noff=13 index=3 serialIndex=5 Active=false
+RObject[18][9][4]   p + ar40 --> n + k40  Z=18 N=22 Noff=13 index=4 serialIndex=8 Active=false
+RObject[18][9][5]   p + ar40 --> he4 + cl37  Z=18 N=22 Noff=13 index=5 serialIndex=9 Active=false
+RObject[18][9][6]   he4 + ar40 --> n + ca43  Z=18 N=22 Noff=13 index=6 serialIndex=10 Active=false
+RObject[19][0][0]   k34 --> p + ar33  Z=19 N=15 Noff=15 index=0 serialIndex=1 Active=false
+RObject[19][0][1]   k34 --> he4 + cl30  Z=19 N=15 Noff=15 index=1 serialIndex=2 Active=false
+RObject[19][0][2]   n + k34 --> k35  Z=19 N=15 Noff=15 index=2 serialIndex=3 Active=false
+RObject[19][0][3]   p + k34 --> ca35  Z=19 N=15 Noff=15 index=3 serialIndex=4 Active=false
+RObject[19][0][4]   he4 + k34 --> sc38  Z=19 N=15 Noff=15 index=4 serialIndex=5 Active=false
+RObject[19][0][5]   n + k34 --> p + ar34  Z=19 N=15 Noff=15 index=5 serialIndex=6 Active=false
+RObject[19][0][6]   n + k34 --> he4 + cl31  Z=19 N=15 Noff=15 index=6 serialIndex=7 Active=false
+RObject[19][0][7]   p + k34 --> he4 + ar31  Z=19 N=15 Noff=15 index=7 serialIndex=9 Active=false
+RObject[19][0][8]   he4 + k34 --> p + ca37  Z=19 N=15 Noff=15 index=8 serialIndex=11 Active=false
+RObject[19][1][0]   k35 --> ar35 + e+ + nu  Z=19 N=16 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][1][1]   k35 --> n + k34  Z=19 N=16 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][1][2]   k35 --> p + ar34  Z=19 N=16 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][1][3]   k35 --> p + ar34  Z=19 N=16 Noff=15 index=3 serialIndex=3 Active=false
+RObject[19][1][4]   k35 --> he4 + cl31  Z=19 N=16 Noff=15 index=4 serialIndex=4 Active=false
+RObject[19][1][5]   n + k35 --> k36  Z=19 N=16 Noff=15 index=5 serialIndex=5 Active=false
+RObject[19][1][6]   p + k35 --> ca36  Z=19 N=16 Noff=15 index=6 serialIndex=6 Active=false
+RObject[19][1][7]   p + k35 --> ca36  Z=19 N=16 Noff=15 index=7 serialIndex=7 Active=false
+RObject[19][1][8]   p + k35 --> ca36  Z=19 N=16 Noff=15 index=8 serialIndex=8 Active=false
+RObject[19][1][9]   p + k35 --> ca36  Z=19 N=16 Noff=15 index=9 serialIndex=9 Active=false
+RObject[19][1][10]   p + k35 --> ca36  Z=19 N=16 Noff=15 index=10 serialIndex=10 Active=false
+RObject[19][1][11]   he4 + k35 --> sc39  Z=19 N=16 Noff=15 index=11 serialIndex=11 Active=false
+RObject[19][1][12]   n + k35 --> p + ar35  Z=19 N=16 Noff=15 index=12 serialIndex=12 Active=false
+RObject[19][1][13]   n + k35 --> he4 + cl32  Z=19 N=16 Noff=15 index=13 serialIndex=13 Active=false
+RObject[19][1][14]   p + k35 --> n + ca35  Z=19 N=16 Noff=15 index=14 serialIndex=14 Active=false
+RObject[19][1][15]   p + k35 --> he4 + ar32  Z=19 N=16 Noff=15 index=15 serialIndex=15 Active=false
+RObject[19][1][16]   he4 + k35 --> n + sc38  Z=19 N=16 Noff=15 index=16 serialIndex=16 Active=false
+RObject[19][1][17]   he4 + k35 --> p + ca38  Z=19 N=16 Noff=15 index=17 serialIndex=17 Active=false
+RObject[19][2][0]   k36 --> ar36 + e+ + nu  Z=19 N=17 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][2][1]   k36 --> n + k35  Z=19 N=17 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][2][2]   k36 --> p + ar35  Z=19 N=17 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][2][3]   k36 --> p + ar35  Z=19 N=17 Noff=15 index=3 serialIndex=3 Active=false
+RObject[19][2][4]   k36 --> he4 + cl32  Z=19 N=17 Noff=15 index=4 serialIndex=4 Active=false
+RObject[19][2][5]   n + k36 --> k37  Z=19 N=17 Noff=15 index=5 serialIndex=5 Active=false
+RObject[19][2][6]   p + k36 --> ca37  Z=19 N=17 Noff=15 index=6 serialIndex=6 Active=false
+RObject[19][2][7]   p + k36 --> ca37  Z=19 N=17 Noff=15 index=7 serialIndex=7 Active=false
+RObject[19][2][8]   he4 + k36 --> sc40  Z=19 N=17 Noff=15 index=8 serialIndex=8 Active=false
+RObject[19][2][9]   n + k36 --> p + ar36  Z=19 N=17 Noff=15 index=9 serialIndex=9 Active=false
+RObject[19][2][10]   n + k36 --> he4 + cl33  Z=19 N=17 Noff=15 index=10 serialIndex=10 Active=false
+RObject[19][2][11]   p + k36 --> n + ca36  Z=19 N=17 Noff=15 index=11 serialIndex=11 Active=false
+RObject[19][2][12]   p + k36 --> he4 + ar33  Z=19 N=17 Noff=15 index=12 serialIndex=12 Active=false
+RObject[19][2][13]   he4 + k36 --> n + sc39  Z=19 N=17 Noff=15 index=13 serialIndex=13 Active=false
+RObject[19][2][14]   he4 + k36 --> p + ca39  Z=19 N=17 Noff=15 index=14 serialIndex=14 Active=false
+RObject[19][3][0]   k37 --> ar37 + e+ + nu  Z=19 N=18 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][3][1]   k37 --> n + k36  Z=19 N=18 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][3][2]   k37 --> p + ar36  Z=19 N=18 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][3][3]   k37 --> he4 + cl33  Z=19 N=18 Noff=15 index=3 serialIndex=3 Active=false
+RObject[19][3][4]   n + k37 --> k38  Z=19 N=18 Noff=15 index=4 serialIndex=4 Active=false
+RObject[19][3][5]   p + k37 --> ca38  Z=19 N=18 Noff=15 index=5 serialIndex=5 Active=false
+RObject[19][3][6]   he4 + k37 --> sc41  Z=19 N=18 Noff=15 index=6 serialIndex=6 Active=false
+RObject[19][3][7]   n + k37 --> p + ar37  Z=19 N=18 Noff=15 index=7 serialIndex=7 Active=false
+RObject[19][3][8]   n + k37 --> he4 + cl34  Z=19 N=18 Noff=15 index=8 serialIndex=8 Active=false
+RObject[19][3][9]   p + k37 --> n + ca37  Z=19 N=18 Noff=15 index=9 serialIndex=9 Active=false
+RObject[19][3][10]   p + k37 --> he4 + ar34  Z=19 N=18 Noff=15 index=10 serialIndex=10 Active=false
+RObject[19][3][11]   he4 + k37 --> n + sc40  Z=19 N=18 Noff=15 index=11 serialIndex=11 Active=false
+RObject[19][3][12]   he4 + k37 --> p + ca40  Z=19 N=18 Noff=15 index=12 serialIndex=12 Active=false
+RObject[19][4][0]   k38 --> ar38 + e+ + nu  Z=19 N=19 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][4][1]   k38 --> n + k37  Z=19 N=19 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][4][2]   k38 --> p + ar37  Z=19 N=19 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][4][3]   k38 --> he4 + cl34  Z=19 N=19 Noff=15 index=3 serialIndex=3 Active=false
+RObject[19][4][4]   n + k38 --> k39  Z=19 N=19 Noff=15 index=4 serialIndex=4 Active=false
+RObject[19][4][5]   p + k38 --> ca39  Z=19 N=19 Noff=15 index=5 serialIndex=5 Active=false
+RObject[19][4][6]   he4 + k38 --> sc42  Z=19 N=19 Noff=15 index=6 serialIndex=6 Active=false
+RObject[19][4][7]   n + k38 --> p + ar38  Z=19 N=19 Noff=15 index=7 serialIndex=7 Active=false
+RObject[19][4][8]   n + k38 --> he4 + cl35  Z=19 N=19 Noff=15 index=8 serialIndex=8 Active=false
+RObject[19][4][9]   p + k38 --> n + ca38  Z=19 N=19 Noff=15 index=9 serialIndex=9 Active=false
+RObject[19][4][10]   p + k38 --> he4 + ar35  Z=19 N=19 Noff=15 index=10 serialIndex=10 Active=false
+RObject[19][4][11]   he4 + k38 --> n + sc41  Z=19 N=19 Noff=15 index=11 serialIndex=11 Active=false
+RObject[19][4][12]   he4 + k38 --> p + ca41  Z=19 N=19 Noff=15 index=12 serialIndex=12 Active=false
+RObject[19][5][0]   k39 --> n + k38  Z=19 N=20 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][5][1]   k39 --> p + ar38  Z=19 N=20 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][5][2]   k39 --> he4 + cl35  Z=19 N=20 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][5][3]   n + k39 --> k40  Z=19 N=20 Noff=15 index=3 serialIndex=3 Active=false
+RObject[19][5][4]   p + k39 --> ca40  Z=19 N=20 Noff=15 index=4 serialIndex=4 Active=false
+RObject[19][5][5]   he4 + k39 --> sc43  Z=19 N=20 Noff=15 index=5 serialIndex=5 Active=false
+RObject[19][5][6]   n + k39 --> p + ar39  Z=19 N=20 Noff=15 index=6 serialIndex=6 Active=false
+RObject[19][5][7]   n + k39 --> he4 + cl36  Z=19 N=20 Noff=15 index=7 serialIndex=7 Active=false
+RObject[19][5][8]   p + k39 --> n + ca39  Z=19 N=20 Noff=15 index=8 serialIndex=8 Active=false
+RObject[19][5][9]   p + k39 --> he4 + ar36  Z=19 N=20 Noff=15 index=9 serialIndex=9 Active=false
+RObject[19][5][10]   he4 + k39 --> n + sc42  Z=19 N=20 Noff=15 index=10 serialIndex=10 Active=false
+RObject[19][5][11]   he4 + k39 --> p + ca42  Z=19 N=20 Noff=15 index=11 serialIndex=11 Active=false
+RObject[19][6][0]   k40 + e --> ar40 + nu  (electron capture)  Z=19 N=21 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][6][1]   k40 --> ca40 + e + nubar  Z=19 N=21 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][6][2]   k40 --> n + k39  Z=19 N=21 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][6][3]   k40 --> p + ar39  Z=19 N=21 Noff=15 index=3 serialIndex=3 Active=false
+RObject[19][6][4]   k40 --> he4 + cl36  Z=19 N=21 Noff=15 index=4 serialIndex=4 Active=false
+RObject[19][6][5]   n + k40 --> k41  Z=19 N=21 Noff=15 index=5 serialIndex=5 Active=false
+RObject[19][6][6]   p + k40 --> ca41  Z=19 N=21 Noff=15 index=6 serialIndex=6 Active=false
+RObject[19][6][7]   he4 + k40 --> sc44  Z=19 N=21 Noff=15 index=7 serialIndex=7 Active=false
+RObject[19][6][8]   n + k40 --> p + ar40  Z=19 N=21 Noff=15 index=8 serialIndex=8 Active=false
+RObject[19][6][9]   n + k40 --> he4 + cl37  Z=19 N=21 Noff=15 index=9 serialIndex=9 Active=false
+RObject[19][6][10]   p + k40 --> n + ca40  Z=19 N=21 Noff=15 index=10 serialIndex=10 Active=false
+RObject[19][6][11]   p + k40 --> he4 + ar37  Z=19 N=21 Noff=15 index=11 serialIndex=11 Active=false
+RObject[19][6][12]   he4 + k40 --> n + sc43  Z=19 N=21 Noff=15 index=12 serialIndex=12 Active=false
+RObject[19][6][13]   he4 + k40 --> p + ca43  Z=19 N=21 Noff=15 index=13 serialIndex=13 Active=false
+RObject[19][7][0]   k41 --> n + k40  Z=19 N=22 Noff=15 index=0 serialIndex=0 Active=false
+RObject[19][7][1]   k41 --> p + ar40  Z=19 N=22 Noff=15 index=1 serialIndex=1 Active=false
+RObject[19][7][2]   k41 --> he4 + cl37  Z=19 N=22 Noff=15 index=2 serialIndex=2 Active=false
+RObject[19][7][3]   p + k41 --> ca42  Z=19 N=22 Noff=15 index=3 serialIndex=4 Active=false
+RObject[19][7][4]   he4 + k41 --> sc45  Z=19 N=22 Noff=15 index=4 serialIndex=5 Active=false
+RObject[19][7][5]   n + k41 --> he4 + cl38  Z=19 N=22 Noff=15 index=5 serialIndex=7 Active=false
+RObject[19][7][6]   p + k41 --> n + ca41  Z=19 N=22 Noff=15 index=6 serialIndex=8 Active=false
+RObject[19][7][7]   p + k41 --> he4 + ar38  Z=19 N=22 Noff=15 index=7 serialIndex=9 Active=false
+RObject[19][7][8]   he4 + k41 --> n + sc44  Z=19 N=22 Noff=15 index=8 serialIndex=10 Active=false
+RObject[19][7][9]   he4 + k41 --> p + ca44  Z=19 N=22 Noff=15 index=9 serialIndex=11 Active=false
+RObject[20][0][0]   ca35 --> k35 + e+ + nu  Z=20 N=15 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][0][1]   ca35 --> p + k34  Z=20 N=15 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][0][2]   ca35 --> he4 + ar31  Z=20 N=15 Noff=15 index=2 serialIndex=3 Active=false
+RObject[20][0][3]   n + ca35 --> ca36  Z=20 N=15 Noff=15 index=3 serialIndex=4 Active=false
+RObject[20][0][4]   n + ca35 --> p + k35  Z=20 N=15 Noff=15 index=4 serialIndex=7 Active=false
+RObject[20][0][5]   n + ca35 --> he4 + ar32  Z=20 N=15 Noff=15 index=5 serialIndex=8 Active=false
+RObject[20][0][6]   he4 + ca35 --> p + sc38  Z=20 N=15 Noff=15 index=6 serialIndex=12 Active=false
+RObject[20][1][0]   ca36 --> k36 + e+ + nu  Z=20 N=16 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][1][1]   ca36 --> n + ca35  Z=20 N=16 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][1][2]   ca36 --> p + k35  Z=20 N=16 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][1][3]   ca36 --> p + k35  Z=20 N=16 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][1][4]   ca36 --> p + k35  Z=20 N=16 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][1][5]   ca36 --> p + k35  Z=20 N=16 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][1][6]   ca36 --> p + k35  Z=20 N=16 Noff=15 index=6 serialIndex=6 Active=false
+RObject[20][1][7]   ca36 --> he4 + ar32  Z=20 N=16 Noff=15 index=7 serialIndex=7 Active=false
+RObject[20][1][8]   n + ca36 --> ca37  Z=20 N=16 Noff=15 index=8 serialIndex=8 Active=false
+RObject[20][1][9]   n + ca36 --> p + k36  Z=20 N=16 Noff=15 index=9 serialIndex=11 Active=false
+RObject[20][1][10]   n + ca36 --> he4 + ar33  Z=20 N=16 Noff=15 index=10 serialIndex=12 Active=false
+RObject[20][1][11]   he4 + ca36 --> p + sc39  Z=20 N=16 Noff=15 index=11 serialIndex=16 Active=false
+RObject[20][2][0]   ca37 --> k37 + e+ + nu  Z=20 N=17 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][2][1]   ca37 --> n + ca36  Z=20 N=17 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][2][2]   ca37 --> p + k36  Z=20 N=17 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][2][3]   ca37 --> p + k36  Z=20 N=17 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][2][4]   ca37 --> he4 + ar33  Z=20 N=17 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][2][5]   n + ca37 --> ca38  Z=20 N=17 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][2][6]   p + ca37 --> sc38  Z=20 N=17 Noff=15 index=6 serialIndex=6 Active=false
+RObject[20][2][7]   he4 + ca37 --> ti41  Z=20 N=17 Noff=15 index=7 serialIndex=7 Active=false
+RObject[20][2][8]   n + ca37 --> p + k37  Z=20 N=17 Noff=15 index=8 serialIndex=8 Active=false
+RObject[20][2][9]   n + ca37 --> he4 + ar34  Z=20 N=17 Noff=15 index=9 serialIndex=9 Active=false
+RObject[20][2][10]   p + ca37 --> he4 + k34  Z=20 N=17 Noff=15 index=10 serialIndex=11 Active=false
+RObject[20][2][11]   he4 + ca37 --> p + sc40  Z=20 N=17 Noff=15 index=11 serialIndex=13 Active=false
+RObject[20][3][0]   ca38 --> k38 + e+ + nu  Z=20 N=18 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][3][1]   ca38 --> n + ca37  Z=20 N=18 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][3][2]   ca38 --> p + k37  Z=20 N=18 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][3][3]   ca38 --> he4 + ar34  Z=20 N=18 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][3][4]   n + ca38 --> ca39  Z=20 N=18 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][3][5]   p + ca38 --> sc39  Z=20 N=18 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][3][6]   he4 + ca38 --> ti42  Z=20 N=18 Noff=15 index=6 serialIndex=6 Active=false
+RObject[20][3][7]   n + ca38 --> p + k38  Z=20 N=18 Noff=15 index=7 serialIndex=7 Active=false
+RObject[20][3][8]   n + ca38 --> he4 + ar35  Z=20 N=18 Noff=15 index=8 serialIndex=8 Active=false
+RObject[20][3][9]   p + ca38 --> n + sc38  Z=20 N=18 Noff=15 index=9 serialIndex=9 Active=false
+RObject[20][3][10]   p + ca38 --> he4 + k35  Z=20 N=18 Noff=15 index=10 serialIndex=10 Active=false
+RObject[20][3][11]   he4 + ca38 --> n + ti41  Z=20 N=18 Noff=15 index=11 serialIndex=11 Active=false
+RObject[20][3][12]   he4 + ca38 --> p + sc41  Z=20 N=18 Noff=15 index=12 serialIndex=12 Active=false
+RObject[20][4][0]   ca39 --> k39 + e+ + nu  Z=20 N=19 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][4][1]   ca39 --> n + ca38  Z=20 N=19 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][4][2]   ca39 --> p + k38  Z=20 N=19 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][4][3]   ca39 --> he4 + ar35  Z=20 N=19 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][4][4]   n + ca39 --> ca40  Z=20 N=19 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][4][5]   p + ca39 --> sc40  Z=20 N=19 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][4][6]   p + ca39 --> sc40  Z=20 N=19 Noff=15 index=6 serialIndex=6 Active=false
+RObject[20][4][7]   p + ca39 --> sc40  Z=20 N=19 Noff=15 index=7 serialIndex=7 Active=false
+RObject[20][4][8]   he4 + ca39 --> ti43  Z=20 N=19 Noff=15 index=8 serialIndex=8 Active=false
+RObject[20][4][9]   n + ca39 --> p + k39  Z=20 N=19 Noff=15 index=9 serialIndex=9 Active=false
+RObject[20][4][10]   n + ca39 --> he4 + ar36  Z=20 N=19 Noff=15 index=10 serialIndex=10 Active=false
+RObject[20][4][11]   p + ca39 --> n + sc39  Z=20 N=19 Noff=15 index=11 serialIndex=11 Active=false
+RObject[20][4][12]   p + ca39 --> he4 + k36  Z=20 N=19 Noff=15 index=12 serialIndex=12 Active=false
+RObject[20][4][13]   he4 + ca39 --> n + ti42  Z=20 N=19 Noff=15 index=13 serialIndex=13 Active=false
+RObject[20][4][14]   he4 + ca39 --> p + sc42  Z=20 N=19 Noff=15 index=14 serialIndex=14 Active=false
+RObject[20][5][0]   ca40 --> n + ca39  Z=20 N=20 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][5][1]   ca40 --> p + k39  Z=20 N=20 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][5][2]   ca40 --> he4 + ar36  Z=20 N=20 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][5][3]   n + ca40 --> ca41  Z=20 N=20 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][5][4]   p + ca40 --> sc41  Z=20 N=20 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][5][5]   p + ca40 --> sc41  Z=20 N=20 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][5][6]   he4 + ca40 --> ti44  Z=20 N=20 Noff=15 index=6 serialIndex=6 Active=false
+RObject[20][5][7]   n + ca40 --> p + k40  Z=20 N=20 Noff=15 index=7 serialIndex=7 Active=false
+RObject[20][5][8]   n + ca40 --> he4 + ar37  Z=20 N=20 Noff=15 index=8 serialIndex=8 Active=false
+RObject[20][5][9]   p + ca40 --> n + sc40  Z=20 N=20 Noff=15 index=9 serialIndex=9 Active=false
+RObject[20][5][10]   p + ca40 --> he4 + k37  Z=20 N=20 Noff=15 index=10 serialIndex=10 Active=false
+RObject[20][5][11]   he4 + ca40 --> n + ti43  Z=20 N=20 Noff=15 index=11 serialIndex=11 Active=false
+RObject[20][5][12]   he4 + ca40 --> p + sc43  Z=20 N=20 Noff=15 index=12 serialIndex=12 Active=false
+RObject[20][6][0]   ca41 + e --> k41 + nu  (electron capture)  Z=20 N=21 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][6][1]   ca41 --> n + ca40  Z=20 N=21 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][6][2]   ca41 --> p + k40  Z=20 N=21 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][6][3]   ca41 --> he4 + ar37  Z=20 N=21 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][6][4]   n + ca41 --> ca42  Z=20 N=21 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][6][5]   p + ca41 --> sc42  Z=20 N=21 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][6][6]   he4 + ca41 --> ti45  Z=20 N=21 Noff=15 index=6 serialIndex=6 Active=false
+RObject[20][6][7]   n + ca41 --> p + k41  Z=20 N=21 Noff=15 index=7 serialIndex=7 Active=false
+RObject[20][6][8]   n + ca41 --> he4 + ar38  Z=20 N=21 Noff=15 index=8 serialIndex=8 Active=false
+RObject[20][6][9]   p + ca41 --> n + sc41  Z=20 N=21 Noff=15 index=9 serialIndex=9 Active=false
+RObject[20][6][10]   p + ca41 --> he4 + k38  Z=20 N=21 Noff=15 index=10 serialIndex=10 Active=false
+RObject[20][6][11]   he4 + ca41 --> n + ti44  Z=20 N=21 Noff=15 index=11 serialIndex=11 Active=false
+RObject[20][6][12]   he4 + ca41 --> p + sc44  Z=20 N=21 Noff=15 index=12 serialIndex=12 Active=false
+RObject[20][7][0]   ca42 --> n + ca41  Z=20 N=22 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][7][1]   ca42 --> p + k41  Z=20 N=22 Noff=15 index=1 serialIndex=1 Active=false
+RObject[20][7][2]   ca42 --> he4 + ar38  Z=20 N=22 Noff=15 index=2 serialIndex=2 Active=false
+RObject[20][7][3]   n + ca42 --> ca43  Z=20 N=22 Noff=15 index=3 serialIndex=3 Active=false
+RObject[20][7][4]   p + ca42 --> sc43  Z=20 N=22 Noff=15 index=4 serialIndex=4 Active=false
+RObject[20][7][5]   he4 + ca42 --> ti46  Z=20 N=22 Noff=15 index=5 serialIndex=5 Active=false
+RObject[20][7][6]   n + ca42 --> he4 + ar39  Z=20 N=22 Noff=15 index=6 serialIndex=7 Active=false
+RObject[20][7][7]   p + ca42 --> n + sc42  Z=20 N=22 Noff=15 index=7 serialIndex=8 Active=false
+RObject[20][7][8]   p + ca42 --> he4 + k39  Z=20 N=22 Noff=15 index=8 serialIndex=9 Active=false
+RObject[20][7][9]   he4 + ca42 --> n + ti45  Z=20 N=22 Noff=15 index=9 serialIndex=10 Active=false
+RObject[20][7][10]   he4 + ca42 --> p + sc45  Z=20 N=22 Noff=15 index=10 serialIndex=11 Active=false
+RObject[20][8][0]   ca43 --> n + ca42  Z=20 N=23 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][8][1]   ca43 --> he4 + ar39  Z=20 N=23 Noff=15 index=1 serialIndex=2 Active=false
+RObject[20][8][2]   n + ca43 --> ca44  Z=20 N=23 Noff=15 index=2 serialIndex=3 Active=false
+RObject[20][8][3]   p + ca43 --> sc44  Z=20 N=23 Noff=15 index=3 serialIndex=4 Active=false
+RObject[20][8][4]   he4 + ca43 --> ti47  Z=20 N=23 Noff=15 index=4 serialIndex=5 Active=false
+RObject[20][8][5]   n + ca43 --> he4 + ar40  Z=20 N=23 Noff=15 index=5 serialIndex=7 Active=false
+RObject[20][8][6]   p + ca43 --> n + sc43  Z=20 N=23 Noff=15 index=6 serialIndex=8 Active=false
+RObject[20][8][7]   p + ca43 --> he4 + k40  Z=20 N=23 Noff=15 index=7 serialIndex=9 Active=false
+RObject[20][8][8]   he4 + ca43 --> n + ti46  Z=20 N=23 Noff=15 index=8 serialIndex=10 Active=false
+RObject[20][9][0]   ca44 --> n + ca43  Z=20 N=24 Noff=15 index=0 serialIndex=0 Active=false
+RObject[20][9][1]   ca44 --> he4 + ar40  Z=20 N=24 Noff=15 index=1 serialIndex=2 Active=false
+RObject[20][9][2]   p + ca44 --> sc45  Z=20 N=24 Noff=15 index=2 serialIndex=4 Active=false
+RObject[20][9][3]   p + ca44 --> n + sc44  Z=20 N=24 Noff=15 index=3 serialIndex=8 Active=false
+RObject[20][9][4]   p + ca44 --> he4 + k41  Z=20 N=24 Noff=15 index=4 serialIndex=9 Active=false
+RObject[20][9][5]   he4 + ca44 --> n + ti47  Z=20 N=24 Noff=15 index=5 serialIndex=10 Active=false
+RObject[21][0][0]   sc38 --> ca38 + e+ + nu  Z=21 N=17 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][0][1]   sc38 --> p + ca37  Z=21 N=17 Noff=17 index=1 serialIndex=2 Active=false
+RObject[21][0][2]   sc38 --> he4 + k34  Z=21 N=17 Noff=17 index=2 serialIndex=3 Active=false
+RObject[21][0][3]   n + sc38 --> sc39  Z=21 N=17 Noff=17 index=3 serialIndex=4 Active=false
+RObject[21][0][4]   n + sc38 --> p + ca38  Z=21 N=17 Noff=17 index=4 serialIndex=7 Active=false
+RObject[21][0][5]   n + sc38 --> he4 + k35  Z=21 N=17 Noff=17 index=5 serialIndex=8 Active=false
+RObject[21][0][6]   p + sc38 --> he4 + ca35  Z=21 N=17 Noff=17 index=6 serialIndex=10 Active=false
+RObject[21][0][7]   he4 + sc38 --> p + ti41  Z=21 N=17 Noff=17 index=7 serialIndex=12 Active=false
+RObject[21][1][0]   sc39 --> ca39 + e+ + nu  Z=21 N=18 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][1][1]   sc39 --> p + ca38  Z=21 N=18 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][1][2]   sc39 --> n + sc38  Z=21 N=18 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][1][3]   sc39 --> he4 + k35  Z=21 N=18 Noff=17 index=3 serialIndex=3 Active=false
+RObject[21][1][4]   n + sc39 --> sc40  Z=21 N=18 Noff=17 index=4 serialIndex=4 Active=false
+RObject[21][1][5]   he4 + sc39 --> v43  Z=21 N=18 Noff=17 index=5 serialIndex=6 Active=false
+RObject[21][1][6]   n + sc39 --> p + ca39  Z=21 N=18 Noff=17 index=6 serialIndex=7 Active=false
+RObject[21][1][7]   n + sc39 --> he4 + k36  Z=21 N=18 Noff=17 index=7 serialIndex=8 Active=false
+RObject[21][1][8]   p + sc39 --> he4 + ca36  Z=21 N=18 Noff=17 index=8 serialIndex=10 Active=false
+RObject[21][1][9]   he4 + sc39 --> p + ti42  Z=21 N=18 Noff=17 index=9 serialIndex=12 Active=false
+RObject[21][2][0]   sc40 --> ca40 + e+ + nu  Z=21 N=19 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][2][1]   sc40 --> n + sc39  Z=21 N=19 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][2][2]   sc40 --> p + ca39  Z=21 N=19 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][2][3]   sc40 --> p + ca39  Z=21 N=19 Noff=17 index=3 serialIndex=3 Active=false
+RObject[21][2][4]   sc40 --> p + ca39  Z=21 N=19 Noff=17 index=4 serialIndex=4 Active=false
+RObject[21][2][5]   sc40 --> he4 + k36  Z=21 N=19 Noff=17 index=5 serialIndex=5 Active=false
+RObject[21][2][6]   n + sc40 --> sc41  Z=21 N=19 Noff=17 index=6 serialIndex=6 Active=false
+RObject[21][2][7]   p + sc40 --> ti41  Z=21 N=19 Noff=17 index=7 serialIndex=7 Active=false
+RObject[21][2][8]   he4 + sc40 --> v44  Z=21 N=19 Noff=17 index=8 serialIndex=8 Active=false
+RObject[21][2][9]   n + sc40 --> p + ca40  Z=21 N=19 Noff=17 index=9 serialIndex=9 Active=false
+RObject[21][2][10]   n + sc40 --> he4 + k37  Z=21 N=19 Noff=17 index=10 serialIndex=10 Active=false
+RObject[21][2][11]   p + sc40 --> he4 + ca37  Z=21 N=19 Noff=17 index=11 serialIndex=12 Active=false
+RObject[21][2][12]   he4 + sc40 --> n + v43  Z=21 N=19 Noff=17 index=12 serialIndex=13 Active=false
+RObject[21][2][13]   he4 + sc40 --> p + ti43  Z=21 N=19 Noff=17 index=13 serialIndex=14 Active=false
+RObject[21][3][0]   sc41 --> ca41 + e+ + nu  Z=21 N=20 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][3][1]   sc41 --> n + sc40  Z=21 N=20 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][3][2]   sc41 --> p + ca40  Z=21 N=20 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][3][3]   sc41 --> p + ca40  Z=21 N=20 Noff=17 index=3 serialIndex=3 Active=false
+RObject[21][3][4]   sc41 --> he4 + k37  Z=21 N=20 Noff=17 index=4 serialIndex=4 Active=false
+RObject[21][3][5]   n + sc41 --> sc42  Z=21 N=20 Noff=17 index=5 serialIndex=5 Active=false
+RObject[21][3][6]   p + sc41 --> ti42  Z=21 N=20 Noff=17 index=6 serialIndex=6 Active=false
+RObject[21][3][7]   he4 + sc41 --> v45  Z=21 N=20 Noff=17 index=7 serialIndex=7 Active=false
+RObject[21][3][8]   n + sc41 --> p + ca41  Z=21 N=20 Noff=17 index=8 serialIndex=8 Active=false
+RObject[21][3][9]   n + sc41 --> he4 + k38  Z=21 N=20 Noff=17 index=9 serialIndex=9 Active=false
+RObject[21][3][10]   p + sc41 --> n + ti41  Z=21 N=20 Noff=17 index=10 serialIndex=10 Active=false
+RObject[21][3][11]   p + sc41 --> he4 + ca38  Z=21 N=20 Noff=17 index=11 serialIndex=11 Active=false
+RObject[21][3][12]   he4 + sc41 --> n + v44  Z=21 N=20 Noff=17 index=12 serialIndex=12 Active=false
+RObject[21][3][13]   he4 + sc41 --> p + ti44  Z=21 N=20 Noff=17 index=13 serialIndex=13 Active=false
+RObject[21][4][0]   sc42 --> ca42 + e+ + nu  Z=21 N=21 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][4][1]   sc42 --> n + sc41  Z=21 N=21 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][4][2]   sc42 --> p + ca41  Z=21 N=21 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][4][3]   sc42 --> he4 + k38  Z=21 N=21 Noff=17 index=3 serialIndex=3 Active=false
+RObject[21][4][4]   n + sc42 --> sc43  Z=21 N=21 Noff=17 index=4 serialIndex=4 Active=false
+RObject[21][4][5]   p + sc42 --> ti43  Z=21 N=21 Noff=17 index=5 serialIndex=5 Active=false
+RObject[21][4][6]   he4 + sc42 --> v46  Z=21 N=21 Noff=17 index=6 serialIndex=6 Active=false
+RObject[21][4][7]   n + sc42 --> p + ca42  Z=21 N=21 Noff=17 index=7 serialIndex=7 Active=false
+RObject[21][4][8]   n + sc42 --> he4 + k39  Z=21 N=21 Noff=17 index=8 serialIndex=8 Active=false
+RObject[21][4][9]   p + sc42 --> n + ti42  Z=21 N=21 Noff=17 index=9 serialIndex=9 Active=false
+RObject[21][4][10]   p + sc42 --> he4 + ca39  Z=21 N=21 Noff=17 index=10 serialIndex=10 Active=false
+RObject[21][4][11]   he4 + sc42 --> n + v45  Z=21 N=21 Noff=17 index=11 serialIndex=11 Active=false
+RObject[21][4][12]   he4 + sc42 --> p + ti45  Z=21 N=21 Noff=17 index=12 serialIndex=12 Active=false
+RObject[21][5][0]   sc43 --> ca43 + e+ + nu  Z=21 N=22 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][5][1]   sc43 --> n + sc42  Z=21 N=22 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][5][2]   sc43 --> p + ca42  Z=21 N=22 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][5][3]   sc43 --> he4 + k39  Z=21 N=22 Noff=17 index=3 serialIndex=3 Active=false
+RObject[21][5][4]   n + sc43 --> sc44  Z=21 N=22 Noff=17 index=4 serialIndex=4 Active=false
+RObject[21][5][5]   p + sc43 --> ti44  Z=21 N=22 Noff=17 index=5 serialIndex=5 Active=false
+RObject[21][5][6]   he4 + sc43 --> v47  Z=21 N=22 Noff=17 index=6 serialIndex=6 Active=false
+RObject[21][5][7]   n + sc43 --> p + ca43  Z=21 N=22 Noff=17 index=7 serialIndex=7 Active=false
+RObject[21][5][8]   n + sc43 --> he4 + k40  Z=21 N=22 Noff=17 index=8 serialIndex=8 Active=false
+RObject[21][5][9]   p + sc43 --> n + ti43  Z=21 N=22 Noff=17 index=9 serialIndex=9 Active=false
+RObject[21][5][10]   p + sc43 --> he4 + ca40  Z=21 N=22 Noff=17 index=10 serialIndex=10 Active=false
+RObject[21][5][11]   he4 + sc43 --> n + v46  Z=21 N=22 Noff=17 index=11 serialIndex=11 Active=false
+RObject[21][5][12]   he4 + sc43 --> p + ti46  Z=21 N=22 Noff=17 index=12 serialIndex=12 Active=false
+RObject[21][6][0]   sc44 --> ca44 + e+ + nu  Z=21 N=23 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][6][1]   sc44 --> n + sc43  Z=21 N=23 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][6][2]   sc44 --> p + ca43  Z=21 N=23 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][6][3]   sc44 --> he4 + k40  Z=21 N=23 Noff=17 index=3 serialIndex=3 Active=false
+RObject[21][6][4]   n + sc44 --> sc45  Z=21 N=23 Noff=17 index=4 serialIndex=4 Active=false
+RObject[21][6][5]   p + sc44 --> ti45  Z=21 N=23 Noff=17 index=5 serialIndex=5 Active=false
+RObject[21][6][6]   n + sc44 --> p + ca44  Z=21 N=23 Noff=17 index=6 serialIndex=7 Active=false
+RObject[21][6][7]   n + sc44 --> he4 + k41  Z=21 N=23 Noff=17 index=7 serialIndex=8 Active=false
+RObject[21][6][8]   p + sc44 --> n + ti44  Z=21 N=23 Noff=17 index=8 serialIndex=9 Active=false
+RObject[21][6][9]   p + sc44 --> he4 + ca41  Z=21 N=23 Noff=17 index=9 serialIndex=10 Active=false
+RObject[21][6][10]   he4 + sc44 --> n + v47  Z=21 N=23 Noff=17 index=10 serialIndex=11 Active=false
+RObject[21][6][11]   he4 + sc44 --> p + ti47  Z=21 N=23 Noff=17 index=11 serialIndex=12 Active=false
+RObject[21][7][0]   sc45 --> n + sc44  Z=21 N=24 Noff=17 index=0 serialIndex=0 Active=false
+RObject[21][7][1]   sc45 --> p + ca44  Z=21 N=24 Noff=17 index=1 serialIndex=1 Active=false
+RObject[21][7][2]   sc45 --> he4 + k41  Z=21 N=24 Noff=17 index=2 serialIndex=2 Active=false
+RObject[21][7][3]   p + sc45 --> ti46  Z=21 N=24 Noff=17 index=3 serialIndex=4 Active=false
+RObject[21][7][4]   p + sc45 --> n + ti45  Z=21 N=24 Noff=17 index=4 serialIndex=8 Active=false
+RObject[21][7][5]   p + sc45 --> he4 + ca42  Z=21 N=24 Noff=17 index=5 serialIndex=9 Active=false
+RObject[22][0][0]   ti41 --> sc41 + e+ + nu  Z=22 N=19 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][0][1]   ti41 --> p + sc40  Z=22 N=19 Noff=19 index=1 serialIndex=2 Active=false
+RObject[22][0][2]   ti41 --> he4 + ca37  Z=22 N=19 Noff=19 index=2 serialIndex=3 Active=false
+RObject[22][0][3]   n + ti41 --> ti42  Z=22 N=19 Noff=19 index=3 serialIndex=4 Active=false
+RObject[22][0][4]   he4 + ti41 --> cr45  Z=22 N=19 Noff=19 index=4 serialIndex=6 Active=false
+RObject[22][0][5]   n + ti41 --> p + sc41  Z=22 N=19 Noff=19 index=5 serialIndex=7 Active=false
+RObject[22][0][6]   n + ti41 --> he4 + ca38  Z=22 N=19 Noff=19 index=6 serialIndex=8 Active=false
+RObject[22][0][7]   p + ti41 --> he4 + sc38  Z=22 N=19 Noff=19 index=7 serialIndex=10 Active=false
+RObject[22][0][8]   he4 + ti41 --> n + cr44  Z=22 N=19 Noff=19 index=8 serialIndex=11 Active=false
+RObject[22][0][9]   he4 + ti41 --> p + v44  Z=22 N=19 Noff=19 index=9 serialIndex=12 Active=false
+RObject[22][1][0]   ti42 --> sc42 + e+ + nu  Z=22 N=20 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][1][1]   ti42 --> n + ti41  Z=22 N=20 Noff=19 index=1 serialIndex=1 Active=false
+RObject[22][1][2]   ti42 --> p + sc41  Z=22 N=20 Noff=19 index=2 serialIndex=2 Active=false
+RObject[22][1][3]   ti42 --> he4 + ca38  Z=22 N=20 Noff=19 index=3 serialIndex=3 Active=false
+RObject[22][1][4]   n + ti42 --> ti43  Z=22 N=20 Noff=19 index=4 serialIndex=4 Active=false
+RObject[22][1][5]   p + ti42 --> v43  Z=22 N=20 Noff=19 index=5 serialIndex=5 Active=false
+RObject[22][1][6]   p + ti42 --> v43  Z=22 N=20 Noff=19 index=6 serialIndex=6 Active=false
+RObject[22][1][7]   he4 + ti42 --> cr46  Z=22 N=20 Noff=19 index=7 serialIndex=7 Active=false
+RObject[22][1][8]   n + ti42 --> p + sc42  Z=22 N=20 Noff=19 index=8 serialIndex=8 Active=false
+RObject[22][1][9]   n + ti42 --> he4 + ca39  Z=22 N=20 Noff=19 index=9 serialIndex=9 Active=false
+RObject[22][1][10]   p + ti42 --> he4 + sc39  Z=22 N=20 Noff=19 index=10 serialIndex=11 Active=false
+RObject[22][1][11]   he4 + ti42 --> n + cr45  Z=22 N=20 Noff=19 index=11 serialIndex=12 Active=false
+RObject[22][1][12]   he4 + ti42 --> p + v45  Z=22 N=20 Noff=19 index=12 serialIndex=13 Active=false
+RObject[22][2][0]   ti43 --> sc43 + e+ + nu  Z=22 N=21 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][2][1]   ti43 --> n + ti42  Z=22 N=21 Noff=19 index=1 serialIndex=1 Active=false
+RObject[22][2][2]   ti43 --> p + sc42  Z=22 N=21 Noff=19 index=2 serialIndex=2 Active=false
+RObject[22][2][3]   ti43 --> he4 + ca39  Z=22 N=21 Noff=19 index=3 serialIndex=3 Active=false
+RObject[22][2][4]   n + ti43 --> ti44  Z=22 N=21 Noff=19 index=4 serialIndex=4 Active=false
+RObject[22][2][5]   p + ti43 --> v44  Z=22 N=21 Noff=19 index=5 serialIndex=5 Active=false
+RObject[22][2][6]   he4 + ti43 --> cr47  Z=22 N=21 Noff=19 index=6 serialIndex=6 Active=false
+RObject[22][2][7]   n + ti43 --> p + sc43  Z=22 N=21 Noff=19 index=7 serialIndex=7 Active=false
+RObject[22][2][8]   n + ti43 --> he4 + ca40  Z=22 N=21 Noff=19 index=8 serialIndex=8 Active=false
+RObject[22][2][9]   p + ti43 --> n + v43  Z=22 N=21 Noff=19 index=9 serialIndex=9 Active=false
+RObject[22][2][10]   p + ti43 --> he4 + sc40  Z=22 N=21 Noff=19 index=10 serialIndex=10 Active=false
+RObject[22][2][11]   he4 + ti43 --> n + cr46  Z=22 N=21 Noff=19 index=11 serialIndex=11 Active=false
+RObject[22][2][12]   he4 + ti43 --> p + v46  Z=22 N=21 Noff=19 index=12 serialIndex=12 Active=false
+RObject[22][3][0]   ti44 + e --> sc44 + nu  (electron capture)  Z=22 N=22 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][3][1]   ti44 --> n + ti43  Z=22 N=22 Noff=19 index=1 serialIndex=1 Active=false
+RObject[22][3][2]   ti44 --> p + sc43  Z=22 N=22 Noff=19 index=2 serialIndex=2 Active=false
+RObject[22][3][3]   ti44 --> he4 + ca40  Z=22 N=22 Noff=19 index=3 serialIndex=3 Active=false
+RObject[22][3][4]   n + ti44 --> ti45  Z=22 N=22 Noff=19 index=4 serialIndex=4 Active=false
+RObject[22][3][5]   p + ti44 --> v45  Z=22 N=22 Noff=19 index=5 serialIndex=5 Active=false
+RObject[22][3][6]   p + ti44 --> v45  Z=22 N=22 Noff=19 index=6 serialIndex=6 Active=false
+RObject[22][3][7]   p + ti44 --> v45  Z=22 N=22 Noff=19 index=7 serialIndex=7 Active=false
+RObject[22][3][8]   n + ti44 --> p + sc44  Z=22 N=22 Noff=19 index=8 serialIndex=9 Active=false
+RObject[22][3][9]   n + ti44 --> he4 + ca41  Z=22 N=22 Noff=19 index=9 serialIndex=10 Active=false
+RObject[22][3][10]   p + ti44 --> n + v44  Z=22 N=22 Noff=19 index=10 serialIndex=11 Active=false
+RObject[22][3][11]   p + ti44 --> he4 + sc41  Z=22 N=22 Noff=19 index=11 serialIndex=12 Active=false
+RObject[22][3][12]   he4 + ti44 --> n + cr47  Z=22 N=22 Noff=19 index=12 serialIndex=13 Active=false
+RObject[22][3][13]   he4 + ti44 --> p + v47  Z=22 N=22 Noff=19 index=13 serialIndex=14 Active=false
+RObject[22][4][0]   ti45 --> sc45 + e+ + nu  Z=22 N=23 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][4][1]   ti45 --> n + ti44  Z=22 N=23 Noff=19 index=1 serialIndex=1 Active=false
+RObject[22][4][2]   ti45 --> p + sc44  Z=22 N=23 Noff=19 index=2 serialIndex=2 Active=false
+RObject[22][4][3]   ti45 --> he4 + ca41  Z=22 N=23 Noff=19 index=3 serialIndex=3 Active=false
+RObject[22][4][4]   n + ti45 --> ti46  Z=22 N=23 Noff=19 index=4 serialIndex=4 Active=false
+RObject[22][4][5]   p + ti45 --> v46  Z=22 N=23 Noff=19 index=5 serialIndex=5 Active=false
+RObject[22][4][6]   n + ti45 --> p + sc45  Z=22 N=23 Noff=19 index=6 serialIndex=7 Active=false
+RObject[22][4][7]   n + ti45 --> he4 + ca42  Z=22 N=23 Noff=19 index=7 serialIndex=8 Active=false
+RObject[22][4][8]   p + ti45 --> n + v45  Z=22 N=23 Noff=19 index=8 serialIndex=9 Active=false
+RObject[22][4][9]   p + ti45 --> he4 + sc42  Z=22 N=23 Noff=19 index=9 serialIndex=10 Active=false
+RObject[22][5][0]   ti46 --> n + ti45  Z=22 N=24 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][5][1]   ti46 --> p + sc45  Z=22 N=24 Noff=19 index=1 serialIndex=1 Active=false
+RObject[22][5][2]   ti46 --> he4 + ca42  Z=22 N=24 Noff=19 index=2 serialIndex=2 Active=false
+RObject[22][5][3]   n + ti46 --> ti47  Z=22 N=24 Noff=19 index=3 serialIndex=3 Active=false
+RObject[22][5][4]   p + ti46 --> v47  Z=22 N=24 Noff=19 index=4 serialIndex=4 Active=false
+RObject[22][5][5]   n + ti46 --> he4 + ca43  Z=22 N=24 Noff=19 index=5 serialIndex=7 Active=false
+RObject[22][5][6]   p + ti46 --> n + v46  Z=22 N=24 Noff=19 index=6 serialIndex=8 Active=false
+RObject[22][5][7]   p + ti46 --> he4 + sc43  Z=22 N=24 Noff=19 index=7 serialIndex=9 Active=false
+RObject[22][6][0]   ti47 --> n + ti46  Z=22 N=25 Noff=19 index=0 serialIndex=0 Active=false
+RObject[22][6][1]   ti47 --> he4 + ca43  Z=22 N=25 Noff=19 index=1 serialIndex=2 Active=false
+RObject[22][6][2]   n + ti47 --> he4 + ca44  Z=22 N=25 Noff=19 index=2 serialIndex=7 Active=false
+RObject[22][6][3]   p + ti47 --> n + v47  Z=22 N=25 Noff=19 index=3 serialIndex=8 Active=false
+RObject[22][6][4]   p + ti47 --> he4 + sc44  Z=22 N=25 Noff=19 index=4 serialIndex=9 Active=false
+RObject[23][0][0]   v43 --> ti43 + e+ + nu  Z=23 N=20 Noff=20 index=0 serialIndex=0 Active=false
+RObject[23][0][1]   v43 --> p + ti42  Z=23 N=20 Noff=20 index=1 serialIndex=2 Active=false
+RObject[23][0][2]   v43 --> p + ti42  Z=23 N=20 Noff=20 index=2 serialIndex=3 Active=false
+RObject[23][0][3]   v43 --> he4 + sc39  Z=23 N=20 Noff=20 index=3 serialIndex=4 Active=false
+RObject[23][0][4]   n + v43 --> v44  Z=23 N=20 Noff=20 index=4 serialIndex=5 Active=false
+RObject[23][0][5]   p + v43 --> cr44  Z=23 N=20 Noff=20 index=5 serialIndex=6 Active=false
+RObject[23][0][6]   n + v43 --> p + ti43  Z=23 N=20 Noff=20 index=6 serialIndex=8 Active=false
+RObject[23][0][7]   n + v43 --> he4 + sc40  Z=23 N=20 Noff=20 index=7 serialIndex=9 Active=false
+RObject[23][0][8]   he4 + v43 --> p + cr46  Z=23 N=20 Noff=20 index=8 serialIndex=13 Active=false
+RObject[23][1][0]   v44 --> ti44 + e+ + nu  Z=23 N=21 Noff=20 index=0 serialIndex=0 Active=false
+RObject[23][1][1]   v44 --> n + v43  Z=23 N=21 Noff=20 index=1 serialIndex=1 Active=false
+RObject[23][1][2]   v44 --> p + ti43  Z=23 N=21 Noff=20 index=2 serialIndex=2 Active=false
+RObject[23][1][3]   v44 --> he4 + sc40  Z=23 N=21 Noff=20 index=3 serialIndex=3 Active=false
+RObject[23][1][4]   n + v44 --> v45  Z=23 N=21 Noff=20 index=4 serialIndex=4 Active=false
+RObject[23][1][5]   p + v44 --> cr45  Z=23 N=21 Noff=20 index=5 serialIndex=5 Active=false
+RObject[23][1][6]   n + v44 --> p + ti44  Z=23 N=21 Noff=20 index=6 serialIndex=7 Active=false
+RObject[23][1][7]   n + v44 --> he4 + sc41  Z=23 N=21 Noff=20 index=7 serialIndex=8 Active=false
+RObject[23][1][8]   p + v44 --> n + cr44  Z=23 N=21 Noff=20 index=8 serialIndex=9 Active=false
+RObject[23][1][9]   p + v44 --> he4 + ti41  Z=23 N=21 Noff=20 index=9 serialIndex=10 Active=false
+RObject[23][1][10]   he4 + v44 --> p + cr47  Z=23 N=21 Noff=20 index=10 serialIndex=12 Active=false
+RObject[23][2][0]   v45 --> ti45 + e+ + nu  Z=23 N=22 Noff=20 index=0 serialIndex=0 Active=false
+RObject[23][2][1]   v45 --> n + v44  Z=23 N=22 Noff=20 index=1 serialIndex=1 Active=false
+RObject[23][2][2]   v45 --> p + ti44  Z=23 N=22 Noff=20 index=2 serialIndex=2 Active=false
+RObject[23][2][3]   v45 --> p + ti44  Z=23 N=22 Noff=20 index=3 serialIndex=3 Active=false
+RObject[23][2][4]   v45 --> p + ti44  Z=23 N=22 Noff=20 index=4 serialIndex=4 Active=false
+RObject[23][2][5]   v45 --> he4 + sc41  Z=23 N=22 Noff=20 index=5 serialIndex=5 Active=false
+RObject[23][2][6]   n + v45 --> v46  Z=23 N=22 Noff=20 index=6 serialIndex=6 Active=false
+RObject[23][2][7]   p + v45 --> cr46  Z=23 N=22 Noff=20 index=7 serialIndex=7 Active=false
+RObject[23][2][8]   n + v45 --> p + ti45  Z=23 N=22 Noff=20 index=8 serialIndex=9 Active=false
+RObject[23][2][9]   n + v45 --> he4 + sc42  Z=23 N=22 Noff=20 index=9 serialIndex=10 Active=false
+RObject[23][2][10]   p + v45 --> n + cr45  Z=23 N=22 Noff=20 index=10 serialIndex=11 Active=false
+RObject[23][2][11]   p + v45 --> he4 + ti42  Z=23 N=22 Noff=20 index=11 serialIndex=12 Active=false
+RObject[23][3][0]   v46 --> ti46 + e+ + nu  Z=23 N=23 Noff=20 index=0 serialIndex=0 Active=false
+RObject[23][3][1]   v46 --> n + v45  Z=23 N=23 Noff=20 index=1 serialIndex=1 Active=false
+RObject[23][3][2]   v46 --> p + ti45  Z=23 N=23 Noff=20 index=2 serialIndex=2 Active=false
+RObject[23][3][3]   v46 --> he4 + sc42  Z=23 N=23 Noff=20 index=3 serialIndex=3 Active=false
+RObject[23][3][4]   n + v46 --> v47  Z=23 N=23 Noff=20 index=4 serialIndex=4 Active=false
+RObject[23][3][5]   p + v46 --> cr47  Z=23 N=23 Noff=20 index=5 serialIndex=5 Active=false
+RObject[23][3][6]   n + v46 --> p + ti46  Z=23 N=23 Noff=20 index=6 serialIndex=7 Active=false
+RObject[23][3][7]   n + v46 --> he4 + sc43  Z=23 N=23 Noff=20 index=7 serialIndex=8 Active=false
+RObject[23][3][8]   p + v46 --> n + cr46  Z=23 N=23 Noff=20 index=8 serialIndex=9 Active=false
+RObject[23][3][9]   p + v46 --> he4 + ti43  Z=23 N=23 Noff=20 index=9 serialIndex=10 Active=false
+RObject[23][4][0]   v47 --> ti47 + e+ + nu  Z=23 N=24 Noff=20 index=0 serialIndex=0 Active=false
+RObject[23][4][1]   v47 --> n + v46  Z=23 N=24 Noff=20 index=1 serialIndex=1 Active=false
+RObject[23][4][2]   v47 --> p + ti46  Z=23 N=24 Noff=20 index=2 serialIndex=2 Active=false
+RObject[23][4][3]   v47 --> he4 + sc43  Z=23 N=24 Noff=20 index=3 serialIndex=3 Active=false
+RObject[23][4][4]   n + v47 --> p + ti47  Z=23 N=24 Noff=20 index=4 serialIndex=7 Active=false
+RObject[23][4][5]   n + v47 --> he4 + sc44  Z=23 N=24 Noff=20 index=5 serialIndex=8 Active=false
+RObject[23][4][6]   p + v47 --> n + cr47  Z=23 N=24 Noff=20 index=6 serialIndex=9 Active=false
+RObject[23][4][7]   p + v47 --> he4 + ti44  Z=23 N=24 Noff=20 index=7 serialIndex=10 Active=false
+RObject[24][0][0]   cr44 --> v44 + e+ + nu  Z=24 N=20 Noff=20 index=0 serialIndex=0 Active=false
+RObject[24][0][1]   cr44 --> p + v43  Z=24 N=20 Noff=20 index=1 serialIndex=2 Active=false
+RObject[24][0][2]   n + cr44 --> cr45  Z=24 N=20 Noff=20 index=2 serialIndex=4 Active=false
+RObject[24][0][3]   n + cr44 --> p + v44  Z=24 N=20 Noff=20 index=3 serialIndex=7 Active=false
+RObject[24][0][4]   n + cr44 --> he4 + ti41  Z=24 N=20 Noff=20 index=4 serialIndex=8 Active=false
+RObject[24][1][0]   cr45 --> v45 + e+ + nu  Z=24 N=21 Noff=20 index=0 serialIndex=0 Active=false
+RObject[24][1][1]   cr45 --> n + cr44  Z=24 N=21 Noff=20 index=1 serialIndex=1 Active=false
+RObject[24][1][2]   cr45 --> p + v44  Z=24 N=21 Noff=20 index=2 serialIndex=2 Active=false
+RObject[24][1][3]   cr45 --> he4 + ti41  Z=24 N=21 Noff=20 index=3 serialIndex=3 Active=false
+RObject[24][1][4]   n + cr45 --> cr46  Z=24 N=21 Noff=20 index=4 serialIndex=4 Active=false
+RObject[24][1][5]   n + cr45 --> p + v45  Z=24 N=21 Noff=20 index=5 serialIndex=7 Active=false
+RObject[24][1][6]   n + cr45 --> he4 + ti42  Z=24 N=21 Noff=20 index=6 serialIndex=8 Active=false
+RObject[24][2][0]   cr46 --> v46 + e+ + nu  Z=24 N=22 Noff=20 index=0 serialIndex=0 Active=false
+RObject[24][2][1]   cr46 --> n + cr45  Z=24 N=22 Noff=20 index=1 serialIndex=1 Active=false
+RObject[24][2][2]   cr46 --> p + v45  Z=24 N=22 Noff=20 index=2 serialIndex=2 Active=false
+RObject[24][2][3]   cr46 --> he4 + ti42  Z=24 N=22 Noff=20 index=3 serialIndex=3 Active=false
+RObject[24][2][4]   n + cr46 --> cr47  Z=24 N=22 Noff=20 index=4 serialIndex=4 Active=false
+RObject[24][2][5]   n + cr46 --> p + v46  Z=24 N=22 Noff=20 index=5 serialIndex=8 Active=false
+RObject[24][2][6]   n + cr46 --> he4 + ti43  Z=24 N=22 Noff=20 index=6 serialIndex=9 Active=false
+RObject[24][2][7]   p + cr46 --> he4 + v43  Z=24 N=22 Noff=20 index=7 serialIndex=11 Active=false
+RObject[24][3][0]   cr47 --> v47 + e+ + nu  Z=24 N=23 Noff=20 index=0 serialIndex=0 Active=false
+RObject[24][3][1]   cr47 --> n + cr46  Z=24 N=23 Noff=20 index=1 serialIndex=1 Active=false
+RObject[24][3][2]   cr47 --> p + v46  Z=24 N=23 Noff=20 index=2 serialIndex=2 Active=false
+RObject[24][3][3]   cr47 --> he4 + ti43  Z=24 N=23 Noff=20 index=3 serialIndex=3 Active=false
+RObject[24][3][4]   n + cr47 --> p + v47  Z=24 N=23 Noff=20 index=4 serialIndex=7 Active=false
+RObject[24][3][5]   n + cr47 --> he4 + ti44  Z=24 N=23 Noff=20 index=5 serialIndex=8 Active=false
+RObject[24][3][6]   p + cr47 --> he4 + v44  Z=24 N=23 Noff=20 index=6 serialIndex=10 Active=false

@@ -1,0 +1,7 @@
+
+-----------------------------------------------------------------
+Particles=1.0E30 maxLight=1000 tripleAlphaOnly=false normX=false
+noNeutronsFlag=false Zmax=53 Zmin=3 nT=1.37142873E31 T9=7.00000000
+diagnoseII=false tbeg=2.2273E-6 limitByFluxes=false fluxFracThresh=1.0E-16
+E/A(init)=0.0000 Mode=Asy+PE SF=0.001 MassTol=1.0E-5 Ymin=0.0
+-----------------------------------------------------------------
