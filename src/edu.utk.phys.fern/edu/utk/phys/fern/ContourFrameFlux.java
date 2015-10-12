@@ -10,11 +10,42 @@ package edu.utk.phys.fern;
 //  These remarks are further explained in comments contained below.
 // ----------------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.CheckboxGroup;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.PrintJob;
+import java.awt.ScrollPane;
+import java.awt.Scrollbar;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 
 class ContourFrameFlux extends Frame implements ItemListener,ComponentListener, WindowListener {

@@ -4,11 +4,27 @@ package edu.utk.phys.fern;
 // isotope (triggered by ctrl-press on isotope square)
 // ---------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.PrintJob;
+import java.awt.ScrollPane;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 class IsoData extends Frame {

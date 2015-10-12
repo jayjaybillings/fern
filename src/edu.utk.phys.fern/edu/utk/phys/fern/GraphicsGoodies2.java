@@ -16,9 +16,11 @@ package edu.utk.phys.fern;
 // --------------------------------------------------------------------------------------------------------------------------
 
 
-import java.awt.*;
-import java.net.*;
-import java.lang.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
 
 public class GraphicsGoodies2 extends Frame {
 

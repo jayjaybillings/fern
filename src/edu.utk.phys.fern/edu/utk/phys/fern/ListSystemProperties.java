@@ -13,7 +13,10 @@ package edu.utk.phys.fern;
 //  See the comments preceding the main method for command line usage.
 // -------------------------------------------------------------------------------------------------------------
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 
 public class ListSystemProperties {

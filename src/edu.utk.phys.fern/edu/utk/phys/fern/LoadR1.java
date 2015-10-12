@@ -13,10 +13,8 @@ package edu.utk.phys.fern;
 // -------------------------------------------------------------------------------------------------
 
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 class LoadR1 {
 

@@ -3,11 +3,9 @@ package edu.utk.phys.fern;
 //  Class ContourDisplay used by ContourPlotter
 // ---------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-import java.util.Properties;
+import java.awt.Canvas;
+import java.awt.Panel;
+import java.awt.TextField;
 
 
 class ContourDisplay extends Panel {

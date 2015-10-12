@@ -5,10 +5,10 @@ package edu.utk.phys.fern;
 // channel of an isotope.
 // -------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Point;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 public class ReactionClass1 implements Serializable {
 

@@ -3,11 +3,8 @@ package edu.utk.phys.fern;
 //  Class LegendTester
 // -------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.Color;
+import java.awt.Frame;
 
 public class LegendTester extends Frame {
 

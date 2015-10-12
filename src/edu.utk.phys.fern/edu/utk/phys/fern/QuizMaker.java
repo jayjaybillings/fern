@@ -1,13 +1,5 @@
 package edu.utk.phys.fern;
 
-// Class QuizMaker to implement quiz creation and editing interface.
-
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-
 public class QuizMaker {
 
     public static void main (String[] args) {

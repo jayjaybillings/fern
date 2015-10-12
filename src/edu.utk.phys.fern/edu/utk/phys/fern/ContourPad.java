@@ -9,10 +9,17 @@ package edu.utk.phys.fern;
 // -------------------------------------------------------------------------------------------------------
 
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileWriter;
+
 import gov.sandia.postscript.PSGr1;
 
 class ContourPad extends Canvas implements MouseListener, Runnable {

@@ -4,11 +4,12 @@ package edu.utk.phys.fern;
 //  conjunction with the classes ContourPlotter and ContourDisplay.
 // --------------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.util.Vector;
-import java.util.Properties;
 
 
 class GraphicsPad extends Canvas {

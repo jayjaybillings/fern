@@ -4,7 +4,10 @@ package edu.utk.phys.fern;
 //  Jama implements a basic linear algebra package for java.
 // ------------------------------------------------------------------------------------------------------------------------
 
-import Jama.*;                    // The JAMA classes are in the Jama subdirectory
+// The JAMA classes are in the Jama subdirectory
+import Jama.EigenvalueDecomposition;
+import Jama.LUDecomposition;
+import Jama.Matrix;
 
 class testJAMA {
 

@@ -7,10 +7,27 @@ package edu.utk.phys.fern;
 // toggle square colors.
 // -----------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileWriter;
+
 import gov.sandia.postscript.PSGr1;
 
 class IsotopePad extends Canvas implements MouseListener {

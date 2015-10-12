@@ -13,12 +13,9 @@ package edu.utk.phys.fern;
 //     VertString vs = new VertString("Hi",10,20,2,myFont,myFontMetrics,g);
 // -------------------------------------------------------------------------------------------------------------
 
-
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 
 class VertString {

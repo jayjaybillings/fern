@@ -4,11 +4,14 @@ package edu.utk.phys.fern;
 //  permit the reactions to be selected.
 // -------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GridLayout;
+import java.awt.Panel;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 
 class ReactionList extends Panel {

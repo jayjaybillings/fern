@@ -7,9 +7,6 @@ package edu.utk.phys.fern;
 //
 // -----------------------------------------------------------------------------------------------------------------------------
 
-import java.io.*; 
-import Jama.*;                    // The JAMA classes are in the Jama subdirectory
-
 class NewtonRaphsonTest {
     
     static double K = 0.096281;

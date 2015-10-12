@@ -1,6 +1,8 @@
 package edu.utk.phys.fern;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 class ReadAFile{
 

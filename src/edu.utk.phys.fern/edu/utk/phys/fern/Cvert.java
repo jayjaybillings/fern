@@ -5,13 +5,7 @@ package edu.utk.phys.fern;
 //  without having to instantiate (but they can be instantiated also).
 // -----------------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.Vector;
-import java.util.Properties;
-import java.text.*;
+import java.util.StringTokenizer;
 
 
 class Cvert {

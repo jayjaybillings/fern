@@ -1,14 +1,6 @@
 package edu.utk.phys.fern;
 
-/*
-Class to implement interpolation in RGB color table specified as a sequence of RGB values.
-*/
-
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.Color;
 
 
 public class InterpolateColorTable {

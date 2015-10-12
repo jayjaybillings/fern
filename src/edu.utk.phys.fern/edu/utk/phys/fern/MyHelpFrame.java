@@ -4,11 +4,14 @@ package edu.utk.phys.fern;
 // --------------------------------------------------------------------
 
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.TextArea;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 class MyHelpFrame extends Frame {

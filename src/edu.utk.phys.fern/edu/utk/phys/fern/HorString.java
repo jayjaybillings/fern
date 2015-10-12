@@ -15,11 +15,9 @@ package edu.utk.phys.fern;
 // -----------------------------------------------------------------------------------------------------------------
 
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 class HorString {
 

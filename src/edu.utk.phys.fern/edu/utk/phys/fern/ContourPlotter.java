@@ -4,11 +4,10 @@ package edu.utk.phys.fern;
 //  Uses ContourDisplay and GraphicsPad classes.
 // --------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-import java.util.Properties;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 class ContourPlotter extends Frame {

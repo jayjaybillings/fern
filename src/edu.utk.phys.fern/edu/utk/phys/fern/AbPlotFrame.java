@@ -4,10 +4,23 @@ package edu.utk.phys.fern;
 //  abundances as a function of time.
 // -------------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.PrintJob;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileWriter;
+
 import gov.sandia.postscript.PSGr1;
 
 class AbPlotFrame extends Frame {

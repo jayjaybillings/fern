@@ -6,11 +6,8 @@ package edu.utk.phys.fern;
 //  a calculation configuration.
 // ------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-import java.util.Properties;
+import java.awt.Color;
+import java.io.Serializable;
 
 
 class NZBoxes implements Serializable {

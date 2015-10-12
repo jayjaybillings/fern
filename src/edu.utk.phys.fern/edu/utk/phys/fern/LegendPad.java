@@ -3,10 +3,11 @@ package edu.utk.phys.fern;
 //  The class LegendPad implements a legend for 2-d contour plot of abundances.
 // --------------------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Properties;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 
 class LegendPad extends Canvas {

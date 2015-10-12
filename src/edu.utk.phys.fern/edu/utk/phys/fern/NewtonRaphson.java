@@ -15,8 +15,8 @@ package edu.utk.phys.fern;
 //
 // -----------------------------------------------------------------------------------------------------------------------------
 
-import java.io.*; 
-import Jama.*;                    // The JAMA classes are in the Jama subdirectory
+// The JAMA classes are in the Jama subdirectory
+import Jama.Matrix;
 
 class NewtonRaphson {
     

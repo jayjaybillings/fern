@@ -30,10 +30,18 @@ package edu.utk.phys.fern;
 // -------------------------------------------------------------------------------------------------------------------------
 
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Button;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class ProgressMeter extends Frame implements Runnable {
 

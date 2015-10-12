@@ -8,10 +8,7 @@ package edu.utk.phys.fern;
 //        "java LoadR1 rc.ser"
 // ----------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Point;
 
 public class SerializeExample {
 

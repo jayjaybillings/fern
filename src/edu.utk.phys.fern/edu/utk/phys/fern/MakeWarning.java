@@ -1,42 +1,20 @@
 package edu.utk.phys.fern;
 
-//  The class MakeWarning creates a modal warning window when invoked
-//  from within an object that subclasses Frame. The window is
-//  modally blocked (the window from which the warning window is
-//  launched is blocked from further input until the warning window
-//  is dismissed by the user).  Method arguments:
-//
-//      X = x-position of window (relative to container upper left)
-//      Y = y-position of window (relative to container upper left)
-//      width = width of window
-//      height = height of window
-//      title = title string
-//      text = warning string text
-//      frame = A Frame or JFrame that is the parent window modally
-//              blocked by the warning window.  If the parent
-//              class from which this method is invoked extends
-//              Frame, this argument can be just "this" (or
-//              "ParentClass.this" if invoked from an
-//              inner class event handler of ParentClass).
-//              Otherwise, it must be the name of an object derived from
-//              Frame that represents the window modally blocked.
-//
-//  Invoke from another class using the constructor.  For example,
-//
-//      new MakeWarning (100, 100, 180, 140, "ERROR!", 
-//              "You really did it this time.", this);
-// 
-//  But remember:  if invoked from an inner class (e.g., an event handler
-//  defined in an anonymous inner class), the last argument should be 
-//  ParentClass.this, where ParentClass is the class enclosing the inner class
-//  invoking the warning window.
-    
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 class MakeWarning {
 

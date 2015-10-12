@@ -3,12 +3,6 @@ package edu.utk.phys.fern;
 // Class to define population vector components
 // ------------------------------------------------------------------------------------------------------
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import gov.sandia.postscript.PSGr1;
-
 class IsoVector {
     
      int Z;

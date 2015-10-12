@@ -22,11 +22,15 @@ package edu.utk.phys.fern;
 //
 // -----------------------------------------------------------------------------------------------------------//
 
-import java.io.*;
-import java.awt.*;
-import java.lang.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.StringTokenizer;
 
 public class FriedelParser {
 

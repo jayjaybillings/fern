@@ -1,27 +1,20 @@
 package edu.utk.phys.fern;
 
-// Class GenericHelpDialog to create generic Help Window.
-//
-//     s = Text string describing the help (\n to skip lines)
-//     t = Text for title bar
-//     h = height of help window
-//     w = width of help window
-//     X = screen x position of help window
-//     Y = sceen y position of help window
-//     frame = component (which must subclass Frame oe JFrame) launching 
-//     help dialog
-//
-//  Note that if this dialog is invoked from an inner class of the parent
-//  Frame class ParentClass (for example, from an anonymous inner class 
-//  event handler), then the frame argument should be ParentClass.this
-//  instead of this.
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 
 class GenericHelpDialog extends JFrame {
