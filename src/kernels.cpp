@@ -239,6 +239,8 @@ void computeFluxes() {
 		if (pEquilOn == 0 || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
 			Flux[i] = Rate[i] * Y[network->reactant[0][i]];
 
+			// FIXME! Look at this. It seems wrong.
+
 			switch (nr) {
 			case 3:
 				/* 3-body; flux = rate x Y x Y x Y */
@@ -347,7 +349,8 @@ static void renormalizeSolution() {
  * @param timeStep the current time step
  * @param numTimeSteps the total number of time steps that have been taken
  */
-static void finalizeNextTimeStep(fern_real & time, fern_real & timeStep, unsigned int & numTimeSteps) {
+static void finalizeNextTimeStep(fern_real & time, fern_real & timeStep,
+		unsigned int & numTimeSteps) {
 
 	/*
 	 Finally check to be sure that timestep will not overstep next plot output
@@ -535,7 +538,7 @@ void integrate() {
 		deltaTimeRestart = dt;
 		// Finalize the next time step based on bounds and other
 		// considerations.
-		finalizeNextTimeStep(t,dt,timesteps);
+		finalizeNextTimeStep(t, dt, timesteps);
 
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
@@ -715,15 +718,11 @@ void partialEquil(fern_real *Y, unsigned short numberReactions,
 					final_k[0][i], final_k[1][i], pEquilbyRG, tolerance);
 			break;
 		}
-
-		//update all PEvals for each reaction
-		for (int j = 0; j < numberReactions; j++) {
-			if (ReacRG[j] == i) {
-				pEquilbyReac[j] = pEquilbyRG[i];
-			}
-		}				//end update PEval for each reaction
-
 	}				//end for each RG
+	//update all PEvals for each reaction
+	for (int j = 0; j < numberReactions; j++) {
+		pEquilbyReac[j] = pEquilbyRG[ReacRG[j]];
+	}				//end update PEval for each reaction
 }
 
 void handlePERG_1(int i, fern_real y_a, fern_real y_b, fern_real kf,
