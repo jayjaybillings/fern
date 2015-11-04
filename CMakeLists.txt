@@ -45,7 +45,7 @@ PROJECT ( FERN CXX )
 cmake_minimum_required(VERSION 2.8)
 
 # FERN requires C++11 to use shared pointers
-list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS} $ENV{CXX_FLAGS}")
 
 # Create the documentation directory and set up the doc target.
 set(DOC_DIR "docs")
