@@ -16,6 +16,17 @@ cmake ../fern -DCMAKE_BUILD_TYPE=Debug -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE
 make
 ```
 
+Build flags, such as -Wall, can be set by prepending the CXX_FLAGS variable to 
+the cmake command as such
+
+```bash
+CXX_FLAGS='-Wall' cmake ../fern -DCMAKE_BUILD_TYPE=Debug -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_ECLIPSE_VERSION=4.5
+```
+
+Optimization flags should be handled by setting -DCMAKE_BUILD_TYPE=Release 
+instead of Debug. Likewise, an optimized build with debug information can be 
+acheived by setting -DCMAKE_BUILD_TYPE=RelWithDebugInfo.
+
 ## Running FERN
 
 You can run FERN from any directory and it only requires one of its INI files
@@ -25,11 +36,6 @@ files in the data directory, you would run
 ```bash
 ./fern-exec ../fern/data/alpha.ini
 ```
-
-## Release, Debug and Release with Debug Info
-
-To get Release, Debug or Release with Debug Info, change the value of 
-CMAKE_BUILD_TYPE to Release, Debug or RelWithDebugInfo as needed.
 
 ## Questions
 Questions can be directed to me at jayjaybillings <at> gmail <dot> com.
