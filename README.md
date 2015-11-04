@@ -26,5 +26,10 @@ files in the data directory, you would run
 ./fern-exec ../fern/data/alpha.ini
 ```
 
+## Release, Debug and Release with Debug Info
+
+To get Release, Debug or Release with Debug Info, change the value of 
+CMAKE_BUILD_TYPE to Release, Debug or RelWithDebugInfo as needed.
+
 ## Questions
 Questions can be directed to me at jayjaybillings <at> gmail <dot> com.
