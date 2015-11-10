@@ -3,9 +3,6 @@
 #include <cassert>
 #include <cstdlib>
 
-Network::Network() {
-}
-
 void Network::loadNetwork(const char *filename) {
 	// Unused variables
 	unsigned short A;
@@ -14,6 +11,10 @@ void Network::loadNetwork(const char *filename) {
 	fern_real Y;
 
 	FILE *file = fopen(filename, "r");
+
+	// Allocate the flux vectors
+	FplusFac = std::vector<fern_real>(species*reactions);
+	FminusFac = std::vector<fern_real>(species*reactions);
 
 	// Exit if the file doesn't exist or can't be read
 
@@ -315,14 +316,13 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 
 	// These tempInt blocks will become MapFPlus and MapFMinus eventually.
 	size_t tempIntSize = species * reactions / 2;
-	unsigned short *tempInt1 = new unsigned short[tempIntSize];
-	unsigned short *tempInt2 = new unsigned short[tempIntSize];
+	unsigned short tempInt1 [tempIntSize];
+	unsigned short tempInt2 [tempIntSize];
 
 	// Access elements by reacMask[speciesIndex + species * reactionIndex].
-	int *reacMask = new int[species * reactions]; // [species][reactions]
-
-	int *numFluxPlus = new int[species];
-	int *numFluxMinus = new int[species];
+	int reacMask [species * reactions]; // [species][reactions]
+	int numFluxPlus [species];
+	int numFluxMinus[species];
 
 	// Start of Guidry's original parseF() code
 
@@ -417,25 +417,13 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 			"FLUX SPARSENESS: Non-zero F+ = %d; Non-zero F- = %d, out of %d x %d = %d possibilities.\n",
 			totalFplus, totalFminus, reactions, species, reactions * species);
 
-	/*******************************************/
-	// Create 1D arrays to hold non-zero F+ and F- for all reactions for all isotopes,
-	// the arrays holding the species factors FplusFac and FminusFac,
-	// and also arrays to hold their sums for each isotope. Note that parseF() must
-	// be run first because it determines totalFplus and totalFminus.
-	FplusFac = new fern_real[totalFplus];
-	FminusFac = new fern_real[totalFminus];
-
-	// Create 1D arrays that will hold the index of the isotope for the F+ or F- term
-	MapFplus = new unsigned short[totalFplus];
-	MapFminus = new unsigned short[totalFminus];
-
 	// Create 1D arrays that will be used to map finite F+ and F- to the Flux array.
 
-	int *FplusIsotopeCut = new int[species];
-	int *FminusIsotopeCut = new int[species];
+	int FplusIsotopeCut[species];
+	int FminusIsotopeCut[species];
 
-	int *FplusIsotopeIndex = new int[totalFplus];
-	int *FminusIsotopeIndex = new int[totalFminus];
+	int FplusIsotopeIndex[totalFplus];
+	int FminusIsotopeIndex[totalFminus];
 
 	FplusIsotopeCut[0] = numFluxPlus[0];
 	FminusIsotopeCut[0] = numFluxMinus[0];
@@ -459,16 +447,15 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	}
 
 	for (int i = 0; i < totalFplus; i++) {
-		MapFplus[i] = tempInt1[i];
+		MapFplus.push_back(tempInt1[i]);
 	}
-
 	for (int i = 0; i < totalFminus; i++) {
-		MapFminus[i] = tempInt2[i];
+		MapFminus.push_back(tempInt2[i]);
 	}
 
 	// Populate the FplusMin and FplusMax arrays
-	unsigned short *FplusMin = new unsigned short[species];
-	unsigned short *FminusMin = new unsigned short[species];
+	unsigned short FplusMin [species];
+	unsigned short FminusMin [species];
 
 	FplusMin[0] = 0;
 	FplusMax[0] = numFluxPlus[0] - 1;
@@ -487,7 +474,6 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 	// Populate the FplusFac and FminusFac arrays that hold the factors counting the
 	// number of occurences of the species in the reaction.  Note that this can only
 	// be done after parseF() has been run to give reacMask[i][j].
-
 	int tempCountPlus = 0;
 	int tempCountMinus = 0;
 	for (int i = 0; i < species; i++) {
@@ -503,18 +489,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 		}
 	}
 
-	// Clean up dynamic memory
-	delete[] reacMask;
-	delete[] FplusIsotopeCut;
-	delete[] FminusIsotopeCut;
-	delete[] FplusIsotopeIndex;
-	delete[] FminusIsotopeIndex;
-	delete[] tempInt1;
-	delete[] tempInt2;
-	delete[] numFluxPlus;
-	delete[] numFluxMinus;
-	delete[] FplusMin;
-//	delete[] FminusMin; We have a double free or corruption on Linux when this is uncommented. ~JJB 20150906 15:35
+	return;
 }
 
 void Network::allocate() {

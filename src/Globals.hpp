@@ -30,6 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 -----------------------------------------------------------------------------*/
 #include "fern_math.h"
+#include <memory>
+#include <vector>
 
 #ifndef Globals_cuh
 #define Globals_cuh
@@ -40,19 +42,22 @@ struct Network;
 */
 struct Globals
 {
-	fern_real *preFac; // [reactions]
-	fern_real *Flux; // [reactions]
-	fern_real *Fplus; // [totalFplus]
-	fern_real *Fminus; // [totalFminus]
-	fern_real *rate; // [reactions]
-	fern_real *massNum;
-	fern_real *X;
-	fern_real *Fdiff;
-	fern_real *Yzero;
-	fern_real *FplusSum;
-	fern_real *FminusSum;
+	// FIXME! These should all be std::shared_ptr!
 
-	void allocate(Network &network);
+	std::vector<fern_real> preFac; // [reactions]
+	std::vector<fern_real> Flux; // [reactions]
+	std::vector<fern_real> Fplus; // [totalFplus]
+	std::vector<fern_real> Fminus; // [totalFminus]
+	std::vector<fern_real> rate; // [reactions]
+	std::vector<fern_real> massNum;
+	std::vector<fern_real> X;
+	std::vector<fern_real> Fdiff;
+	std::vector<fern_real> Yzero;
+	std::vector<fern_real> FplusSum;
+	std::vector<fern_real> FminusSum;
+
+public:
+	Globals(const std::shared_ptr<Network> & network);
 };
 
 #endif

@@ -31,8 +31,12 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 -----------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory>
 #include "kernels.hpp"
 #include <SimpleIni.h>
+
+std::shared_ptr<Network> network;
+std::shared_ptr<Globals> globals;
 
 /**
  * This operation loads parameters from the input file into the integrator. It
@@ -42,7 +46,7 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
  * @param integrator the integrator into which the parameters should be loaded
  * @param filename the name of the file that contains the parameters
  */
-void loadParameters(Network * network, IntegrationData * data,
+void loadParameters(std::shared_ptr<Network> network, IntegrationData * data,
 		const char * filename) {
 
 	// Load the parameters file
@@ -108,15 +112,14 @@ int main(int argc, char const *argv[]) {
 	}
 
 	/* Load the network */
-	IntegrationData integrationData;
-	Network network;
-	loadParameters(&network, &integrationData, argv[1]);
+	IntegrationData integrationData = IntegrationData();
+	network = std::make_shared<Network>();
+	loadParameters(network, &integrationData, argv[1]);
 	// Launch the integrator
-	Globals globals;
-	globals.allocate(network);
-	initialize(&network, &integrationData, &globals);
-	integrate();
-	integrationData.print();
+	//globals = std::make_shared<Globals>(network);
+	//initialize(network, &integrationData, globals);
+	//integrate();
+	//integrationData.print();
 
 	return EXIT_SUCCESS;
 }

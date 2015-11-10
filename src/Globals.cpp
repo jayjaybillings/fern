@@ -2,17 +2,17 @@
 #include "Globals.hpp"
 #include "Network.hpp"
 
-void Globals::allocate(Network &network)
+Globals::Globals(const std::shared_ptr<Network> & network)
 {
-	preFac = (fern_real *) malloc(sizeof(fern_real) * network.reactions);
-	Fplus = (fern_real *) malloc(sizeof(fern_real) * network.totalFplus);
-	Fminus = (fern_real *) malloc(sizeof(fern_real) * network.totalFminus);
-	rate = (fern_real *) malloc(sizeof(fern_real) * network.reactions);
-	massNum = (fern_real *) malloc(sizeof(fern_real) * network.species);
-	X = (fern_real *) malloc(sizeof(fern_real) * network.species);
-	Fdiff = (fern_real *) malloc(sizeof(fern_real) * network.species);
-	Yzero = (fern_real *) malloc(sizeof(fern_real) * network.species);
-	FplusSum = (fern_real *) malloc(sizeof(fern_real) * network.totalFplus);
-	FminusSum = (fern_real *) malloc(sizeof(fern_real) * network.totalFminus);
-	Flux = (fern_real *) malloc(sizeof(fern_real) * network.reactions);
+	preFac = std::vector<fern_real>(network->reactions);
+	Fplus = std::vector<fern_real>(network->totalFplus);
+	Fminus = std::vector<fern_real>(network->totalFminus);
+	rate = std::vector<fern_real>(network->reactions);
+	massNum = std::vector<fern_real>(network->species);
+	X =  std::vector<fern_real>(network->species);
+	Fdiff = std::vector<fern_real>(network->species);
+	Yzero = std::vector<fern_real>(network->species);
+	FplusSum = std::vector<fern_real>(network->totalFplus);
+	FminusSum = std::vector<fern_real>(network->totalFminus);
+	Flux = std::vector<fern_real>(network->reactions);
 }

@@ -33,34 +33,13 @@ static int *pEquilbyRG;
 static int *pEquilbyReac;
 static int *ReacRG;
 
-/* Declare local pointers for Globals arrays. */
-
-static fern_real *Flux;
-static fern_real *Fplus;
-static fern_real *Fminus;
-static fern_real *Rate;
-static fern_real *massNum;
-static fern_real *X;
-static fern_real *Fdiff;
-static fern_real *Yzero;
-static fern_real *FplusSum;
-static fern_real *FminusSum;
-
 /* Declare local variables for Network struct. */
 
 static unsigned short numberSpecies;
 static unsigned short numberReactions;
-static unsigned short totalFplus;
-static unsigned short totalFminus;
 
 static unsigned char *Z;
 static unsigned char *N;
-
-static fern_real *FplusFac;
-static fern_real *FminusFac;
-
-static unsigned short *MapFplus;
-static unsigned short *MapFminus;
 
 static unsigned short *FplusMax;
 static unsigned short *FminusMax;
@@ -69,9 +48,9 @@ static fern_real massTol;
 static fern_real fluxFrac;
 static fern_real sumX, sumXLast;
 
-static Network * network;
+static std::shared_ptr<Network> network;
 static IntegrationData * integrationData;
-static Globals * globals;
+static std::shared_ptr<Globals> globals;
 
 /* Declare pointer variables for IntegrationData arrays.  */
 
@@ -105,9 +84,9 @@ void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime,
 			peCount = 0;
 			//Check all Species if undergoing asymptotic update
 			for (int m = 0; m < numberSpecies; m++) {
-				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m],
-						Fminus[m]);
-				if (checkAsy(FminusSum[m], Y[m], stepSize)) {
+				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m],
+						globals->Fplus[m], globals->Fminus[m]);
+				if (checkAsy(globals->FminusSum[m], Y[m], stepSize)) {
 					asyCount++;
 				}
 			}
@@ -170,7 +149,7 @@ static void computeRates() {
 				+ t2 * network->P[2][i] + t3 * network->P[3][i]
 				+ t4 * network->P[4][i] + t5 * network->P[5][i]
 				+ t6 * network->P[6][i];
-		Rate[i] = globals->preFac[i] * exp(x);
+		globals->rate[i] = globals->preFac[i] * exp(x);
 	}
 }
 
@@ -205,10 +184,10 @@ static void configurePartialEquilibriumGroups() {
 			for (int n = RGmemberIndex[i]; n >= 0; n--) {
 				//add the rate to forward reaction
 				if (isReverseR[i - n] == 1) {
-					kr += Rate[i - n];
+					kr += globals->rate[i - n];
 				} else {
 					//add the rate to reverse reaction
-					kf += Rate[i - n];
+					kf += globals->rate[i - n];
 				}
 			}
 			final_k[0][countRG] = 0;
@@ -237,29 +216,30 @@ void computeFluxes() {
 	for (int i = 0; i < numberReactions; i++) {
 		int nr = network->numReactingSpecies[i];
 		if (pEquilOn == 0 || (pEquilbyReac[i] == 0 && pEquilOn == 1)) {
-			Flux[i] = Rate[i] * Y[network->reactant[0][i]];
+			globals->Flux[i] = globals->rate[i] * Y[network->reactant[0][i]];
 
 			// FIXME! Look at this. It seems wrong.
 
 			switch (nr) {
 			case 3:
 				/* 3-body; flux = rate x Y x Y x Y */
-				Flux[i] *= Y[network->reactant[2][i]];
+				globals->Flux[i] *= Y[network->reactant[2][i]];
 
 			case 2:
 				/* 2-body; flux = rate x Y x Y */
-				Flux[i] *= Y[network->reactant[1][i]];
+				globals->Flux[i] *= Y[network->reactant[1][i]];
 				break;
 			}
 		} else if (pEquilbyReac[i] == 1 && pEquilOn == 1) {
-			Flux[i] = 0.0;
+			globals->Flux[i] = 0.0;
 		}
 	}
 
 	/* Populate the F+ and F- arrays in parallel from the master Flux array. */
-
-	populateF(Fplus, FplusFac, Flux, MapFplus, totalFplus);
-	populateF(Fminus, FminusFac, Flux, MapFminus, totalFminus);
+	populateF(globals->Fplus, network->FplusFac, globals->Flux,
+			network->MapFplus, network->totalFplus);
+	populateF(globals->Fminus, network->FminusFac, globals->Flux,
+			network->MapFminus, network->totalFminus);
 
 	/*
 	 Sum the F+ and F- for each isotope. These are "sub-arrays"
@@ -277,22 +257,22 @@ void computeFluxes() {
 	for (int i = 0; i < numberSpecies; i++) {
 		minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
 		/* Serially sum secction of F+. */
-		FplusSum[i] = 0.0;
+		globals->FplusSum[i] = 0.0;
 		for (int j = minny; j <= FplusMax[i]; j++) {
-			FplusSum[i] += Fplus[j];
+			globals->FplusSum[i] += globals->Fplus[j];
 		}
 
 		/* Serially sum section of F-. */
 		minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
-		FminusSum[i] = 0.0;
+		globals->FminusSum[i] = 0.0;
 		for (int j = minny; j <= FminusMax[i]; j++) {
-			FminusSum[i] += Fminus[j];
+			globals->FminusSum[i] += globals->Fminus[j];
 		}
 	}
 
 	/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
 	for (int i = 0; i < numberSpecies; i++) {
-		Fdiff[i] = std::abs(FplusSum[i] - FminusSum[i]);
+		globals->Fdiff[i] = std::abs(globals->FplusSum[i] - globals->FminusSum[i]);
 	}
 
 }
@@ -323,22 +303,22 @@ static void computeSecondaryValues() {
 	// Compute the mass fractions
 	for (int i = 0; i < numberSpecies; i++) {
 		/* Compute mass fraction X from abundance Y. */
-		X[i] = massNum[i] * Y[i];
+		globals->X[i] = globals->massNum[i] * Y[i];
 	}
 	return;
 }
 
 static void renormalizeSolution() {
 	// RENORMALIZE
-	sumX = NDreduceSum(X, numberSpecies);
+	sumX = NDreduceSum(globals->X, numberSpecies);
 	sumXLast = sumX;
 	if (pEquilOn == 1) {
 		//renormalize mass fraction so sumX is 1 for partial equilibrium
 		for (int i = 0; i < numberSpecies; i++) {
-			X[i] = X[i] * (1 / sumX);
+			globals->X[i] = globals->X[i] * (1 / sumX);
 		}
 
-		sumX = NDreduceSum(X, numberSpecies);
+		sumX = NDreduceSum(globals->X, numberSpecies);
 	}
 }
 
@@ -369,15 +349,13 @@ static void finalizeNextTimeStep(fern_real & time, fern_real & timeStep,
 	return;
 }
 
-void initialize(Network * networkInfo, IntegrationData * data,
-		Globals *globalsPtr) {
+void initialize(std::shared_ptr<Network> networkInfo, IntegrationData * data,
+		std::shared_ptr<Globals> globalsPtr) {
 	network = networkInfo;
 	globals = globalsPtr;
 
 	numberSpecies = network->species;
 	numberReactions = network->reactions;
-	totalFplus = network->totalFplus;
-	totalFminus = network->totalFminus;
 
 	integrationData = data;
 
@@ -395,29 +373,10 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	massTol = network->massTol;
 	fluxFrac = network->fluxFrac;
 
-	/* Assign globals pointers. */
-
-	Flux = globals->Flux;
-	Fplus = globals->Fplus;
-	Fminus = globals->Fminus;
-	Rate = globals->rate;
-	massNum = globals->massNum;
-	X = globals->X;
-	Fdiff = globals->Fdiff;
-	Yzero = globals->Yzero;
-	FplusSum = globals->FplusSum;
-	FminusSum = globals->FminusSum;
-
 	/* Assign Network pointers. */
 
 	Z = network->Z;
 	N = network->N;
-	FplusFac = network->FplusFac;
-	FminusFac = network->FminusFac;
-	MapFplus = network->MapFplus;
-	MapFminus = network->MapFminus;
-	FplusMax = network->FplusMax;
-	FminusMax = network->FminusMax;
 
 	// Compute the prefactors
 	computePrefactors();
@@ -460,12 +419,12 @@ void integrate() {
 
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
 	for (int i = 0; i < numberSpecies; i++) {
-		massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
+		globals->massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
 		/* Compute mass fraction X from abundance Y. */
-		X[i] = massNum[i] * Y[i];
+		globals->X[i] = globals->massNum[i] * Y[i];
 	}
 
-	sumXLast = NDreduceSum(X, numberSpecies);
+	sumXLast = NDreduceSum(globals->X, numberSpecies);
 
 	/* Main time integration loop */
 	while (t < integrationData->t_max) {
@@ -476,13 +435,13 @@ void integrate() {
 
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
 		for (int i = 0; i < numberSpecies; i++) {
-			Yzero[i] = Y[i];
+			globals->Yzero[i] = Y[i];
 		}
 
 		// Compute the fluxes
 		computeFluxes();
 		// Get the max flux for the time step calculation
-		maxFlux = reduceMax(Fdiff, numberSpecies);
+		maxFlux = reduceMax(globals->Fdiff, numberSpecies);
 
 		/*
 		 Now use the fluxes to update the populations for this timestep.
@@ -501,16 +460,17 @@ void integrate() {
 		if (deltaTimeRestart < dtFlux)
 			dt = deltaTimeRestart;
 
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		updatePopulations(globals->FplusSum, globals->FminusSum, Y, globals->Yzero,
+				numberSpecies, dt);
 
 		/* Compute sum of mass fractions sumX for all species. */
 
 		for (int i = 0; i < numberSpecies; i++) {
 			/* Compute mass fraction X from abundance Y. */
-			X[i] = massNum[i] * Y[i];
+			globals->X[i] = globals->massNum[i] * Y[i];
 		}
 
-		sumX = NDreduceSum(X, numberSpecies);
+		sumX = NDreduceSum(globals->X, numberSpecies);
 
 		/*
 		 Now modify timestep if necessary to ensure that particle number is conserved to
@@ -529,7 +489,8 @@ void integrate() {
 			dt *= (massTol / (fmax(massChecker, upbumper)));
 		}
 
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		updatePopulations(globals->FplusSum, globals->FminusSum, Y, globals->Yzero,
+				numberSpecies, dt);
 
 		/*
 		 Store the actual timestep that would be taken. Same as dt unless
@@ -589,7 +550,7 @@ inline fern_real eulerUpdate(fern_real FplusSum, fern_real FminusSum,
  Same as previous, but copies array to dsmem allocated
  to the global scratch_space before executing algorithm.
  */
-fern_real NDreduceSum(fern_real *a, unsigned short length) {
+fern_real NDreduceSum(std::vector<fern_real> a, unsigned short length) {
 	fern_real sum;
 
 	sum = 0.0;
@@ -607,7 +568,7 @@ fern_real NDreduceSum(fern_real *a, unsigned short length) {
  The given array is overwritten by intermediate values during computation.
  The maximum array size is 2 * blockDim.x.
  */
-fern_real reduceMax(fern_real *a, unsigned short length) {
+fern_real reduceMax(std::vector<fern_real> a, unsigned short length) {
 	fern_real max;
 	max = a[0];
 	for (int i = 0; i < length; i++) {
@@ -625,8 +586,10 @@ fern_real reduceMax(fern_real *a, unsigned short length) {
  of this function uses the term 'sign' to replace 'plus' and 'minus'.
  */
 
-void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
-		unsigned short *MapFsign, unsigned short totalFsign) {
+void populateF(std::vector<fern_real> Fsign,
+		const std::vector<fern_real> & FsignFac, std::vector<fern_real> Flux,
+		const std::vector<unsigned short> & MapFsign,
+		unsigned short totalFsign) {
 	for (int i = 0; i < totalFsign; i++) {
 		Fsign[i] = FsignFac[i] * Flux[MapFsign[i]];
 	}
@@ -634,15 +597,17 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 
 /* Updates populations based on the trial timestep */
 
-inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
-		fern_real *Y, fern_real *Yzero, unsigned short numberSpecies,
-		fern_real dt) {
+inline void updatePopulations(std::vector<fern_real> FplusSum,
+		std::vector<fern_real> FminusSum, fern_real *Y, std::vector<fern_real> Yzero,
+		unsigned short numberSpecies, fern_real dt) {
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++) {
 		if (checkAsy(FminusSum[i], Y[i], dt)) {
-			Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
+			Y[i] = asymptoticUpdate(globals->FplusSum[i], globals->FminusSum[i],
+					Yzero[i], dt);
 		} else {
-			Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
+			Y[i] = eulerUpdate(globals->FplusSum[i], globals->FminusSum[i],
+					Yzero[i], dt);
 		}
 	}
 }
