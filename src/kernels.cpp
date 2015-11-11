@@ -38,12 +38,6 @@ static int *ReacRG;
 static unsigned short numberSpecies;
 static unsigned short numberReactions;
 
-static unsigned char *Z;
-static unsigned char *N;
-
-static unsigned short *FplusMax;
-static unsigned short *FminusMax;
-
 static fern_real massTol;
 static fern_real fluxFrac;
 static fern_real sumX, sumXLast;
@@ -84,7 +78,7 @@ void checkPlotStatus(fern_real time, fern_real stepSize, fern_real maxTime,
 			peCount = 0;
 			//Check all Species if undergoing asymptotic update
 			for (int m = 0; m < numberSpecies; m++) {
-				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m],
+				printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], network->Z[m], network->N[m],
 						globals->Fplus[m], globals->Fminus[m]);
 				if (checkAsy(globals->FminusSum[m], Y[m], stepSize)) {
 					asyCount++;
@@ -243,7 +237,7 @@ void computeFluxes() {
 
 	/*
 	 Sum the F+ and F- for each isotope. These are "sub-arrays"
-	 of Fplus and Fminus at (F[+ or -] + minny) of size FplusMax[i].
+	 of Fplus and Fminus at (F[+ or -] + minny) of size network->FplusMax[i].
 	 The first loop applies to sub-arrays with size < 40. The outer
 	 loop (in i) is parallel, but the inner loops (in j) are serial.
 
@@ -255,17 +249,17 @@ void computeFluxes() {
 	int minny;
 
 	for (int i = 0; i < numberSpecies; i++) {
-		minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
+		minny = (i > 0) ? network->FplusMax[i - 1] + 1 : 0;
 		/* Serially sum secction of F+. */
 		globals->FplusSum[i] = 0.0;
-		for (int j = minny; j <= FplusMax[i]; j++) {
+		for (int j = minny; j <= network->FplusMax[i]; j++) {
 			globals->FplusSum[i] += globals->Fplus[j];
 		}
 
 		/* Serially sum section of F-. */
-		minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
+		minny = (i > 0) ? network->FminusMax[i - 1] + 1 : 0;
 		globals->FminusSum[i] = 0.0;
-		for (int j = minny; j <= FminusMax[i]; j++) {
+		for (int j = minny; j <= network->FminusMax[i]; j++) {
 			globals->FminusSum[i] += globals->Fminus[j];
 		}
 	}
@@ -373,11 +367,6 @@ void initialize(std::shared_ptr<Network> networkInfo, IntegrationData * data,
 	massTol = network->massTol;
 	fluxFrac = network->fluxFrac;
 
-	/* Assign Network pointers. */
-
-	Z = network->Z;
-	N = network->N;
-
 	// Compute the prefactors
 	computePrefactors();
 	// Compute the rate values.
@@ -419,7 +408,7 @@ void integrate() {
 
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
 	for (int i = 0; i < numberSpecies; i++) {
-		globals->massNum[i] = (fern_real) Z[i] + (fern_real) N[i];
+		globals->massNum[i] = (fern_real) (network->Z[i] + network->N[i]);
 		/* Compute mass fraction X from abundance Y. */
 		globals->X[i] = globals->massNum[i] * Y[i];
 	}

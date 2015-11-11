@@ -40,10 +40,11 @@ struct Network;
 
 /**	Only allocated on the device per FERN integration
 */
-struct Globals
+class Globals
 {
 	// FIXME! These should all be std::shared_ptr!
 
+public:
 	std::vector<fern_real> preFac; // [reactions]
 	std::vector<fern_real> Flux; // [reactions]
 	std::vector<fern_real> Fplus; // [totalFplus]

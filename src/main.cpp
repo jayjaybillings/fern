@@ -35,7 +35,7 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 #include "kernels.hpp"
 #include <SimpleIni.h>
 
-std::shared_ptr<Network> network;
+std::shared_ptr<Network> reacNetwork;
 std::shared_ptr<Globals> globals;
 
 /**
@@ -113,13 +113,13 @@ int main(int argc, char const *argv[]) {
 
 	/* Load the network */
 	IntegrationData integrationData = IntegrationData();
-	network = std::make_shared<Network>();
-	loadParameters(network, &integrationData, argv[1]);
+	reacNetwork = std::make_shared<Network>();
+	loadParameters(reacNetwork, &integrationData, argv[1]);
 	// Launch the integrator
-	//globals = std::make_shared<Globals>(network);
-	//initialize(network, &integrationData, globals);
-	//integrate();
-	//integrationData.print();
+	globals = std::make_shared<Globals>(reacNetwork);
+	initialize(reacNetwork, &integrationData, globals);
+	integrate();
+	integrationData.print();
 
 	return EXIT_SUCCESS;
 }

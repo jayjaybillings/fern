@@ -5,7 +5,9 @@
 #include <vector>
 #include <stdlib.h>
 
-struct Network {
+class Network {
+
+public:
 	unsigned short species = 0;
 	unsigned short reactions = 0;
 	unsigned int totalFplus = 0;
@@ -13,8 +15,8 @@ struct Network {
 
 	// Network data
 
-	unsigned char *Z = NULL; // [species]
-	unsigned char *N = NULL; // [species]
+	std::vector<unsigned int> Z; // [species]
+	std::vector<unsigned int> N; // [species]
 	char **isotopeLabel = NULL;
 	char **reactionLabel = NULL;
 
@@ -52,10 +54,10 @@ struct Network {
 	int *ReacRG = NULL; //[reactions]
 	int *RGParent = NULL; //[numRG]
 	int *RGclass = NULL; // [reactions]
-	int **reacVector = NULL; // [reactions][species]
 
 	Network() {};
 
+	~Network() {};
 	/**	Reads the network data file line by line
 
 	 This file is expected to have 4 lines per isotope with the line structure

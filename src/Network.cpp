@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
+#include <boost/numeric/ublas/matrix.hpp>
 
 void Network::loadNetwork(const char *filename) {
 	// Unused variables
@@ -25,6 +26,8 @@ void Network::loadNetwork(const char *filename) {
 
 	// Read 4 lines at a time
 	isotopeLabel = (char **) malloc(sizeof(char *) * species);
+	unsigned int * zData = Z.data();
+	unsigned int * nData = N.data();
 	for (int n = 0; n < species; n++) {
 		isotopeLabel[n] = (char *) malloc(sizeof(char) * 10);
 		int status;
@@ -32,11 +35,11 @@ void Network::loadNetwork(const char *filename) {
 		// Line #1
 
 #ifdef FERN_SINGLE
-		status = fscanf(file, "%s %hu %hhu %hhu %f %f\n",
-				isotopeLabel[n], &A, &Z[n], &N[n], &Y, &massExcess);
+		status = fscanf(file, "%s %hu %i %hhu %f %f\n",
+				isotopeLabel[n], &A, &zData[n], &nData[n], &Y, &massExcess);
 #else
-		status = fscanf(file, "%s %hu %hhu %hhu %lf %lf\n", isotopeLabel[n], &A,
-				&Z[n], &N[n], &Y, &massExcess);
+		status = fscanf(file, "%s %hu %i %hhu %lf %lf\n", isotopeLabel[n], &A,
+				&zData[n], &nData[n], &Y, &massExcess);
 #endif
 
 		if (status == EOF)
@@ -52,6 +55,8 @@ void Network::loadNetwork(const char *filename) {
 #endif
 		}
 	}
+
+	return;
 }
 
 void Network::loadReactions(const char *filename) {
@@ -63,14 +68,14 @@ void Network::loadReactions(const char *filename) {
 	int isEC;
 
 	// Allocate the host-only memory to be used by parseFlux()
-	int *numProducts = new int[reactions];
-	int *RGclass = new int[reactions];
+	int numProducts[reactions];
+	int RGclass[reactions];
 
 	// Each element of these dynamic arrays are pointers to static arrays of size 4.
-	vec_4i *reactantZ = new vec_4i[reactions]; // [reactions]
-	vec_4i *reactantN = new vec_4i[reactions]; // [reactions]
-	vec_4i *productZ = new vec_4i[reactions]; // [reactions]
-	vec_4i *productN = new vec_4i[reactions]; // [reactions]
+	vec_4i reactantZ[reactions]; // [reactions]
+	vec_4i reactantN[reactions]; // [reactions]
+	vec_4i productZ[reactions]; // [reactions]
+	vec_4i productN[reactions]; // [reactions]
 
 	FILE *file = fopen(filename, "r");
 
@@ -85,10 +90,10 @@ void Network::loadReactions(const char *filename) {
 	// Read eight lines at a time
 	numRG = 0;
 	reactionLabel = (char **) malloc(sizeof(char *) * reactions);
-	reacVector = (int **) malloc(sizeof(int *) * reactions);
+	using namespace boost::numeric::ublas;
+	matrix<int> reacVector (reactions,species);
 	for (int n = 0; n < reactions; n++) {
 		reactionLabel[n] = (char *) malloc(sizeof(char) * 50);
-		reacVector[n] = (int *) malloc(sizeof(int) * species);
 		int status;
 
 		// Line #1
@@ -181,7 +186,7 @@ void Network::loadReactions(const char *filename) {
 			//"subtract" reactants from reacVector (PE)
 			for (int i = 0; i < species; i++) {
 				if (i == reactant[mm][n]) {
-					reacVector[n][i]--;
+					reacVector(n,i)--;
 				}
 			}
 			if (displayInput)
@@ -195,7 +200,7 @@ void Network::loadReactions(const char *filename) {
 			//"add" products to reacVector (PE)
 			for (int i = 0; i < species; i++) {
 				if (i == product[mm][n]) {
-					reacVector[n][i]++;
+					reacVector(n,i)++;
 				}
 			}
 
@@ -212,14 +217,14 @@ void Network::loadReactions(const char *filename) {
 	int isRGmember = 0;
 	int RGmemberID = 0;
 	//each reaction's home RGParent
-	int *reacPlaced = new int[reactions];
+	int reacPlaced[reactions];
 	// initialize reacPlaced for logic below. This indicates whether a reaction has been placed into a reaction group yet... If not, it will be the parent of a new RG.
 	for (int i = 0; i < reactions; i++) {
 		reacPlaced[i] = 0;
 	}
 	//member ID within this reaction's RG
-	int *RGmemID = new int[reactions];
-	int *RGnumMembers = new int[numRG];
+	int RGmemID[reactions];
+	int RGnumMembers[numRG];
 	for (int j = 0; j < reactions; j++) {
 
 		//if this reaction doesn't yet have an RG home of its own...
@@ -235,7 +240,7 @@ void Network::loadReactions(const char *filename) {
 				printf("Reaction %s ID[%d]\nReaction Vector: ",
 						reactionLabel[j], j);
 				for (int q = 0; q < species; q++) {
-					printf("%d ", reacVector[j][q]);
+					printf("%d ", reacVector(j,q));
 				}
 				printf("\n");
 			}
@@ -243,7 +248,7 @@ void Network::loadReactions(const char *filename) {
 				for (int i = 0; i < species; i++) {
 					//if reaction j has a different species than reaction n, check n+1
 					//also if n = j, skip it
-					if (abs(reacVector[j][i]) != abs(reacVector[n][i])
+					if (abs(reacVector(j,i)) != abs(reacVector(n,i))
 							|| j == n) {
 						isRGmember = 0;
 						break;
@@ -254,9 +259,9 @@ void Network::loadReactions(const char *filename) {
 				//if reac n was determined to have same species as reac j,
 				if (isRGmember == 1) {
 					for (int b = 0; b < species; b++) {
-						if (reacVector[j][b] != (reacVector[n][b])
-								&& abs(reacVector[j][b])
-										== abs(reacVector[n][b])) {
+						if (reacVector(j,b) != (reacVector(n,b))
+								&& abs(reacVector(j,b))
+										== abs(reacVector(n,b))) {
 							isReverseR[n] = 1;
 						}
 					}
@@ -275,7 +280,7 @@ void Network::loadReactions(const char *filename) {
 						printf("Reaction %s ID[%d]\nReaction Vector: ",
 								reactionLabel[n], n);
 						for (int q = 0; q < species; q++) {
-							printf("%d ", reacVector[n][q]);
+							printf("%d ", reacVector(n,q));
 						}
 						printf("\n");
 					}
@@ -297,17 +302,10 @@ void Network::loadReactions(const char *filename) {
 	}
 	fclose(file);
 
-	// We're not done yet.
-	// Finally parse the flux
-
+	// We're not done yet. Finally parse the flux.
 	parseFlux(numProducts, reactantZ, reactantN, productZ, productN);
 
-	// Cleanup dynamic memory
-	delete[] numProducts;
-	delete[] reactantZ;
-	delete[] reactantN;
-	delete[] productZ;
-	delete[] productN;
+	return;
 }
 
 void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
@@ -446,11 +444,13 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 			currentIso++;
 	}
 
+	MapFplus.resize(totalFplus);
 	for (int i = 0; i < totalFplus; i++) {
-		MapFplus.push_back(tempInt1[i]);
+		MapFplus[i] = tempInt1[i];
 	}
+	MapFminus.resize(totalFminus);
 	for (int i = 0; i < totalFminus; i++) {
-		MapFminus.push_back(tempInt2[i]);
+		MapFminus[i] = tempInt2[i];
 	}
 
 	// Populate the FplusMin and FplusMax arrays
@@ -495,8 +495,8 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 void Network::allocate() {
 	// Allocate the network data
 
-	Z = new unsigned char[species];
-	N = new unsigned char[species];
+	Z = std::vector<unsigned int>(species);
+	N = std::vector<unsigned int>(species);
 
 	FplusMax = new unsigned short[species];
 	FminusMax = new unsigned short[species];
