@@ -410,7 +410,7 @@ void integrate() {
 	for (int i = 0; i < numberSpecies; i++) {
 		globals->massNum[i] = (fern_real) (network->Z[i] + network->N[i]);
 		/* Compute mass fraction X from abundance Y. */
-		globals->X[i] = globals->massNum[i] * Y[i];
+		globals->X[i] = ((fern_real) globals->massNum[i]) * Y[i];
 	}
 
 	sumXLast = NDreduceSum(globals->X, numberSpecies);
@@ -575,8 +575,8 @@ fern_real reduceMax(std::vector<fern_real> a, unsigned short length) {
  of this function uses the term 'sign' to replace 'plus' and 'minus'.
  */
 
-void populateF(std::vector<fern_real> Fsign,
-		const std::vector<fern_real> & FsignFac, std::vector<fern_real> Flux,
+void populateF(std::vector<fern_real> & Fsign,
+		const std::vector<fern_real> & FsignFac, std::vector<fern_real> & Flux,
 		const std::vector<unsigned short> & MapFsign,
 		unsigned short totalFsign) {
 	for (int i = 0; i < totalFsign; i++) {
@@ -586,8 +586,8 @@ void populateF(std::vector<fern_real> Fsign,
 
 /* Updates populations based on the trial timestep */
 
-inline void updatePopulations(std::vector<fern_real> FplusSum,
-		std::vector<fern_real> FminusSum, fern_real *Y, std::vector<fern_real> Yzero,
+inline void updatePopulations(std::vector<fern_real> & FplusSum,
+		std::vector<fern_real> & FminusSum, fern_real *Y, std::vector<fern_real> & Yzero,
 		unsigned short numberSpecies, fern_real dt) {
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++) {
@@ -599,6 +599,8 @@ inline void updatePopulations(std::vector<fern_real> FplusSum,
 					Yzero[i], dt);
 		}
 	}
+
+	return;
 }
 
 /* Checks for partial equilibrium between reaction groups */

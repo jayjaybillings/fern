@@ -183,7 +183,6 @@ void Network::loadReactions(const char *filename) {
 			for (int i = 0; i < species; i++) {
 				if (i == reactant[mm][n]) {
 					reacVector(n,i)--;
-					printf("%d %d %f\n", n,i,reacVector(n,i));
 				}
 			}
 			if (displayInput)

@@ -57,12 +57,12 @@ bool checkAsy(fern_real, fern_real, fern_real);
 fern_real asymptoticUpdate(fern_real, fern_real, fern_real, fern_real);
 fern_real eulerUpdate(fern_real, fern_real, fern_real, fern_real);
 
-void populateF(std::vector<fern_real> Fsign,
-		const std::vector<fern_real> & FsignFac, std::vector<fern_real> Flux,
+void populateF(std::vector<fern_real> & Fsign,
+		const std::vector<fern_real> & FsignFac, std::vector<fern_real> & Flux,
 		const std::vector<unsigned short> & MapFsign,
 		unsigned short totalFsign);
-inline void updatePopulations(std::vector<fern_real> FplusSum,
-		std::vector<fern_real> FminusSum, fern_real *Y, std::vector<fern_real> Yzero,
+inline void updatePopulations(std::vector<fern_real> & FplusSum,
+		std::vector<fern_real> & FminusSum, fern_real *Y, std::vector<fern_real> & Yzero,
 		unsigned short numberSpecies, fern_real dt);
 
 fern_real NDreduceSum(std::vector<fern_real> a, unsigned short length);
