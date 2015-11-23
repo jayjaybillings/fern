@@ -13,10 +13,6 @@ void Network::loadNetwork(const char *filename) {
 
 	FILE *file = fopen(filename, "r");
 
-	// Allocate the flux vectors
-	FplusFac = std::vector<fern_real>(species*reactions);
-	FminusFac = std::vector<fern_real>(species*reactions);
-
 	// Exit if the file doesn't exist or can't be read
 
 	if (!file) {
@@ -187,6 +183,7 @@ void Network::loadReactions(const char *filename) {
 			for (int i = 0; i < species; i++) {
 				if (i == reactant[mm][n]) {
 					reacVector(n,i)--;
+					printf("%d %d %f\n", n,i,reacVector(n,i));
 				}
 			}
 			if (displayInput)
@@ -471,6 +468,10 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 		FminusMax[i] = FminusMin[i] + numFluxMinus[i] - 1;
 	}
 
+	// Allocate the flux vectors
+	FplusFac = std::vector<fern_real>(species*reactions);
+	FminusFac = std::vector<fern_real>(species*reactions);
+
 	// Populate the FplusFac and FminusFac arrays that hold the factors counting the
 	// number of occurences of the species in the reaction.  Note that this can only
 	// be done after parseF() has been run to give reacMask[i][j].
@@ -487,7 +488,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 				tempCountMinus++;
 			}
 		}
-	}
+	} // If you run this through the debugger, it is a lot of work to calculate 0!
 
 	return;
 }
