@@ -58,7 +58,7 @@ public:
 	std::vector<fern_real> FminusSum;
 
 public:
-	Globals(const std::shared_ptr<Network> & network);
+	Globals(const Network & network);
 };
 
 #endif

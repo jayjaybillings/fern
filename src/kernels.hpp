@@ -36,7 +36,6 @@
 #include "IntegrationData.hpp"
 #include "Globals.hpp"
 #include "fern_math.h"
-#include <memory>
 
 /**
  * This operation initializes the solver.
@@ -44,8 +43,8 @@
  * @param integrationData the set of integration parameters for the integration
  * @param globals the set of global variables
  */
-void initialize(std::shared_ptr<Network> network,
-		IntegrationData * integrationData, std::shared_ptr<Globals> globalsPtr);
+void initialize(Network * network,
+		IntegrationData * integrationData, Globals * globalsPtr);
 
 /**
  * This operation performs the integration based on the information provided to
@@ -58,15 +57,15 @@ fern_real asymptoticUpdate(fern_real, fern_real, fern_real, fern_real);
 fern_real eulerUpdate(fern_real, fern_real, fern_real, fern_real);
 
 void populateF(std::vector<fern_real> & Fsign,
-		const std::vector<fern_real> & FsignFac, std::vector<fern_real> & Flux,
-		const std::vector<unsigned short> & MapFsign,
-		unsigned short totalFsign);
-inline void updatePopulations(std::vector<fern_real> & FplusSum,
-		std::vector<fern_real> & FminusSum, fern_real *Y, std::vector<fern_real> & Yzero,
-		unsigned short numberSpecies, fern_real dt);
+		const std::vector<fern_real> & FsignFac, const std::vector<fern_real> & Flux,
+		const unsigned short * MapFsign,
+		const unsigned short totalFsign);
+inline void updatePopulations(const std::vector<fern_real> & FplusSum,
+		const std::vector<fern_real> & FminusSum, fern_real *Y, const std::vector<fern_real> & Yzero,
+		const unsigned short numberSpecies, const fern_real dt);
 
-fern_real NDreduceSum(std::vector<fern_real> a, unsigned short length);
-fern_real reduceMax(std::vector<fern_real> a, unsigned short length);
+fern_real NDreduceSum(std::vector<fern_real> & a, unsigned short length);
+fern_real reduceMax(std::vector<fern_real> & a, unsigned short length);
 //EVENTUALLY INSERT PE function
 void partialEquil(fern_real *Y, unsigned short numberReactions, int *ReacGroups,
 		int **reactant, int **product, fern_real **final_k, int *pEquilbyRG,

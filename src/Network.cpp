@@ -503,8 +503,9 @@ void Network::allocate() {
 
 	// Allocate the reaction data
 
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; i++) {
 		P[i] = new fern_real[reactions];
+	}
 
 	numReactingSpecies = new unsigned char[reactions];
 	statFac = new fern_real[reactions];
@@ -515,11 +516,14 @@ void Network::allocate() {
 	PEnumProducts = new int[reactions];
 	ReacParent = new int[reactions];
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++) {
 		product[i] = new int[reactions];
+	}
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++) {
 		reactant[i] = new int[reactions];
+	}
+
 	pEquilbyRG = new int[numRG];
 	pEquilbyReac = new int[reactions];
 	ReacRG = new int[reactions];	//holds each reaction's RGid

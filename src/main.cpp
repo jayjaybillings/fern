@@ -46,7 +46,7 @@ std::shared_ptr<Globals> globals;
  * @param integrator the integrator into which the parameters should be loaded
  * @param filename the name of the file that contains the parameters
  */
-void loadParameters(std::shared_ptr<Network> network, IntegrationData * data,
+void loadParameters(Network & network, IntegrationData * data,
 		const char * filename) {
 
 	// Load the parameters file
@@ -59,15 +59,15 @@ void loadParameters(std::shared_ptr<Network> network, IntegrationData * data,
 
 	// Load the network parameters. The simple parameters can be loaded
 	// directly, but the file names are used in multiple places.
-	network->species = atoi(
+	network.species = atoi(
 			iniReader.GetValue("network", "numSpecies", "0"));
-	network->reactions = atoi(
+	network.reactions = atoi(
 			iniReader.GetValue("network", "numReactions", "0"));
-	network->numRG = atoi(
+	network.numRG = atoi(
 			iniReader.GetValue("network", "numReactionGroups", "0"));
-	network->massTol = strtod(
+	network.massTol = strtod(
 			iniReader.GetValue("network", "massTol", "0.0"), NULL);
-	network->fluxFrac = strtod(
+	network.fluxFrac = strtod(
 			iniReader.GetValue("network", "fluxFrac", "0.0"), NULL);
 	const char * networkFile = iniReader.GetValue("network", "networkFile",
 	NULL);
@@ -86,11 +86,11 @@ void loadParameters(std::shared_ptr<Network> network, IntegrationData * data,
 			"density", "0.0"), NULL);
 
 	// Configure the integrator
-	network->allocate();
-	network->loadNetwork(networkFile);
-	network->loadReactions(rateFile);
+	network.allocate();
+	network.loadNetwork(networkFile);
+	network.loadReactions(rateFile);
 	// Configure the data
-	data->allocate(network->species);
+	data->allocate(network.species);
 	data->loadAbundances(networkFile);
 
 	return;
@@ -114,10 +114,10 @@ int main(int argc, char const *argv[]) {
 	/* Load the network */
 	IntegrationData integrationData = IntegrationData();
 	reacNetwork = std::make_shared<Network>();
-	loadParameters(reacNetwork, &integrationData, argv[1]);
+	loadParameters(*reacNetwork.get(), &integrationData, argv[1]);
 	// Launch the integrator
-	globals = std::make_shared<Globals>(reacNetwork);
-	initialize(reacNetwork, &integrationData, globals);
+	globals = std::make_shared<Globals>(*reacNetwork.get());
+	initialize(reacNetwork.get(), &integrationData, globals.get());
 	integrate();
 	integrationData.print();
 
