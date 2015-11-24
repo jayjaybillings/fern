@@ -317,33 +317,6 @@ static void renormalizeSolution() {
 	}
 }
 
-/**
- * This function finalizes the next time step based on integration limits and
- * possibly other considerations.
- * @param time the current time
- * @param timeStep the current time step
- * @param numTimeSteps the total number of time steps that have been taken
- */
-static void finalizeNextTimeStep(fern_real & time, fern_real & timeStep,
-		unsigned int & numTimeSteps) {
-
-	/*
-	 Finally check to be sure that timestep will not overstep next plot output
-	 time and adjust to match if necessary. This will adjust dt only if at the end
-	 of the integration interval. In that case it will also recompute the Y[]
-	 corresponding to the adjusted time interval.
-	 */
-	if (time + timeStep >= integrationData->t_max) {
-		timeStep = integrationData->t_max - time;
-	}
-
-	/* Increment the integration time and set the new timestep. */
-	time += timeStep;
-	numTimeSteps++;
-
-	return;
-}
-
 void initialize(Network * networkInfo, IntegrationData * data,
 		Globals * globalsPtr) {
 	network = networkInfo;
@@ -433,6 +406,9 @@ void integrate() {
 
 		// Compute the fluxes
 		computeFluxes();
+
+		//----- Compute time step
+
 		// Get the max flux for the time step calculation
 		maxFlux = reduceMax(globals->Fdiff, numberSpecies);
 
@@ -450,11 +426,19 @@ void integrate() {
 			dtFlux = dtFloor;
 
 		dt = dtFlux;
+		if (t + dt >= integrationData->t_max) {
+			dt = integrationData->t_max - t;
+		}
+
 		if (deltaTimeRestart < dtFlux)
 			dt = deltaTimeRestart;
 
+		//----- Advance one step
+
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
+
+		//----- Recompute time step
 
 		/* Compute sum of mass fractions sumX for all species. */
 
@@ -482,17 +466,21 @@ void integrate() {
 			dt *= (massTol / (fmax(massChecker, upbumper)));
 		}
 
+		//----- Advance one step with a new dt if it changed
+
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
+
+		//----- Update values
 
 		/*
 		 Store the actual timestep that would be taken. Same as dt unless
 		 artificially shortened in the last integration step to match end time.
 		 */
 		deltaTimeRestart = dt;
-		// Finalize the next time step based on bounds and other
-		// considerations.
-		finalizeNextTimeStep(t, dt, timesteps);
+		// Update the time and number of time steps
+		t += dt;
+		++timesteps;
 
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
