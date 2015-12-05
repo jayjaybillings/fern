@@ -354,12 +354,45 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	return;
 }
 
+static fern_real getFirstStageStep(fern_real time) {
+
+	fern_real floorFac = 0.1;
+	fern_real dt = 0.0;
+
+	// Get the max flux for the time step calculation
+	fern_real maxFlux = reduceMax(globals->Fdiff, numberSpecies);
+
+	/*
+	 Now use the fluxes to update the populations for this timestep.
+	 For now we shall assume the asymptotic method. We determine whether each isotope
+	 satisfies the asymptotic condition. If it does we update with the asymptotic formula.
+	 If not, we update numerically using the forward Euler formula.
+	 */
+
+
+	/* Determine an initial trial timestep based on fluxes and dt in previous step. */
+	fern_real dtFlux = network->fluxFrac / maxFlux;
+	fern_real dtFloor = floorFac * time;
+	if (dtFlux > dtFloor)
+		dtFlux = dtFloor;
+
+	dt = dtFlux;
+	if (time + dt >= integrationData->t_max) {
+		dt = integrationData->t_max - time;
+	}
+
+	fern_real deltaTimeRestart = dt;
+	if (deltaTimeRestart < dtFlux)
+		dt = deltaTimeRestart;
+
+	return dt;
+}
+
 void integrate() {
 
 	/* Assign IntegrationData pointers. */
 	Y = integrationData->Y;
 
-	fern_real maxFlux;
 	fern_real t;
 	fern_real dt;
 	unsigned int timesteps;
@@ -374,13 +407,9 @@ void integrate() {
 	dt = integrationData->dt_init;
 	timesteps = 1;
 
-	fern_real floorFac = 0.1;
 	fern_real upbumper = 0.9 * massTol;
 	fern_real downbumper = 0.1;
 	fern_real massTolUp = 0.25 * massTol;
-	fern_real deltaTimeRestart = dt;
-	fern_real dtFloor;
-	fern_real dtFlux;
 	fern_real massChecker;
 
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
@@ -408,30 +437,7 @@ void integrate() {
 		computeFluxes();
 
 		//----- Compute time step
-
-		// Get the max flux for the time step calculation
-		maxFlux = reduceMax(globals->Fdiff, numberSpecies);
-
-		/*
-		 Now use the fluxes to update the populations for this timestep.
-		 For now we shall assume the asymptotic method. We determine whether each isotope
-		 satisfies the asymptotic condition. If it does we update with the asymptotic formula.
-		 If not, we update numerically using the forward Euler formula.
-		 */
-
-		/* Determine an initial trial timestep based on fluxes and dt in previous step. */
-		dtFlux = fluxFrac / maxFlux;
-		dtFloor = floorFac * t;
-		if (dtFlux > dtFloor)
-			dtFlux = dtFloor;
-
-		dt = dtFlux;
-		if (t + dt >= integrationData->t_max) {
-			dt = integrationData->t_max - t;
-		}
-
-		if (deltaTimeRestart < dtFlux)
-			dt = deltaTimeRestart;
+		dt = getFirstStageStep(t);
 
 		//----- Advance one step
 
@@ -477,7 +483,7 @@ void integrate() {
 		 Store the actual timestep that would be taken. Same as dt unless
 		 artificially shortened in the last integration step to match end time.
 		 */
-		deltaTimeRestart = dt;
+		double deltaTimeRestart = dt;
 		// Update the time and number of time steps
 		t += dt;
 		++timesteps;
