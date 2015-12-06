@@ -56,6 +56,11 @@ fern_real *Y;
 /** Global partial equilibrium variables **/
 static fern_real *final_k[2];
 
+static fern_real t;
+static fern_real dt;
+static fern_real deltaTimeRestart;
+static unsigned int timesteps;
+
 /**
  * This function checks the status for the plotting
  */
@@ -344,6 +349,10 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	mapFPlus = network->MapFplus.data();
 	mapFMinus = network->MapFminus.data();
 
+	// Initialize time stepping parameters
+	dt = integrationData->dt_init;
+	deltaTimeRestart = integrationData->dt_init;
+
 	// Compute the prefactors
 	computePrefactors();
 	// Compute the rate values.
@@ -354,10 +363,9 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	return;
 }
 
-static fern_real getFirstStageStep(fern_real time) {
+static fern_real getFirstStageStep(fern_real t) {
 
 	fern_real floorFac = 0.1;
-	fern_real dt = 0.0;
 
 	// Get the max flux for the time step calculation
 	fern_real maxFlux = reduceMax(globals->Fdiff, numberSpecies);
@@ -369,23 +377,67 @@ static fern_real getFirstStageStep(fern_real time) {
 	 If not, we update numerically using the forward Euler formula.
 	 */
 
-
 	/* Determine an initial trial timestep based on fluxes and dt in previous step. */
 	fern_real dtFlux = network->fluxFrac / maxFlux;
-	fern_real dtFloor = floorFac * time;
+	fern_real dtFloor = floorFac * t;
 	if (dtFlux > dtFloor)
 		dtFlux = dtFloor;
 
 	dt = dtFlux;
-	if (time + dt >= integrationData->t_max) {
-		dt = integrationData->t_max - time;
+	if (t + dt >= integrationData->t_max) {
+		dt = integrationData->t_max - t;
 	}
 
-	fern_real deltaTimeRestart = dt;
 	if (deltaTimeRestart < dtFlux)
 		dt = deltaTimeRestart;
 
 	return dt;
+}
+
+static fern_real getSecondStageStep(fern_real t) {
+
+	fern_real upbumper = 0.9 * massTol;
+	fern_real downbumper = 0.1;
+	fern_real massTolUp = 0.25 * massTol;
+
+	/* Compute sum of mass fractions sumX for all species. */
+
+	for (int i = 0; i < numberSpecies; i++) {
+		/* Compute mass fraction X from abundance Y. */
+		globals->X[i] = globals->massNum[i] * Y[i];
+	}
+
+	fern_real sumX = NDreduceSum(globals->X, numberSpecies);
+
+	/*
+	 Now modify timestep if necessary to ensure that particle number is conserved to
+	 specified tolerance (but not too high a tolerance). Using updated populations
+	 based on the trial timestep computed above, test for conservation of particle
+	 number and modify trial timestep accordingly.
+	 */
+	fern_real test1 = std::abs(sumXLast - 1.0);
+	fern_real test2 = std::abs(sumX - 1.0);
+	fern_real massChecker = std::abs(sumXLast - sumX);
+
+	if (test2 > test1 && massChecker > massTol) {
+		dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16),
+				downbumper);
+	} else if (massChecker < massTolUp) {
+		dt *= (massTol / (fmax(massChecker, upbumper)));
+	}
+
+	/*
+	 Store the actual timestep that would be taken. Same as dt unless
+	 artificially shortened in the last integration step to match end time.
+	 */
+	deltaTimeRestart = dt;
+
+	return dt;
+}
+
+static void updateTime() {
+	t += dt;
+	++timesteps;
 }
 
 void integrate() {
@@ -393,9 +445,7 @@ void integrate() {
 	/* Assign IntegrationData pointers. */
 	Y = integrationData->Y;
 
-	fern_real t;
-	fern_real dt;
-	unsigned int timesteps;
+	fern_real maxFlux;
 
 	/*
 	 Begin the time integration from t=0 to tmax. Rather than t=0 we
@@ -404,12 +454,10 @@ void integrate() {
 	 */
 
 	t = 1.0e-20;
-	dt = integrationData->dt_init;
 	timesteps = 1;
 
-	fern_real upbumper = 0.9 * massTol;
-	fern_real downbumper = 0.1;
-	fern_real massTolUp = 0.25 * massTol;
+	fern_real dtFloor;
+	fern_real dtFlux;
 	fern_real massChecker;
 
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
@@ -436,57 +484,23 @@ void integrate() {
 		// Compute the fluxes
 		computeFluxes();
 
-		//----- Compute time step
+		// Compute time step
 		dt = getFirstStageStep(t);
 
-		//----- Advance one step
-
+		// Advance one step
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
 
-		//----- Recompute time step
-
-		/* Compute sum of mass fractions sumX for all species. */
-
-		for (int i = 0; i < numberSpecies; i++) {
-			/* Compute mass fraction X from abundance Y. */
-			globals->X[i] = globals->massNum[i] * Y[i];
-		}
-
-		sumX = NDreduceSum(globals->X, numberSpecies);
-
-		/*
-		 Now modify timestep if necessary to ensure that particle number is conserved to
-		 specified tolerance (but not too high a tolerance). Using updated populations
-		 based on the trial timestep computed above, test for conservation of particle
-		 number and modify trial timestep accordingly.
-		 */
-		fern_real test1 = std::abs(sumXLast - 1.0);
-		fern_real test2 = std::abs(sumX - 1.0);
-		massChecker = std::abs(sumXLast - sumX);
-
-		if (test2 > test1 && massChecker > massTol) {
-			dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16),
-					downbumper);
-		} else if (massChecker < massTolUp) {
-			dt *= (massTol / (fmax(massChecker, upbumper)));
-		}
+		// Recompute time step
+		dt = getSecondStageStep(t);
 
 		//----- Advance one step with a new dt if it changed
 
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
 
-		//----- Update values
-
-		/*
-		 Store the actual timestep that would be taken. Same as dt unless
-		 artificially shortened in the last integration step to match end time.
-		 */
-		double deltaTimeRestart = dt;
 		// Update the time and number of time steps
-		t += dt;
-		++timesteps;
+		updateTime();
 
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
