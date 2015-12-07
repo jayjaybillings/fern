@@ -37,5 +37,19 @@ files in the data directory, you would run
 ./fern-exec ../fern/data/alpha.ini
 ```
 
+## Updating Submodules
+
+FERN uses the Fire Framework for various utilities. This is included as a git
+submodule, which can be updated by running the the following from the FERN
+source directory
+
+```bash
+bash ./tools/updateSubModules.sh
+```
+
+FERN always checks out the latest release version of the submodule from the 
+repository, so it should not be necessary to update it. However, the utility
+should be used as required.
+
 ## Questions
-Questions can be directed to me at jayjaybillings <at> gmail <dot> com.
+Questions can be directed to me at billingsjj <at> ornl <dot> gov.
