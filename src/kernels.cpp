@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <cmath>
-#include <IStepper.h>
-#include <DefaultStepper.h>
 #include "kernels.hpp"
 #include <memory>
 #include <iostream>
@@ -49,6 +47,9 @@ static fern_real sumX, sumXLast;
 static Network * network;
 static IntegrationData * integrationData;
 static Globals * globals;
+/// The instance of the stepper used to get the time step.
+static fire::IStepper * stepper;
+
 
 static unsigned short * mapFPlus = NULL;
 static unsigned short * mapFMinus = NULL;
@@ -58,9 +59,6 @@ fern_real *Y;
 
 /** Global partial equilibrium variables **/
 static fern_real *final_k[2];
-
-/// The instance of the stepper used to get the time step.
-std::shared_ptr<fire::IStepper> stepper;
 
 /**
  * This function checks the status for the plotting
@@ -324,7 +322,7 @@ static void renormalizeSolution() {
 }
 
 void initialize(Network * networkInfo, IntegrationData * data,
-		Globals * globalsPtr) {
+		Globals * globalsPtr, fire::IStepper * stepperPtr) {
 	network = networkInfo;
 	globals = globalsPtr;
 
@@ -333,7 +331,7 @@ void initialize(Network * networkInfo, IntegrationData * data,
 
 	integrationData = data;
 	// Setup the time stepper
-	stepper = std::make_shared<DefaultStepper>(*globals,*network,integrationData->Y);
+	stepper = stepperPtr;
 	stepper->setInitialStep(integrationData->t_init);
 	stepper->setInitialStepsize(integrationData->dt_init);
 	stepper->setFinalStep(integrationData->t_max);

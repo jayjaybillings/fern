@@ -36,15 +36,18 @@
 #include "IntegrationData.hpp"
 #include "Globals.hpp"
 #include "fern_math.h"
+#include <IStepper.h>
 
 /**
  * This operation initializes the solver.
  * @param network the network that should be integrated
  * @param integrationData the set of integration parameters for the integration
  * @param globals the set of global variables
+ * @param stepper the stepper used for computing time steps
  */
 void initialize(Network * network,
-		IntegrationData * integrationData, Globals * globalsPtr);
+		IntegrationData * integrationData,
+		Globals * globalsPtr, fire::IStepper * stepper);
 
 /**
  * This operation performs the integration based on the information provided to

@@ -34,9 +34,12 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 #include <memory>
 #include "kernels.hpp"
 #include <SimpleIni.h>
+#include <IStepper.h>
+#include <DefaultStepper.h>
 
 std::shared_ptr<Network> reacNetwork;
 std::shared_ptr<Globals> globals;
+std::shared_ptr<fire::IStepper> stepper;
 
 /**
  * This operation loads parameters from the input file into the integrator. It
@@ -117,8 +120,14 @@ int main(int argc, char const *argv[]) {
 	loadParameters(*reacNetwork.get(), &integrationData, argv[1]);
 	// Launch the integrator
 	globals = std::make_shared<Globals>(*reacNetwork.get());
-	initialize(reacNetwork.get(), &integrationData, globals.get());
+	// Allocate the stepper
+	stepper = std::make_shared<DefaultStepper>(*globals.get(),
+			*reacNetwork.get(),integrationData.Y);
+	// Initialize the system
+	initialize(reacNetwork.get(), &integrationData, globals.get(), stepper.get());
+	// Solve the system
 	integrate();
+	// Dump the results
 	integrationData.print();
 
 	return EXIT_SUCCESS;

@@ -60,6 +60,7 @@ include(UseDoxygen OPTIONAL)
 # directories must come before add subdirectory!
 include_directories("${CMAKE_SOURCE_DIR}/src")
 include_directories("${CMAKE_SOURCE_DIR}/tpls/simpleini-4.17")
+include_directories("${CMAKE_SOURCE_DIR}/tpls/fire/integrators")
 
 # Add the source directory
 add_subdirectory(src)
