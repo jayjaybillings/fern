@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <cmath>
+#include <IStepper.h>
+#include <DefaultStepper.h>
 #include "kernels.hpp"
+#include <memory>
+#include <iostream>
+#include <iomanip>
 
 // Global Variables.
 /*
@@ -38,7 +43,6 @@ static int *ReacRG;
 static unsigned short numberSpecies;
 static unsigned short numberReactions;
 
-static fern_real massTol;
 static fern_real fluxFrac;
 static fern_real sumX, sumXLast;
 
@@ -50,16 +54,13 @@ static unsigned short * mapFPlus = NULL;
 static unsigned short * mapFMinus = NULL;
 
 /* Declare pointer variables for IntegrationData arrays.  */
-
 fern_real *Y;
 
 /** Global partial equilibrium variables **/
 static fern_real *final_k[2];
 
-static fern_real t;
-static fern_real dt;
-static fern_real deltaTimeRestart;
-static unsigned int timesteps;
+/// The instance of the stepper used to get the time step.
+std::shared_ptr<fire::IStepper> stepper;
 
 /**
  * This function checks the status for the plotting
@@ -331,6 +332,11 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	numberReactions = network->reactions;
 
 	integrationData = data;
+	// Setup the time stepper
+	stepper = std::make_shared<DefaultStepper>(*globals,*network,integrationData->Y);
+	stepper->setInitialStep(integrationData->t_init);
+	stepper->setInitialStepsize(integrationData->dt_init);
+	stepper->setFinalStep(integrationData->t_max);
 
 	// Assign network parameters
 	numRG = network->numRG;
@@ -343,15 +349,13 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	pEquilbyReac = network->pEquilbyReac;
 	ReacRG = network->ReacRG; //holds each reaction's RGid
 
-	massTol = network->massTol;
 	fluxFrac = network->fluxFrac;
 
 	mapFPlus = network->MapFplus.data();
 	mapFMinus = network->MapFminus.data();
 
 	// Initialize time stepping parameters
-	dt = integrationData->dt_init;
-	deltaTimeRestart = integrationData->dt_init;
+	//deltaTimeRestart = integrationData->dt_init;
 
 	// Compute the prefactors
 	computePrefactors();
@@ -361,83 +365,6 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	configurePartialEquilibriumGroups();
 
 	return;
-}
-
-static fern_real getFirstStageStep(fern_real t) {
-
-	fern_real floorFac = 0.1;
-
-	// Get the max flux for the time step calculation
-	fern_real maxFlux = reduceMax(globals->Fdiff, numberSpecies);
-
-	/*
-	 Now use the fluxes to update the populations for this timestep.
-	 For now we shall assume the asymptotic method. We determine whether each isotope
-	 satisfies the asymptotic condition. If it does we update with the asymptotic formula.
-	 If not, we update numerically using the forward Euler formula.
-	 */
-
-	/* Determine an initial trial timestep based on fluxes and dt in previous step. */
-	fern_real dtFlux = network->fluxFrac / maxFlux;
-	fern_real dtFloor = floorFac * t;
-	if (dtFlux > dtFloor)
-		dtFlux = dtFloor;
-
-	dt = dtFlux;
-	if (t + dt >= integrationData->t_max) {
-		dt = integrationData->t_max - t;
-	}
-
-	if (deltaTimeRestart < dtFlux)
-		dt = deltaTimeRestart;
-
-	return dt;
-}
-
-static fern_real getSecondStageStep(fern_real t) {
-
-	fern_real upbumper = 0.9 * massTol;
-	fern_real downbumper = 0.1;
-	fern_real massTolUp = 0.25 * massTol;
-
-	/* Compute sum of mass fractions sumX for all species. */
-
-	for (int i = 0; i < numberSpecies; i++) {
-		/* Compute mass fraction X from abundance Y. */
-		globals->X[i] = globals->massNum[i] * Y[i];
-	}
-
-	fern_real sumX = NDreduceSum(globals->X, numberSpecies);
-
-	/*
-	 Now modify timestep if necessary to ensure that particle number is conserved to
-	 specified tolerance (but not too high a tolerance). Using updated populations
-	 based on the trial timestep computed above, test for conservation of particle
-	 number and modify trial timestep accordingly.
-	 */
-	fern_real test1 = std::abs(sumXLast - 1.0);
-	fern_real test2 = std::abs(sumX - 1.0);
-	fern_real massChecker = std::abs(sumXLast - sumX);
-
-	if (test2 > test1 && massChecker > massTol) {
-		dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16),
-				downbumper);
-	} else if (massChecker < massTolUp) {
-		dt *= (massTol / (fmax(massChecker, upbumper)));
-	}
-
-	/*
-	 Store the actual timestep that would be taken. Same as dt unless
-	 artificially shortened in the last integration step to match end time.
-	 */
-	deltaTimeRestart = dt;
-
-	return dt;
-}
-
-static void updateTime() {
-	t += dt;
-	++timesteps;
 }
 
 void integrate() {
@@ -453,12 +380,8 @@ void integrate() {
 	 code as well as the Java version.
 	 */
 
-	t = 1.0e-20;
-	timesteps = 1;
-
-	fern_real dtFloor;
-	fern_real dtFlux;
-	fern_real massChecker;
+	//timesteps = 1; Check to see if this is required!
+	fern_real dt = 0.0;
 
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
 	for (int i = 0; i < numberSpecies; i++) {
@@ -467,12 +390,11 @@ void integrate() {
 		globals->X[i] = ((fern_real) globals->massNum[i]) * Y[i];
 	}
 
-	sumXLast = NDreduceSum(globals->X, numberSpecies);
-
 	/* Main time integration loop */
-	while (t < integrationData->t_max) {
+	fern_real t = stepper->getInitialStep();
+	while (t < stepper->getFinalStep()) {
 		// Check the time to see if plot information should be provided
-		checkPlotStatus(t, dt, integrationData->t_max, sumX);
+		checkPlotStatus(t, dt, stepper->getFinalStep(), sumX);
 		// Check the reaction groups to see if they are in equilibrium
 		checkReactionGroupEquilibrium(t);
 
@@ -485,28 +407,29 @@ void integrate() {
 		computeFluxes();
 
 		// Compute time step
-		dt = getFirstStageStep(t);
+		dt = stepper->getStepSizeAtStage(1);
 
 		// Advance one step
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
 
 		// Recompute time step
-		dt = getSecondStageStep(t);
+		dt = stepper->getStepSizeAtStage(2);
 
 		//----- Advance one step with a new dt if it changed
 
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
 
-		// Update the time and number of time steps
-		updateTime();
-
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
 		// Handle postprocessing and renormalization
 		computeSecondaryValues();
 		renormalizeSolution();
+
+		// Update the time and number of time steps
+		stepper->updateStep();
+		t = stepper->getStep();
 	}
 
 	return;
