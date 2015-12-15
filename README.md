@@ -9,7 +9,7 @@ From a shell, execute the following commands:
 
 
 ```bash
-git clone https://github.com/jayjaybillings/fern
+git clone --recursive https://github.com/jayjaybillings/fern
 mkdir fern-build
 cd fern-build
 cmake ../fern -DCMAKE_BUILD_TYPE=Debug -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_ECLIPSE_VERSION=4.5
