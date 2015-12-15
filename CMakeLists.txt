@@ -61,6 +61,7 @@ include(UseDoxygen OPTIONAL)
 include_directories("${CMAKE_SOURCE_DIR}/src")
 include_directories("${CMAKE_SOURCE_DIR}/tpls/simpleini-4.17")
 include_directories("${CMAKE_SOURCE_DIR}/tpls/fire/integrators")
+INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/tpls/fire/parsers")
 
 # Add the source directory
 add_subdirectory(src)
@@ -81,7 +82,6 @@ target_link_libraries(fern-exec ${FERN_LIBS})
 # Add integration and system tests. The first one just makes sure it executes.
 add_test(smoke_test_alpha fern-exec ${CMAKE_SOURCE_DIR}/data/alpha.ini)
 # Check the results for the alpha network benchmark
-# FIXME! Wrong files for now!
 add_test(diff_test_alpha ${CMAKE_SOURCE_DIR}/tools/diffTest.sh ${CMAKE_SOURCE_DIR}/data/alpha.ini ${CMAKE_SOURCE_DIR}/data/alpha_gold.txt)
 
 # Find Boost for unit tests
@@ -89,7 +89,7 @@ FIND_PACKAGE(Boost)
 # Enable testing if boost is found.
 if(Boost_FOUND)
     # Turn on the testing harness
-	enable_testing()
+    enable_testing()
     # Let the user know that tests will be built
     message(STATUS "Boost version ${Boost_VERSION} found.")
     message(STATUS "Tests will be built since Boost was found.")
@@ -103,8 +103,11 @@ if(Boost_FOUND)
         message(STATUS "Making test ${test}")
         get_filename_component(testName ${test} NAME_WE)
         add_executable(${testName} ${test})
+	# Link the FERN library
+	target_link_libraries(${testName} ${FERN_LIBS})
+        # Add the test
         add_test(${testName} ${testName}) 
-        #add a label so the tests can be run separately
+        # Add a label so the tests can be run separately
         set_property(TEST ${testName} PROPERTY LABELS ${PACKAGE_NAME})   
     endforeach(test ${tests})
 endif(Boost_FOUND)

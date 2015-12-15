@@ -390,6 +390,8 @@ void integrate() {
 
 	/* Main time integration loop */
 	fern_real t = stepper->getInitialStep();
+	double testVal = stepper->getFinalStep();
+	std::cout << testVal << " " << stepper->getStepSizeAtStage(1)<< std::endl;
 	while (t < stepper->getFinalStep()) {
 		// Check the time to see if plot information should be provided
 		checkPlotStatus(t, dt, stepper->getFinalStep(), sumX);
@@ -410,6 +412,12 @@ void integrate() {
 		// Advance one step
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
+
+		/* Compute sum of mass fractions sumX for all species. */
+		for (int i = 0; i < network->species; i++) {
+			/* Compute mass fraction X from abundance Y. */
+			globals->X[i] = globals->massNum[i] * Y[i];
+		}
 
 		// Recompute time step
 		dt = stepper->getStepSizeAtStage(2);

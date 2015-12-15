@@ -66,7 +66,7 @@ private:
 	/// Abundance values
 	const fern_real * Y;
 	/// Global variables
-	Globals & globals;
+	const Globals & globals;
 	/// Network of reactions and reactants
 	const Network & network;
 
@@ -78,7 +78,7 @@ public:
 	 * @param networkRef Reference to the network information
 	 * @param yArray Pointer to abundance values
 	 */
-	DefaultStepper(Globals & globalsRef, const Network & networkRef, const fern_real * yArray) :
+	DefaultStepper(const Globals & globalsRef, const Network & networkRef, const fern_real * yArray) :
 	     globals(globalsRef), network(networkRef), Y(yArray) {
 	};
 
@@ -121,13 +121,6 @@ public:
 			fern_real upbumper = 0.9 * network.massTol;
 			fern_real downbumper = 0.1;
 			fern_real massTolUp = 0.25 * network.massTol;
-
-			/* Compute sum of mass fractions sumX for all species. */
-
-			for (int i = 0; i < network.species; i++) {
-				/* Compute mass fraction X from abundance Y. */
-				globals.X[i] = globals.massNum[i] * Y[i];
-			}
 
 			// Sum the mass fractions
 			sumX = 0.0;
