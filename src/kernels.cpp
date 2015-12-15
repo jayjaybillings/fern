@@ -390,8 +390,6 @@ void integrate() {
 
 	/* Main time integration loop */
 	fern_real t = stepper->getInitialStep();
-	double testVal = stepper->getFinalStep();
-	std::cout << testVal << " " << stepper->getStepSizeAtStage(1)<< std::endl;
 	while (t < stepper->getFinalStep()) {
 		// Check the time to see if plot information should be provided
 		checkPlotStatus(t, dt, stepper->getFinalStep(), sumX);
@@ -436,6 +434,7 @@ void integrate() {
 		// Update the time and number of time steps
 		stepper->updateStep();
 		t = stepper->getStep();
+//		std::cout << t << "," << dt << std::endl;
 	}
 
 	return;
