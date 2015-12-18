@@ -71,6 +71,10 @@ void IntegrationData::print()
 	printf("t_max: %e\n", t_max);
 	printf("dt_init: %e\n", dt_init);
 	printf("rho: %e\n", rho);
+	printf("energy release rate (erg/s/g): %e\n", energy_release_rate);
+	printf("energy release rate (MeV/nucleon/s): %e\n", energy_release_rate / 9.5768e17);
+	printf("energy release %e\n", energy_release_rate * (t_max - t_init));
+	printf("energy release %e\n", (energy_release_rate / 9.5768e17) * (t_max - t_init));
 	
 	printf("Y: ");
 	for (unsigned short i = 0; i < species; i++)

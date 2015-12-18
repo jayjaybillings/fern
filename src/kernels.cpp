@@ -336,6 +336,8 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	stepper->setInitialStepsize(integrationData->dt_init);
 	stepper->setFinalStep(integrationData->t_max);
 
+	integrationData->energy_release_rate = 0.0;
+
 	// Assign network parameters
 	numRG = network->numRG;
 	RGParent = network->RGParent;
@@ -361,6 +363,9 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	computeRates();
 	// Configure the partial equilibrium groups
 	configurePartialEquilibriumGroups();
+
+	// Initialize energy vector
+	globals->energy.resize(numberReactions, 0.0);
 
 	return;
 }
@@ -425,6 +430,9 @@ void integrate() {
 		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
 				globals->Yzero, numberSpecies, dt);
 
+		updateEnergy(globals->energy, globals->rate, network->Q,
+				integrationData->rho);
+
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
 		// Handle postprocessing and renormalization
@@ -436,6 +444,9 @@ void integrate() {
 		t = stepper->getStep();
 //		std::cout << t << "," << dt << std::endl;
 	}
+
+	integrationData->energy_release_rate = calcEnergyReleaseRate(globals->energy,
+			integrationData->t_max - integrationData->t_init);
 
 	return;
 }
@@ -542,6 +553,27 @@ inline void updatePopulations(const std::vector<fern_real> & FplusSum,
 	}
 
 	return;
+}
+
+/* Compute energy released by reactions */
+void updateEnergy(std::vector <fern_real> & energy,
+		const std::vector <fern_real> & rate, fern_real *Q,
+		fern_real rho) {
+	for (int i = 0; i < numberReactions; i++) {
+		energy[i] += (rate[i]*Q[i]) / rho;
+	}
+}
+
+/* Calculate the energy release rate */
+fern_real calcEnergyReleaseRate(std::vector <fern_real> & energy,
+		fern_real dt) {
+	fern_real energy_release = 0.0;
+
+	for (int i = 0; i < numberReactions; i++) {
+		energy_release += energy[i];
+	}
+
+	return energy_release / dt;
 }
 
 /* Checks for partial equilibrium between reaction groups */

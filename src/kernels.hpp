@@ -67,6 +67,13 @@ inline void updatePopulations(const std::vector<fern_real> & FplusSum,
 		const std::vector<fern_real> & FminusSum, fern_real *Y, const std::vector<fern_real> & Yzero,
 		const unsigned short numberSpecies, const fern_real dt);
 
+void updateEnergy(std::vector <fern_real> & energy,
+        const std::vector <fern_real> & rate, fern_real *Q,
+        fern_real rho);
+
+fern_real calcEnergyReleaseRate(std::vector <fern_real> & energy, fern_real dt);
+
+
 fern_real NDreduceSum(std::vector<fern_real> & a, unsigned short length);
 fern_real reduceMax(std::vector<fern_real> & a, unsigned short length);
 //EVENTUALLY INSERT PE function

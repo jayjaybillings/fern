@@ -14,6 +14,8 @@ struct IntegrationData
 	fern_real t_max;
 	fern_real dt_init;
 	fern_real rho;
+
+	fern_real energy_release_rate;
 	
 	fern_real *Y;
 	

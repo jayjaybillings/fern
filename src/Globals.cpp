@@ -15,4 +15,5 @@ Globals::Globals(const Network & network)
 	FplusSum = std::vector<fern_real>(network.totalFplus);
 	FminusSum = std::vector<fern_real>(network.totalFminus);
 	Flux = std::vector<fern_real>(network.reactions);
+	energy = std::vector<fern_real>(network.reactions);
 }

@@ -47,6 +47,7 @@ class Globals
 public:
 	std::vector<fern_real> preFac; // [reactions]
 	std::vector<fern_real> Flux; // [reactions]
+	std::vector<fern_real> energy; // [reactions]
 	std::vector<fern_real> Fplus; // [totalFplus]
 	std::vector<fern_real> Fminus; // [totalFminus]
 	std::vector<fern_real> rate; // [reactions]
