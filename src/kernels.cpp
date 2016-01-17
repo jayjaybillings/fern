@@ -62,6 +62,7 @@ void integrateNetwork(
 
 	//DSOUTPUT
 	const bool plotOutput = 1;
+  const bool GNUplot = 0;
 	const int numIntervals = 100;
 	int plotStartTime = 0;
 	fern_real intervalLogt;
@@ -350,7 +351,7 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 
       //bring it all together, calculate Rate using multipliers, rateparam1 and 2
       if(zenith >= 0 && zenith <= 1.57079632679) {
-        printf("paramMult[0][%d]: %f * paramNumID[0]: %d + paramMult[1]: %f * paramNumID[1]: %d\n", i, network.paramMult[0][i], network.paramNumID[0][i], network.paramMult[1][i], network.paramNumID[1][i]);
+//        printf("paramMult[0][%d]: %f * paramNumID[0]: %d + paramMult[1]: %f * paramNumID[1]: %d\n", i, network.paramMult[0][i], network.paramNumID[0][i], network.paramMult[1][i], network.paramNumID[1][i]);
         Rate[i] = network.paramMult[0][i]*rateparam1 + network.paramMult[1][i]*rateparam2;
       } else {
         Rate[i] = 0.0;
@@ -629,6 +630,17 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 			  countRG++;
       }
 		}
+
+
+    //Set initial abundances for O2, N2 and H2:
+
+    
+    Y[2] = 0.21*cair; //O2
+    Y[97] = 500.0e-9*cair; //H2
+    Y[98] = 0.78*cair; //N2
+    Y[95] = 3.87e17;
+
+
 	/*
 	   Begin the time integration from t=0 to tmax. Rather than t=0 we
 	   start at some very small value of t. This is required for the CUDA C
@@ -674,7 +686,6 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
   fern_real Yppb = 0.0;
 	while (t < integrationData.t_max)
 	{
-//printf("t=%e, TESTdt=%e \n",t, dt);	
       //START PLOT INFO//
       //TODO: Update to latest partial equilibrium code from fernPartialEq code.
 
@@ -690,11 +701,11 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
         
         //For GNUplot Output
         //if(chooseyourSpecies < 1000)
-          printf("%e ", t);
+/*          printf("outputTime: %e \n", t);
           for(int i = 0; i < numberReactions; i++) {
             printf("Rate for Reaction[%d]: %e, Flux: %e\n", i, Rate[i], Flux[i]);
           }
-
+*/
     //REPEAT Flux loops to print for GNUPLOT at proper intervals
 		int minny;
     int lastIsoWFplus = 0;
@@ -750,6 +761,7 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 				nextOutput = intervalLogt+nextOutput;
 				asyCount = 0;
 				peCount = 0;
+        printf("%e ",t);	
 				for(int m = 0; m < network.species; m++) {
           //convert back to parts-per-billion for graphing/output
           Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
@@ -766,8 +778,9 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 
 
           //plot long-lived species in ppb
-          if(m == 21 || m == 0 || m == 5 || m == 6 || m == 11 || m == 12 || m == 27 || m == 18 || m == 9 || m == 28 || m == 29 || m == 31 || m == 30 || m == 101 || m == 75 || m == 76 || m == 77) {
-            printf("%e ", Y[m]);
+          //if(m == 21 || m == 0 || m == 5 || m == 6 || m == 11 || m == 12 || m == 27 || m == 18 || m == 9 || m == 28 || m == 29 || m == 31 || m == 30 || m == 101 || m == 75 || m == 76 || m == 77) {
+          if(m == 0 || m == 12 || m == 6 || m == 13 || m==14 || m==18 || m==27 || m==101) {
+            printf("%e ", Yppb);
           }
 
           //plot shortlived radicals in molecules/cm^3
@@ -794,7 +807,7 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
       //  printf("maxFlux: %e\n", maxFlux);
-			//	printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+//				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
 				outputCount++;
 			}
 		}
@@ -840,6 +853,9 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
         //this is a photolytic reaction, and is first order, ie flux is determined only by the first reactant
         Flux[i] = Rate[i] * Y[network.reactant[0][i]];
         //printf("reaction[%d] with rate %e causes a flux of %e because we some abundance of species[%d]: %e(first-body)\n", i, Rate[i], Flux[i], network.reactant[0][i], Y[network.reactant[0][i]]);
+/*        if(i == 23) {
+          printf("%d HACET[%e]\n",network.reactant[0][i], Y[network.reactant[0][i]]); 
+        }*/
       }
 		}
 		

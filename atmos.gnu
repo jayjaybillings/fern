@@ -35,7 +35,7 @@ set style line 24 lw 3 lt rgb "#B22222"
 set terminal pngcairo background "#ffffff" size 1700, 1010
 #datafile = 'polluted_dt1e-4.dat'
 #datafile = 'test.txt'
-datafile = 'testzenith0.txt'
+datafile = 'output/fernOutput.dat'
 #datafile = 'polluted_dt1e-5.dat'
 #datafile = 'polluted_dt1e-3.dat'
 #datafile = 'rural_dt1e-4.dat'
@@ -47,7 +47,7 @@ datafile = 'testzenith0.txt'
 set key autotitle columnheader
 set key outside
 #set title "CHASER Moderately Polluted, zenith=π/2, fluxFrac=1e8" font "helvetica,18"
-set title "CHASER Moderately Polluted, zenith=0, fluxFrac=1e8" font "helvetica,18"
+#set title "CHASER Moderately Polluted, zenith=0, fluxFrac=1e8" font "helvetica,18"
 #set title "CHASER Moderately Polluted, t_m_a_x=300s, dt=1e-4" font "helvetica,18"
 #set title "CHASER Moderately Polluted, t_m_a_x=300s, dt=1e-3" font "helvetica,18"
 #set title "CHASER Moderately Polluted, t_m_a_x=300s, dt=1e-5" font "helvetica,18"
@@ -57,12 +57,16 @@ set title "CHASER Moderately Polluted, zenith=0, fluxFrac=1e8" font "helvetica,1
 #set title "CHASER Remote Troposphere, t_m_a_x=300s, dt=1e-4" font "helvetica,18"
 #set title "CHASER Remote Troposphere, t_m_a_x=300s, dt=1e-3" font "helvetica,18"
 #set title "CHASER Remote Troposphere, t_m_a_x=300s, dt=1e-5" font "helvetica,18"
-set xlabel "log(t)"
+set title "Case 0 Non-Radicals, 300s, ppb" font "helvetica,18"
+set xlabel "t"
 set ylabel "Y(ppb)"
-set yrange [5e-13:1e3]
-set xrange [5e-2:5e2]
-set logscale
-set format xy "10^{%L}"
+#set yrange [5e-13:1e3]
+#set xrange [5e-2:5e2]
+set autoscale
+unset logscale
+#set format xy "10^{%L}"
+set format y "%.1f"
+set format x "%.0f"
 set output "~/Desktop/Research/gnuplotScripts/plot.png"
 plot for [i=2:25] datafile every ::30::99 u 1:i w lines ls i-1, \
 datafile every ::99::99 u 1:2:("O3") with labels font "arial,10" offset 2,-.2 notitle, \
