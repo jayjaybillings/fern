@@ -62,7 +62,8 @@ void integrateNetwork(
 
 	//DSOUTPUT
 	const bool plotOutput = 1;
-  const bool GNUplot = 0;
+const bool GNUplot = 1;
+const bool plotRadicals = 0;
 	const int numIntervals = 100;
 	int plotStartTime = 0;
 	fern_real intervalLogt;
@@ -277,13 +278,8 @@ void integrateNetwork(
         amax5 = network.aparam[(amax+34)][network.paramNumID[0][i]];
         amax6 = network.aparam[(amax+41)][network.paramNumID[0][i]];
 
-if(i==12) {
-printf("paramNumID: %d\n", network.paramNumID[0][i]);
-}
-
         zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
         zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
-//      printf("photoreac[%d]: amin0: %e, amax0: %e, zpolylow: %e, zpolyhigh: %e\n", i, amin0, amax0, zpolylow, zpolyhigh);
 
         rateparam1 = zfac1*zpolyhigh + zfac*zpolylow;
 
@@ -351,13 +347,11 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 
       //bring it all together, calculate Rate using multipliers, rateparam1 and 2
       if(zenith >= 0 && zenith <= 1.57079632679) {
-//        printf("paramMult[0][%d]: %f * paramNumID[0]: %d + paramMult[1]: %f * paramNumID[1]: %d\n", i, network.paramMult[0][i], network.paramNumID[0][i], network.paramMult[1][i], network.paramNumID[1][i]);
         Rate[i] = network.paramMult[0][i]*rateparam1 + network.paramMult[1][i]*rateparam2;
       } else {
         Rate[i] = 0.0;
       }
 
-//      printf("Final Rate: %e, using paramMult1: %e, rateparam1: %e, paramMult2: %e, and rateparam2: %e\n\n", Rate[i], network.paramMult[0][i],rateparam1,network.paramMult[1][i],rateparam2);
 
       /***** FOR GRAPHING CONSTANT PHOTOLYTIC REACTION RATES VS TEMP (independent of temp... this is just for reference) IN GNUPLOT *****/
       //to graph reactions that contain any but only of these species
@@ -450,8 +444,9 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
       fern_real p5 = F*powf(T,2)*expf(e/T);
 		  #endif
       fern_real p6 = G*(1+R*Patm);
+      //Specific parameterization for special formats.
       if(i == 36) {
-        printf("A: %e, B: %e, C: %e, D: %e, E: %e, F: %e, G: %e, a: %e, b: %e, c: %e, d: %e, e: %e, t: %e, u: %e, v: %e, w: %e, x: %e, Q: %e, R: %e\n", A, B, C, D, E, F, G, a, b, c, d, e, t, u, v, w, x, Q, R);
+//        printf("A: %e, B: %e, C: %e, D: %e, E: %e, F: %e, G: %e, a: %e, b: %e, c: %e, d: %e, e: %e, t: %e, u: %e, v: %e, w: %e, x: %e, Q: %e, R: %e\n", A, B, C, D, E, F, G, a, b, c, d, e, t, u, v, w, x, Q, R);
         //This reaction has the form k11 = (ka + kb[M])*kc
         Rate[i] = (p3+p2)*p1;       
       } else if(i == 38) {
@@ -680,7 +675,7 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 	sumXLast = NDreduceSum(X, numberSpecies);
 	/* Main time integration loop */
 	if(plotOutput == 1) {
-//		printf("SO\n");//StartOutput
+		printf("STARTOUTPUT\n");//StartOutput
   }
 	//holder for Y conversion back to ppb for plotting
   fern_real Yppb = 0.0;
@@ -699,7 +694,7 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 		//stdout to file > fernOut.txt for plottable output
 			if(log10(t) >= nextOutput) {
         
-        //For GNUplot Output
+        //For GNUplot Output of rates and fluxes
         //if(chooseyourSpecies < 1000)
 /*          printf("outputTime: %e \n", t);
           for(int i = 0; i < numberReactions; i++) {
@@ -716,7 +711,6 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
         //printf("Sorry, species[%d] has no F+'s, therefore its FplusSum is: %e\n", i, FplusSum[i]);
       } else {
         minny = (i > 0) ? FplusMax[lastIsoWFplus] + 1 : 0;
-	  		/* Serially sum secction of F+. */
 			  for (int j = minny; j <= FplusMax[i]; j++)
 		  	{
           //printf("Species[%d] will include Fplus[%d]: %e, due to reaaction[%d]\n", i, j, Fplus[j], MapFplus[j]);
@@ -755,37 +749,31 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 
 
 
-
-			//	printf("OC\n");//OutputCount
+        if(plotOutput == 1 && GNUplot == 0) {
+  		  	printf("OC\n");//OutputCount
+        }
 				//renormalize nextOutput by compensating for overshooting last expected output time
 				nextOutput = intervalLogt+nextOutput;
 				asyCount = 0;
 				peCount = 0;
-        printf("%e ",t);	
+        if(plotOutput == 1 && GNUplot == 1) {
+          printf("%e ",t);	
+        }
 				for(int m = 0; m < network.species; m++) {
           //convert back to parts-per-billion for graphing/output
           Yppb = (Y[m]*1e9)/cair; //Y[i] in ppb/cm^3
-					//printf("Y:%eZ:%dN:%dF+%eF-%e\n", Yppb, Z[m], N[m], FplusSum[m], FminusSum[m]);
-
 
           /***** FOR GNUPLOT *****/
-          //allnonzero:
-          //if(m == 0 || m == 2 || m == 3 || (m >= 5 && m <= 14) || m == 16 || (m >= 18 && m <= 35) || m == 37 || (m >= 75 && m <= 85) || (m >= 95 && m <= 97) || m == 99 || m == 101)
-        
-          //important species
-          //if(m == 0 || m == 2 || m == 3 || m == 6 || m == 7 || (m >= 12 && m <= 16) || m == 18 || m == 19 || m == 22 || m == 27 || (m >= 75 && m <= 77) || m == 80 || m == 85 || (m >= 95 && m <= 97) || m == 99 || m == 101)
-          //  printf("%e ", Yppb);
-
-
-          //plot long-lived species in ppb
-          //if(m == 21 || m == 0 || m == 5 || m == 6 || m == 11 || m == 12 || m == 27 || m == 18 || m == 9 || m == 28 || m == 29 || m == 31 || m == 30 || m == 101 || m == 75 || m == 76 || m == 77) {
-          if(m == 0 || m == 12 || m == 6 || m == 13 || m==14 || m==18 || m==27 || m==101) {
-            printf("%e ", Yppb);
+          if(plotRadicals == 0 && GNUplot == 1) {
+            if(m == 0 || m == 12 || m == 6 || m == 13 || m==14 || m==18 || m==27 || m==101) {
+              printf("%e ", Yppb);
+            }
+          } else if (plotRadicals == 1 && GNUplot == 1) {
+            //plot shortlived radicals in molecules/cm^3
+            if(m == 75 || m == 3 || m == 76 || m == 77) {
+              printf("%e ", Y[m]);
+            }
           }
-
-          //plot shortlived radicals in molecules/cm^3
-          //if(m == 75 || m == 3 || m == 76 || m == 77)
-            //printf("%e ", Y[m]);
           /***** END FOR GNUPLOT *****/
 
 					if(checkAsy(FminusSum[m], Y[m], dt))
@@ -793,7 +781,9 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 				}
 
           /***** FOR GNUPLOT *****/
-          printf("\n");
+          if(plotOutput == 1 && GNUplot == 1) {
+            printf("\n");
+          }
           /***** END FOR GNUPLOT *****/
 
 
@@ -806,8 +796,9 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
 				}
 				FracAsy = asyCount/numberSpecies;
 				FracRGPE = peCount/numRG;
-      //  printf("maxFlux: %e\n", maxFlux);
-//				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+        if(plotOutput == 1 && GNUplot == 0) {
+  				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
+        }
 				outputCount++;
 			}
 		}
@@ -1098,8 +1089,8 @@ printf("paramNumID: %d\n", network.paramNumID[0][i]);
     printf("updated Y[%d] for t: %e = %e\n", i, t, Y[i]);
   }*/
 	}
-//  if(plotOutput == 1)
-//    printf("EO\n");//EndOutput
+  if(plotOutput == 1)
+    printf("ENDOUTPUT\n");//EndOutput
 }
 
 

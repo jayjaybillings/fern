@@ -34,8 +34,8 @@ void Network::loadNetwork(const char *filename)
 	speciesLabel = (char **) malloc(sizeof(char *) * species);
 	speciesFamily = (char **) malloc(sizeof(char *) * species);
   //boolean for plotting
-  const bool plotOutput = 0;
-  const bool plotRadicals = 0;
+const bool plotOutput = 1;
+const bool plotRadicals = 0;
   if(plotOutput == 1) {  
     printf("BEGIN PLOTTING (COLHEADER)\n");
     printf("t ");
