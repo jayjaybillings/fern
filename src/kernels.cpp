@@ -62,7 +62,7 @@ void integrateNetwork(
 
 	//DSOUTPUT
 	const bool plotOutput = 1;
-const bool GNUplot = 1;
+const bool GNUplot = 0;
 const bool plotRadicals = 0;
 	const int numIntervals = 100;
 	int plotStartTime = 0;
