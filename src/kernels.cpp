@@ -431,7 +431,7 @@ void integrate() {
 				globals->Yzero, numberSpecies, dt);
 
 		updateEnergy(globals->energy, globals->rate, network->Q,
-				integrationData->rho);
+				integrationData->rho, dt);
 
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
@@ -555,16 +555,19 @@ inline void updatePopulations(const std::vector<fern_real> & FplusSum,
 	return;
 }
 
-/* Compute energy released by reactions */
+/* Compute energy released by reactions. Here,
+   dt is the integration timestep. */
 void updateEnergy(std::vector <fern_real> & energy,
 		const std::vector <fern_real> & rate, fern_real *Q,
-		fern_real rho) {
+		fern_real rho, fern_real dt) {
 	for (int i = 0; i < numberReactions; i++) {
-		energy[i] += (rate[i]*Q[i]) / rho;
+		energy[i] += (rate[i]*Q[i]*dt) / rho;
 	}
 }
 
-/* Calculate the energy release rate */
+/* Calculate the energy release rate. Here,
+   dt should be t_max - t_start, not the integration
+   timestep. */
 fern_real calcEnergyReleaseRate(std::vector <fern_real> & energy,
 		fern_real dt) {
 	fern_real energy_release = 0.0;

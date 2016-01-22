@@ -69,7 +69,7 @@ inline void updatePopulations(const std::vector<fern_real> & FplusSum,
 
 void updateEnergy(std::vector <fern_real> & energy,
         const std::vector <fern_real> & rate, fern_real *Q,
-        fern_real rho);
+        fern_real rho, fern_real dt);
 
 fern_real calcEnergyReleaseRate(std::vector <fern_real> & energy, fern_real dt);
 
