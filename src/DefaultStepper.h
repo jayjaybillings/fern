@@ -113,8 +113,7 @@ public:
 			/* Determine an initial trial timestep based on fluxes and dt in previous step. */
 			fern_real dtFlux = network.fluxFrac / maxFlux;
 			fern_real dtFloor = floorFac * t;
-			if (dtFlux > dtFloor)
-				dtFlux = dtFloor;
+			dtFlux = std::min(dtFlux,dtFloor);
 
 			// The time step for this stage is the minimum of the time step
 			// computed based on flux considerations and the restart time.
