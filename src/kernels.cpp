@@ -24,6 +24,7 @@ static fern_real peCount = 0;
 static fern_real FracAsy = 0;
 static fern_real FracRGPE = 0;
 static int eq = 0;
+static double equilibrateTime = 1.0e9;
 
 // Global references to parameter data
 static int numRG;
@@ -49,7 +50,6 @@ static IntegrationData * integrationData;
 static Globals * globals;
 /// The instance of the stepper used to get the time step.
 static fire::IStepper * stepper;
-
 
 static unsigned short * mapFPlus = NULL;
 static unsigned short * mapFMinus = NULL;
@@ -389,7 +389,8 @@ void integrate() {
 	fern_real t = stepper->getInitialStep();
 	//timesteps = 1; Check to see if this is required!
 	fern_real dt = stepper->getInitialStepsize();
-	std::cout << t << "," << dt << std::endl;
+	int counter = 0;
+	std::cout << counter << ", " << t << ", " << dt << std::endl;
 	while (t < stepper->getFinalStep()) {
 		// Check the time to see if plot information should be provided
 		checkPlotStatus(t, dt, stepper->getFinalStep(), sumX);
@@ -417,13 +418,18 @@ void integrate() {
 			globals->X[i] = globals->massNum[i] * Y[i];
 		}
 
-		// Recompute time step
-		dt = stepper->getStepSizeAtStage(2);
+		// Try to take a bigger time step
+		if (t < equilibrateTime || !pEquilOn) {
 
-		//----- Advance one step with a new dt if it changed
+			// Recompute time step
+			dt = stepper->getStepSizeAtStage(2);
 
-		updatePopulations(globals->FplusSum, globals->FminusSum, Y,
-				globals->Yzero, numberSpecies, dt);
+			//----- Advance one step with a new dt if it changed
+
+			updatePopulations(globals->FplusSum, globals->FminusSum, Y,
+					globals->Yzero, numberSpecies, dt);
+
+		}
 
 		/* NOTE: eventually need to deal with special case Be8 <-> 2 He4. */
 
@@ -434,7 +440,7 @@ void integrate() {
 		// Update the time and number of time steps
 		stepper->updateStep();
 		t = stepper->getStep();
-		std::cout << t << "," << dt << std::endl;
+		std::cout << (++counter) << ", " << t << ", " << dt << std::endl;
 	}
 
 	return;

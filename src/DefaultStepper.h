@@ -1,34 +1,34 @@
 /**----------------------------------------------------------------------------
-Copyright (c) 2015-, The University of Tennessee
-All rights reserved.
+ Copyright (c) 2015-, The University of Tennessee
+ All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
 
-* Neither the name of fern nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
+ * Neither the name of fern nor the names of its
+ contributors may be used to endorse or promote products derived from
+ this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
------------------------------------------------------------------------------*/
+ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
+ -----------------------------------------------------------------------------*/
 #ifndef DEFAULTSTEPPER_H_
 #define DEFAULTSTEPPER_H_
 
@@ -41,7 +41,7 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 /**
  * This class is the default time stepper for FERN.
  */
-class DefaultStepper : public fire::IStepper {
+class DefaultStepper: public fire::IStepper {
 
 private:
 
@@ -78,13 +78,20 @@ public:
 	 * @param networkRef Reference to the network information
 	 * @param yArray Pointer to abundance values
 	 */
-	DefaultStepper(const Globals & globalsRef, const Network & networkRef, const fern_real * yArray) :
-	     globals(globalsRef), network(networkRef), Y(yArray) {
-	};
+	DefaultStepper(const Globals & globalsRef, const Network & networkRef,
+			const fern_real * yArray) :
+			globals(globalsRef), network(networkRef), Y(yArray) {
+	}
+	;
 
-	virtual ~DefaultStepper() {};
+	virtual ~DefaultStepper() {
+	}
+	;
 
-	double getStep() {return t;};
+	double getStep() {
+		return t;
+	}
+	;
 
 	double getStepSizeAtStage(int i) {
 		double size = 0.0;
@@ -93,7 +100,8 @@ public:
 			fern_real floorFac = 0.1;
 
 			// Get the max flux for the time step calculation
-			fern_real maxFlux = *(std::max_element(globals.Fdiff.begin(),globals.Fdiff.end()));
+			fern_real maxFlux = *(max_element(globals.Fdiff.begin(),
+					globals.Fdiff.end()));
 
 			/*
 			 Now use the fluxes to update the populations for this timestep.
@@ -108,14 +116,10 @@ public:
 			if (dtFlux > dtFloor)
 				dtFlux = dtFloor;
 
-			dt = dtFlux;
-			if (t + dt >= t_max) {
-				dt = t_max - t;
-			}
-
-			if (deltaTimeRestart < dtFlux) {
-				dt = deltaTimeRestart;
-			}
+			// The time step for this stage is the minimum of the time step
+			// computed based on flux considerations and the restart time.
+			dt = std::min(deltaTimeRestart, dtFlux);
+			std::cout << "t1 = " << dt << std::endl;
 		} else if (i == 2) {
 
 			fern_real upbumper = 0.9 * network.massTol;
@@ -134,13 +138,12 @@ public:
 			 based on the trial timestep computed above, test for conservation of particle
 			 number and modify trial timestep accordingly.
 			 */
-			fern_real test1 = std::abs(sumXLast - 1.0);
-			fern_real test2 = std::abs(sumX - 1.0);
+			fern_real test1 = sumXLast - 1.0;
+			fern_real test2 = sumX - 1.0;
 			fern_real massChecker = std::abs(sumXLast - sumX);
 
-			if (test2 > test1 && massChecker > network.massTol) {
-				dt *= fmax(network.massTol / fmax(massChecker, (fern_real) 1.0e-16),
-						downbumper);
+			if (std::abs(test2) > std::abs(test1) && massChecker > network.massTol) {
+				dt *= fmax( network.massTol	/ massChecker, downbumper);
 			} else if (massChecker < massTolUp) {
 				dt *= (network.massTol / (fmax(massChecker, upbumper)));
 			}
@@ -150,22 +153,30 @@ public:
 			 artificially shortened in the last integration step to match end time.
 			 */
 			deltaTimeRestart = dt;
+			std::cout << "t2 = " << dt << std::endl;
+		}
+
+		// Adjust the time if crosses over the maximum time.
+		if (t + dt >= t_max) {
+			dt = t_max - t;
 		}
 
 		return dt;
-	};
+	}
+	;
 
 	void updateStep() {
 		t += dt;
-	    ++timesteps;
-	    // Update sum of the mass fractions
-	    sumX = 0.0;
-    	for (double x : globals.X) {
-    		sumX += x;
-    	}
-    	sumXLast = sumX;
-    	// FIXME! This does not accurately account of PE!
-	};
+		++timesteps;
+		// Update sum of the mass fractions
+		sumX = 0.0;
+		for (double x : globals.X) {
+			sumX += x;
+		}
+		sumXLast = sumX;
+		// FIXME! This does not accurately account of PE!
+	}
+	;
 
 	/**
 	 * This operation sets the initial step size for the stepper
@@ -173,7 +184,7 @@ public:
 	 */
 	void setInitialStepsize(double stepSize) {
 		initialStepSize = stepSize;
-    	deltaTimeRestart = stepSize;
+		deltaTimeRestart = stepSize;
 	}
 
 	/**
@@ -184,23 +195,24 @@ public:
 		return initialStepSize;
 	}
 
-    double getInitialStep() {
-    	// Compute the initial sum of the mass fractions. This has to be done
-    	// here because it affects the tests for the time stepping.
-    	for (double x : globals.X) {
-    		sumXLast += x;
-    	}
-    	return t_init;
-    };
+	double getInitialStep() {
+		// Compute the initial sum of the mass fractions. This has to be done
+		// here because it affects the tests for the time stepping.
+		for (double x : globals.X) {
+			sumXLast += x;
+		}
+		return t_init;
+	}
+	;
 
-    /**
-     * This operation sets the initial step for the stepper.
-     * @param initialStep the initial step
-     */
-    void setInitialStep(double initialStep) {
-    	t_init = initialStep;
-    	t = t_init;
-    }
+	/**
+	 * This operation sets the initial step for the stepper.
+	 * @param initialStep the initial step
+	 */
+	void setInitialStep(double initialStep) {
+		t_init = initialStep;
+		t = t_init;
+	}
 
 	double getFinalStep() {
 		return t_max;
@@ -214,7 +226,5 @@ public:
 		t_max = finalStep;
 	}
 };
-
-
 
 #endif /* DEFAULTSTEPPER_H_ */
