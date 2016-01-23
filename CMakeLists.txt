@@ -82,7 +82,7 @@ target_link_libraries(fern-exec ${FERN_LIBS})
 # Add integration and system tests. The first one just makes sure it executes.
 add_test(smoke_test_alpha fern-exec ${CMAKE_SOURCE_DIR}/data/alpha.ini)
 # Check the results for the alpha network benchmark
-add_test(diff_test_alpha ${CMAKE_SOURCE_DIR}/tools/diffTest.sh ${CMAKE_SOURCE_DIR}/data/alpha.ini ${CMAKE_SOURCE_DIR}/data/alpha_gold.txt)
+add_test(diff_test_alpha ${CMAKE_SOURCE_DIR}/tools/diffTest.sh ${CMAKE_SOURCE_DIR}/data/alpha_gold.ini ${CMAKE_SOURCE_DIR}/data/alpha_gold.txt)
 
 # Find Boost for unit tests
 FIND_PACKAGE(Boost)
