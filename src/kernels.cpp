@@ -378,9 +378,6 @@ void integrate() {
 	 code as well as the Java version.
 	 */
 
-	//timesteps = 1; Check to see if this is required!
-	fern_real dt = 0.0;
-
 	/* Compute mass numbers and initial mass fractions X for all isotopes. */
 	for (int i = 0; i < numberSpecies; i++) {
 		globals->massNum[i] = (fern_real) (network->Z[i] + network->N[i]);
@@ -390,6 +387,9 @@ void integrate() {
 
 	/* Main time integration loop */
 	fern_real t = stepper->getInitialStep();
+	//timesteps = 1; Check to see if this is required!
+	fern_real dt = stepper->getInitialStepsize();
+	std::cout << t << "," << dt << std::endl;
 	while (t < stepper->getFinalStep()) {
 		// Check the time to see if plot information should be provided
 		checkPlotStatus(t, dt, stepper->getFinalStep(), sumX);
@@ -434,7 +434,7 @@ void integrate() {
 		// Update the time and number of time steps
 		stepper->updateStep();
 		t = stepper->getStep();
-//		std::cout << t << "," << dt << std::endl;
+		std::cout << t << "," << dt << std::endl;
 	}
 
 	return;

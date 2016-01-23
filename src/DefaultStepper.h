@@ -50,7 +50,7 @@ private:
 	/// Final time
 	double t_max = 0.0;
 	/// Current time
-	double t = 1.0e-20;;
+	double t;
 	/// Current time step
 	double dt = 0.0;
 	/// Previous mass fraction sum
@@ -199,6 +199,7 @@ public:
      */
     void setInitialStep(double initialStep) {
     	t_init = initialStep;
+    	t = t_init;
     }
 
 	double getFinalStep() {
