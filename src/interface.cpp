@@ -36,11 +36,11 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 #include <SimpleIni.h>
 #include <IStepper.h>
 #include <DefaultStepper.h>
+#include <string>
 
-#define T_MIN 0.0
+#define T_MIN 1.0e-20
 
-char *network_file = "../data/CUDAnet_150.inp";
-
+/*
 extern "C"
 {
   void *init_fern_();
@@ -49,6 +49,7 @@ extern "C"
   void set_abundance_(double *a, int n);
   void delete_fern_();
 }
+*/
 
 typedef struct {
   Network *reacNetwork;
@@ -65,6 +66,7 @@ typedef struct {
  * @param integrator the integrator into which the parameters should be loaded
  * @param filename the name of the file that contains the parameters
  */
+
 void loadParameters(Network & network, IntegrationData * data,
 		const char * filename) {
 
@@ -106,6 +108,7 @@ void loadParameters(Network & network, IntegrationData * data,
 
 	// Configure the integrator
 	network.allocate();
+	printf("%s, %s\n", networkFile, rateFile);
 	network.loadNetwork(networkFile);
 	network.loadReactions(rateFile);
 	// Configure the data
@@ -115,16 +118,26 @@ void loadParameters(Network & network, IntegrationData * data,
 	return;
 }
 
-void *init_fern_() {
+void *init_fern() {
 	FernData *fp = (FernData *) malloc(sizeof(FernData));
 	fp->reacNetwork = new Network();
 	fp->integrationData = new IntegrationData();
-	loadParameters(*(fp->reacNetwork), fp->integrationData, network_file);
+	loadParameters(*(fp->reacNetwork), fp->integrationData, "../data/150.ini");
 
 	fp->globals = new Globals(*(fp->reacNetwork));
 	fp->stepper = new DefaultStepper(*(fp->globals), *(fp->reacNetwork), fp->integrationData->Y);
 
 	return (void *) fp;
+}
+
+
+void set_abundances(IntegrationData *integrationData, Globals *globals, Network *network, fern_real *xIn) {
+	for (int i = 0; i < integrationData->species; i++) {
+		globals->X[i] = xIn[i];
+
+		globals->massNum[i] = (fern_real) (network->Z[i] + network->N[i]);
+		integrationData->Y[i] = globals->X[i] / ((fern_real) globals->massNum[i]);
+	}
 }
 
 void integrate_fern(void *f, fern_real dt, fern_real tmp, fern_real rho,
@@ -134,5 +147,7 @@ void integrate_fern(void *f, fern_real dt, fern_real tmp, fern_real rho,
 	fp->integrationData->t_max = fp->integrationData->t_init + dt;
 	fp->integrationData->T9 = tmp;
 	fp->integrationData->rho = rho;
+	set_abundances(fp->integrationData, fp->globals, fp->reacNetwork, xIn);
 	initialize(fp->reacNetwork, fp->integrationData, fp->globals, fp->stepper);
+	integrate();
 }

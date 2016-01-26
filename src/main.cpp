@@ -33,6 +33,7 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 #include <stdio.h>
 #include <memory>
 #include "kernels.hpp"
+#include "interface.hpp"
 #include <SimpleIni.h>
 #include <IStepper.h>
 #include <DefaultStepper.h>
@@ -49,6 +50,7 @@ std::shared_ptr<fire::IStepper> stepper;
  * @param integrator the integrator into which the parameters should be loaded
  * @param filename the name of the file that contains the parameters
  */
+/*
 void loadParameters(Network & network, IntegrationData * data,
 		const char * filename) {
 
@@ -98,6 +100,7 @@ void loadParameters(Network & network, IntegrationData * data,
 
 	return;
 }
+*/
 
 /**
  * This is the main function that starts the solve.
@@ -114,21 +117,23 @@ int main(int argc, char const *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	/* Load the network */
-	IntegrationData integrationData = IntegrationData();
-	reacNetwork = std::make_shared<Network>();
-	loadParameters(*reacNetwork.get(), &integrationData, argv[1]);
-	// Launch the integrator
-	globals = std::make_shared<Globals>(*reacNetwork.get());
-	// Allocate the stepper
-	stepper = std::make_shared<DefaultStepper>(*globals.get(),
-			*reacNetwork.get(),integrationData.Y);
-	// Initialize the system
-	initialize(reacNetwork.get(), &integrationData, globals.get(), stepper.get());
-	// Solve the system
-	integrate();
-	// Dump the results
-	integrationData.print();
+	void *f = init_fern();
+
+	fern_real *xIn, *xOut;
+
+	xIn = new fern_real[((FernData *) f)->integrationData->species];
+	xOut = new fern_real[((FernData *) f)->integrationData->species];
+
+	for (int i = 0; i < ((FernData *) f)->integrationData->species; i++) {
+		xIn[i] = 0.0;
+	}
+
+	xIn[12] = 0.499920;
+	xIn[20] = 0.5;
+
+	integrate_fern(f, 5e-8, 7.000000e+00, 1.000000e+08, xIn, xOut);
+
+	((FernData *) f)->integrationData->print();
 
 	return EXIT_SUCCESS;
 }
