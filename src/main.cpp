@@ -11,8 +11,8 @@ int main(int argc, char const *argv[])
 	integrator.network.species = 16;
 	//integrator.network.reactions = 1604;
 	integrator.network.reactions = 48;
-	integrator.network.massTol = 1;
-	integrator.network.fluxFrac = .000001;
+	integrator.network.massTol = 1e-7;
+	integrator.network.fluxFrac = .01;
   //integrator.network.numRG = 741;
   integrator.network.numRG = 19;
 

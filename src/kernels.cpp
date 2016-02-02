@@ -53,8 +53,8 @@ void integrateNetwork(
 	unsigned short *FplusMax;
 	unsigned short *FminusMax;
 
-	const fern_real massTol = network.massTol;
-	const fern_real fluxFrac = network.fluxFrac;
+  fern_real massTol = network.massTol;
+	fern_real fluxFrac = network.fluxFrac;
 
 	/* Declare pointer variables for IntegrationData arrays.  */
 
@@ -63,6 +63,15 @@ void integrateNetwork(
 	const bool plotOutput = 1;
 	const bool pEquilOn = 1;
   const bool trackPE = 1;
+
+  if(pEquilOn == 1) {
+    massTol = 1;
+    fluxFrac = .2;
+  } else {
+    massTol = 1e-7;
+    fluxFrac = .01;
+  }
+
 	const int numIntervals = 100;
 	int plotStartTime = -16;
 	fern_real intervalLogt;
@@ -302,6 +311,7 @@ void integrateNetwork(
 				FracRGPE = peCount/numRG;
 				printf("SUD\nti:%edt:%eT9:%erh:%esX:%efasy:%ffrpe:%f\n", t, dt, integrationData.T9, integrationData.rho, sumX, FracAsy, FracRGPE);//StartUniversalData
 //        printf("maxFlux: %e\n", maxFlux);
+  //      printf("dtRestart: %e\n", deltaTimeRestart);
 				outputCount++;
 			}
 		}
@@ -446,7 +456,10 @@ void integrateNetwork(
 		if (dtFlux > dtFloor) dtFlux = dtFloor;
 			
 		dt = dtFlux;
-		//if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
+		if (pEquilOn == 1 && deltaTimeRestart > dtFlux && deltaTimeRestart < .01*t && log10(t) < -7) dt = deltaTimeRestart;
+		if (pEquilOn == 0 && deltaTimeRestart > dtFlux) dt = deltaTimeRestart;
+    if(pEquilOn == 1 && log10(t) > -8 && fluxFrac > 1e-6) fluxFrac = fluxFrac*.93;
+    if(pEquilOn == 1 && log10(t) > -3.5) fluxFrac = .2;
 		
 		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
 		
@@ -459,7 +472,9 @@ void integrateNetwork(
 		}
 		
 		sumX = NDreduceSum(X, numberSpecies);
-		
+    if(pEquilOn == 1) {
+    //  sumX = sumXLast = 1;
+    }	
 		
 		/*
 		   Now modify timestep if necessary to ensure that particle number is conserved to
@@ -486,18 +501,18 @@ void integrateNetwork(
 			fern_real test2 = fabs(sumX - 1.0);
 			massChecker = fabs(sumXLast - sumX);
 
-/*			if (test2 > test1 && massChecker > massTol)
+			if (test2 > test1 && massChecker > massTol)
 			{
 				dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
 			}
 			else if (massChecker < massTolUp)
 			{
 				dt *= (massTol / (fmax(massChecker, upbumper)));
-			}*/
+			}
 		#endif
 		
 		
-//		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
+		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
 		
 		
 		/*
@@ -686,7 +701,7 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum, fern_re
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++)
 	{
-		if (checkAsy(FminusSumBefore[i], Y[i], dt))
+		if (checkAsy(FminusSum[i], Y[i], dt))
 		{
 			Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
 		}
