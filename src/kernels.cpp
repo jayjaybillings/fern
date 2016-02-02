@@ -22,6 +22,8 @@ void integrateNetwork(
 	fern_real *Flux;
 	fern_real *Fplus;
 	fern_real *Fminus;
+	fern_real *FplusBefore;
+	fern_real *FminusBefore;
 	fern_real *Rate;
 	fern_real *massNum;
 	fern_real *X;
@@ -29,6 +31,8 @@ void integrateNetwork(
 	fern_real *Yzero;
 	fern_real *FplusSum;
 	fern_real *FminusSum;
+	fern_real *FplusSumBefore;
+	fern_real *FminusSumBefore;
 	
 	/* Declare local variables for Network struct. */
 
@@ -93,6 +97,8 @@ void integrateNetwork(
 	Flux = globals.Flux;
 	Fplus = globals.Fplus;
 	Fminus = globals.Fminus;
+	FplusBefore = globals.FplusBefore;
+	FminusBefore = globals.FminusBefore;
 	Rate = globals.rate;
 	massNum = globals.massNum;
 	X = globals.X;
@@ -100,6 +106,8 @@ void integrateNetwork(
 	Yzero = globals.Yzero;
 	FplusSum = globals.FplusSum;
 	FminusSum = globals.FminusSum;
+	FplusSumBefore = globals.FplusSumBefore;
+	FminusSumBefore = globals.FminusSumBefore;
 
 	/* Assign Network pointers. */
 
@@ -249,9 +257,13 @@ void integrateNetwork(
 		printf("SO\n");//StartOutput
   }
 	/* Main time integration loop */
+
 	
 	while (t < integrationData.t_max)
 	{
+  // for (int i = 0; i < numberSpecies; i++) 
+//    printf("Before[%d]: %e, After: %e\n", i, FplusSumBefore[i], FplusSum[i]);
+
 		if(plotOutput == 1 && log10(t) >= plotStartTime) {
 			//Do this once after log10(t) >= plotStartTime.
 			if(setNextOut == 0) {
@@ -274,7 +286,7 @@ void integrateNetwork(
         //Check all Species if undergoing asymptotic update
 				for(int m = 0; m < network.species; m++) {
 				  printf("Y:%eZ:%dN:%dF+%eF-%e\n", Y[m], Z[m], N[m], Fplus[m], Fminus[m]);
-					if(checkAsy(FminusSum[m], Y[m], dt)) {
+					if(checkAsy(FminusSumBefore[m], Y[m], dt)) {
 						asyCount++;	
           }
 				}
@@ -311,6 +323,29 @@ void integrateNetwork(
 		
 		/* Parallel version of flux calculation */
 		
+		for (int i = 0; i < numberReactions; i++)
+		{
+			int nr = network.numReactingSpecies[i];
+			  Flux[i] = Rate[i] * Y[network.reactant[0][i]];
+			
+  			switch (nr)
+	  		{
+		  	case 3:
+			  	/* 3-body; flux = rate x Y x Y x Y */
+				  Flux[i] *= Y[network.reactant[2][i]];
+				
+  			case 2:
+	  			/* 2-body; flux = rate x Y x Y */
+		  		Flux[i] *= Y[network.reactant[1][i]];
+			  	break;
+  			}
+		}
+    
+    //populate Fplus/minusBefore array so that Asymptotic Update still has original flux values before being removed by PE.
+		populateF(FplusBefore, FplusFac, Flux, MapFplus, totalFplus);
+		populateF(FminusBefore, FminusFac, Flux, MapFminus, totalFminus);
+
+    //Now update fluxes again for partial equilibrium version of Fplus/minusSum
 		for (int i = 0; i < numberReactions; i++)
 		{
 			int nr = network.numReactingSpecies[i];
@@ -358,22 +393,30 @@ void integrateNetwork(
       minny = (i > 0) ? FplusMax[i - 1] + 1 : 0;
 			/* Serially sum secction of F+. */
 			FplusSum[i] = 0.0;
+			FplusSumBefore[i] = 0.0;
 			for (int j = minny; j <= FplusMax[i]; j++)
 			{
   				FplusSum[i] += Fplus[j];
+  				FplusSumBefore[i] += FplusBefore[j];
+//  printf("FplusBefore[%d]: %e Fplus[%d]: %e\n", j, FplusBefore[j], j, Fplus[j]);
 			}
 
 			/* Serially sum section of F-. */
       minny = (i > 0) ? FminusMax[i - 1] + 1 : 0;
 			FminusSum[i] = 0.0;
+			FminusSumBefore[i] = 0.0;
 			for (int j = minny; j <= FminusMax[i]; j++)
 			{
 				  FminusSum[i] += Fminus[j];
+				  FminusSumBefore[i] += FminusBefore[j];
 			}
 		}
 		
+//   for (int i = 0; i < numberSpecies; i++) 
+  //  printf("Before: %e, After: %e\n", FplusSumBefore[i], FplusSum[i]);
+
 		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
-		
+	  //DS: Will benefit partial equilibrium, so don't use Fplus/minusBefore. Use after PE has removed some fluxes.
 		for (int i = 0; i < numberSpecies; i++)
 		{
 			#ifdef FERN_SINGLE
@@ -403,9 +446,9 @@ void integrateNetwork(
 		if (dtFlux > dtFloor) dtFlux = dtFloor;
 			
 		dt = dtFlux;
-		if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
+		//if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
 		
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
 		
 		/* Compute sum of mass fractions sumX for all species. */
 		
@@ -424,7 +467,7 @@ void integrateNetwork(
 		   based on the trial timestep computed above, test for conservation of particle
 		   number and modify trial timestep accordingly.
 		*/
-		
+    //	sumX = sumXLast = 1;	
 		#ifdef FERN_SINGLE
 			fern_real test1 = fabsf(sumXLast - 1.0);
 			fern_real test2 = fabsf(sumX - 1.0);
@@ -443,18 +486,18 @@ void integrateNetwork(
 			fern_real test2 = fabs(sumX - 1.0);
 			massChecker = fabs(sumXLast - sumX);
 
-			if (test2 > test1 && massChecker > massTol)
+/*			if (test2 > test1 && massChecker > massTol)
 			{
 				dt *= fmax(massTol / fmax(massChecker, (fern_real) 1.0e-16), downbumper);
 			}
 			else if (massChecker < massTolUp)
 			{
 				dt *= (massTol / (fmax(massChecker, upbumper)));
-			}
+			}*/
 		#endif
 		
 		
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+//		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
 		
 		
 		/*
@@ -476,7 +519,7 @@ void integrateNetwork(
       #else
         dt = powf(10, plotStartTime) - t;
       #endif
-      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		  updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
     }
 
     if(plotOutput == 1 && log10(t+dt) > nextOutput) {
@@ -485,7 +528,7 @@ void integrateNetwork(
       #else
         dt = powf(10, nextOutput) - t;
       #endif
-      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		  updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
     }
 
 		/*
@@ -506,7 +549,7 @@ void integrateNetwork(
 			dt = integrationData.t_max - t;
 			
 			
-			updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		  updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
 		}
 		
 		
@@ -614,6 +657,7 @@ fern_real reduceMax(fern_real *a, unsigned short length)
             max = a[i];    
         }
     }
+    //printf("MaxFlux: %e\n", max);
 	
 	return max;
 }
@@ -636,13 +680,13 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 
 /* Updates populations based on the trial timestep */
 
-inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
+inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum, fern_real *FplusSumBefore, fern_real *FminusSumBefore,
 	fern_real *Y, fern_real *Yzero, unsigned short numberSpecies, fern_real dt)
 {
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++)
 	{
-		if (checkAsy(FminusSum[i], Y[i], dt))
+		if (checkAsy(FminusSumBefore[i], Y[i], dt))
 		{
 			Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
 		}
