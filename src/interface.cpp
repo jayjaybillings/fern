@@ -33,30 +33,13 @@ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
 #include <stdio.h>
 #include <memory>
 #include "kernels.hpp"
+#include "interface.hpp"
 #include <SimpleIni.h>
 #include <IStepper.h>
 #include <DefaultStepper.h>
 #include <string>
 
 #define T_MIN 1.0e-20
-
-/*
-extern "C"
-{
-  void *init_fern_();
-  void integrate_fern_();
-  void reset_fern_();
-  void set_abundance_(double *a, int n);
-  void delete_fern_();
-}
-*/
-
-typedef struct {
-  Network *reacNetwork;
-  IntegrationData *integrationData;
-  Globals *globals;
-  fire::IStepper *stepper;
-} FernData;
 
 /**
  * This operation loads parameters from the input file into the integrator. It
@@ -130,7 +113,6 @@ void *init_fern() {
 	return (void *) fp;
 }
 
-
 void set_abundances(IntegrationData *integrationData, Globals *globals, Network *network, fern_real *xIn) {
 	for (int i = 0; i < integrationData->species; i++) {
 		globals->X[i] = xIn[i];
@@ -150,4 +132,12 @@ void integrate_fern(void *f, fern_real dt, fern_real tmp, fern_real rho,
 	set_abundances(fp->integrationData, fp->globals, fp->reacNetwork, xIn);
 	initialize(fp->reacNetwork, fp->integrationData, fp->globals, fp->stepper);
 	integrate();
+}
+
+void delete_fern(void *f) {
+	FernData *fp = (FernData *) f;
+	delete fp->reacNetwork;
+	delete fp->integrationData;
+	delete fp->globals;
+	delete fp->stepper;
 }
