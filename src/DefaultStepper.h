@@ -118,7 +118,7 @@ public:
 			// The time step for this stage is the minimum of the time step
 			// computed based on flux considerations and the restart time.
 			dt = std::min(deltaTimeRestart, dtFlux);
-			std::cout << "t1 = " << dt << std::endl;
+	//		std::cout << "t1 = " << dt << std::endl;
 		} else if (i == 2) {
 
 			fern_real upbumper = 0.9 * network.massTol;
@@ -152,7 +152,7 @@ public:
 			 artificially shortened in the last integration step to match end time.
 			 */
 			deltaTimeRestart = dt;
-			std::cout << "t2 = " << dt << std::endl;
+	//		std::cout << "t2 = " << dt << std::endl;
 		}
 
 		// Adjust the time if crosses over the maximum time.

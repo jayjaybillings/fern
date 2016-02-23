@@ -390,7 +390,7 @@ void integrate() {
 	//timesteps = 1; Check to see if this is required!
 	fern_real dt = stepper->getInitialStepsize();
 	int counter = 0;
-	std::cout << counter << ", " << t << ", " << dt << std::endl;
+	//std::cout << counter << ", " << t << ", " << dt << std::endl;
 	while (t < stepper->getFinalStep()) {
 		// Check the time to see if plot information should be provided
 		checkPlotStatus(t, dt, stepper->getFinalStep(), sumX);
@@ -440,7 +440,7 @@ void integrate() {
 		// Update the time and number of time steps
 		stepper->updateStep();
 		t = stepper->getStep();
-		std::cout << (++counter) << ", " << t << ", " << dt << std::endl;
+//		std::cout << (++counter) << ", " << t << ", " << dt << std::endl;
 	}
 
 	return;
