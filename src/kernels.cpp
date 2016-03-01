@@ -33,6 +33,8 @@ void integrateNetwork(
 	fern_real *FminusSum;
 	fern_real *FplusSumBefore;
 	fern_real *FminusSumBefore;
+
+	fern_real fluxTol = 0.01;
 	
 	/* Declare local variables for Network struct. */
 
@@ -459,14 +461,24 @@ void integrateNetwork(
 			
 		dt = dtFlux;
 
-    if(pEquilOn == 1 && (maxFluxLast/maxFlux)<1) {
+    if (pEquilOn == 1) {
 //      printf("maxFluxLast(%e)/maxFlux(%e): %e\n",maxFluxLast, maxFlux, maxFluxLast/maxFlux);
+		fern_real fluxChecker = fabs(maxFlux - maxFluxLast) / maxFluxLast;
+
+		if (fluxChecker > fluxTol) {
+			dt *= fmax(fluxTol / fmax(fluxChecker, (fern_real) 1.0e-16), downbumper);
+		} else {
+			dt *= fluxTol / fmax(fluxChecker, (fern_real) upbumper);
+		}
+
+/*
       if((maxFlux/maxFluxLast)<100) {
         dt *= .01;
       }
       if((maxFlux/maxFluxLast)>100) {
         dt *= .001;
       }
+*/
     }
 		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
 		//if (pEquilOn == 1 && deltaTimeRestart > dtFlux && deltaTimeRestart < .01*t && log10(t) < -7) dt = deltaTimeRestart;
@@ -496,6 +508,7 @@ void integrateNetwork(
 		   number and modify trial timestep accordingly.
 		*/
     //	sumX = sumXLast = 1;	
+/*
 		#ifdef FERN_SINGLE
 			fern_real test1 = fabsf(sumXLast - 1.0);
 			fern_real test2 = fabsf(sumX - 1.0);
@@ -523,6 +536,7 @@ void integrateNetwork(
 				dt *= (massTol / (fmax(massChecker, upbumper)));
 			}
 		#endif
+*/
 		
 		
 		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
