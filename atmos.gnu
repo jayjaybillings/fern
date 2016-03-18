@@ -36,7 +36,7 @@ set terminal pngcairo background "#ffffff" size 1700, 1010
 datafile = 'output/fernOutput.dat'
 set key autotitle columnheader
 set key outside
-set title "Case 0 Non-Radicals, 300s, ppb" font "helvetica,18"
+set title "Monkey" font "helvetica,18"
 set xlabel "t"
 set ylabel "Y(ppb)"
 #set yrange [5e-13:1e3]

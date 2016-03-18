@@ -1,5 +1,11 @@
 #include <stdio.h>
 #include <cmath>
+#include <ctime>
+#include <time.h>
+#include <string>
+#include <sstream>
+#include <cstring>
+#include <iostream>
 #include "kernels.hpp"
 
 void integrateNetwork(
@@ -61,7 +67,7 @@ void integrateNetwork(
 	fern_real *Y;
 
 	//DSOUTPUT
-	const bool plotOutput = 1;
+	const bool plotOutput = 0;
 const bool GNUplot = 0;
 const bool plotRadicals = 0;
 	const int numIntervals = 100;
@@ -147,7 +153,6 @@ const bool plotRadicals = 0;
 
 	/* Compute the rate values. */
   /* Altered for Atmospheric Chemistry */
-  /* Removing globals.preFac... Will I need something like it?*/
 
 	/*
 	   Compute the temperature-dependent factors for the rates.
@@ -164,6 +169,61 @@ const bool plotRadicals = 0;
   fern_real alt = integrationData.alt;
   fern_real zenith = integrationData.zenith;
   fern_real pmb = integrationData.pmb; //air pressure in millibar
+//  parameters for calculating dynamic solar zenith
+  fern_real latitude = 35.97; //Knoxville Lat
+  fern_real longitude = -83.94; //Knoxville Long
+  time_t now = time(0);
+  int month = 2;
+  int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  int daymonth = 4;
+  int year = 2016;
+  int hour = 19; //12:00am (midnight) 24hr clock
+  int minute = 0;
+  int second = 0;
+  int tzone = -5; //Offset from GMT
+
+  fern_real doy = 0.0;//day-of-year
+  //calculate day of year
+  for(int i = 0; i < month; i++) {
+    doy = doy + months[i];
+  }
+  doy = doy + daymonth; //add days elapsed in this month
+  //end calculate day of year
+
+  //calculate UTC hour in decimal format
+  fern_real hrlocal = hour + (minute/60) + (second/3600);
+  fern_real hrutc = hrlocal - tzone;
+
+  fern_real delta_year = year-1949; //years since 1949
+
+  fern_real leap = delta_year/4;
+
+  //modified Julian Day to account for leap days
+  fern_real mjd = 32916.5+delta_year*365+leap+doy+hrutc/24;
+
+  if (year % 100 == 0 && year % 400 != 0) {
+    mjd = mjd-1;
+  }
+
+  // time in days since Jan 1, 2000 Greenwich Noon
+  fern_real time21 = mjd-51545.0;
+
+  // time in seconds since Jan 1, 2000 Greenwich Noon for simulation time
+  fern_real tstart = time21*24*3600;
+  fern_real td = t/(24*3600); 
+
+/*  std::ostringstream timedeets;
+  timedeets << year << "-" << month << "-" << daymonth << " " << hour << ":" << minute << ":" << second;
+  struct tm time_thing;
+  char *date_thing = new char[1024];
+  strcpy(date_thing, timedeets.str().c_str());
+  strptime(date_thing,"%Y-%m-%d %H:%M:%S", &time_thing); 
+  time_t epochtime = mktime(&time_thing);
+  printf("time: %s\n", timedeets.str().c_str());
+  printf("epoch: %d\n", epochtime);
+
+  delete date_thing;
+*/
 
   //convert Y[i] from parts-per-billion to molecules/cm^3
   //necessary for calculation using involved rates
@@ -174,186 +234,15 @@ const bool plotRadicals = 0;
 //    printf("Y[%d](m/cm^3): %e\n", i, Y[i]);
   } 
   
-  fern_real cz = cos(zenith);//cosine of zenith angle
-  //calculate powers of cz
-  fern_real cz2 = cz*cz;
-  fern_real cz3 = cz2*cz;
-  fern_real cz4 = cz3*cz;
-  fern_real cz5 = cz4*cz;
-  fern_real cz6 = cz5*cz;
-  fern_real zalpha = 1.0;
-  int amin = 0;
-  int amax = 0;
-
-  if(alt >= 12000) {
-    zalpha = 1.0;
-    amax = 7; 
-    amin = 7; 
-  } else if (alt < 12000 && alt >= 10000) {
-    zalpha = (12000 - alt)/2000;
-    amax = 7; 
-    amin = 6; 
-  } else if (alt < 10000 && alt >= 8000) {
-    zalpha = (10000 - alt)/2000;
-    amax = 6; 
-    amin = 5; 
-  } else if (alt < 8000 && alt >= 6000) {
-    zalpha = (8000 - alt)/2000;
-    amax = 5; 
-    amin = 4; 
-  } else if (alt < 6000 && alt >= 4000) {
-    zalpha = (6000 - alt)/2000;
-    amax = 4; 
-    amin = 3; 
-  } else if (alt < 4000 && alt >= 2000) {
-    zalpha = (4000 - alt)/2000;
-    amax = 3; 
-    amin = 2; 
-  } else if (alt < 2000) {
-    zalpha = (2000 - alt)/2000;
-    amax = 2; 
-    amin = 1; 
-  }
-
-  //calculate interpolation parameters
-  fern_real zfac = zalpha;
-  fern_real zfac1 = 1.0 - zalpha;
-
-  fern_real zpolyhigh;
-  fern_real zpolylow;
-  fern_real rateparam1;
-  fern_real rateparam2;
-  fern_real amin0 = 0;
-  fern_real amin1 = 0;
-  fern_real amin2 = 0;
-  fern_real amin3 = 0;
-  fern_real amin4 = 0;
-  fern_real amin5 = 0;
-  fern_real amin6 = 0;
-  fern_real amax0 = 0;
-  fern_real amax1 = 0;
-  fern_real amax2 = 0;
-  fern_real amax3 = 0;
-  fern_real amax4 = 0;
-  fern_real amax5 = 0;
-  fern_real amax6 = 0;
 
 	for (int i = 0; i < network.reactions; i++) {
     if(reacType[i] == 2) {
-      rateparam1 = 0;
-      rateparam2 = 0;
-      /*******************************************************************************
-        From Rick's Fortran Code
-        CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
-        altitude and cosine(zenith angle).
-        Photolysis frequencies were generated from TUV 5.0
-        (Madronich, S. and S. Flocke, Theoretical estimation of 
-        biologically effective UV radiation at the Earth's surface, 
-        in Solar Ultraviolet Radiation - Modeling, Measurements and 
-        Effects (Zerefos, C., ed.). NATO ASI Series Vol. I52, 
-        Springer-Verlag, Berlin, 1997.) as a function of altitude 
-        above sea level and zenith angle.  For each photolysis reaction 
-        polynomial fits were created as a function of cosine(zenith 
-        angle) at seven altitudes.  At a given altitude, the 
-        photolysis frequency for each reaction is determined 
-        by interpolation between bounding altitudes. Frequencies are
-        valid from 0 to 12 km above mean sea level.
-      *******************************************************************************/
+      calculatePhotolyticRates(i, zenith, alt, network.paramNumID, network.aparam, network.paramMult, Rate);
 
-      //begin interpolation
-      //calculate rateparam1 (eg in fjmacra+fjmacrb, fjmacra is param1, often rateparam2 will be 0)
-      if(network.paramNumID[0][i] >= 0) {
-        amin0 = network.aparam[(amin-1)][network.paramNumID[0][i]];
-        amin1 = network.aparam[(amin+6)][network.paramNumID[0][i]];
-        amin2 = network.aparam[(amin+13)][network.paramNumID[0][i]];
-        amin3 = network.aparam[(amin+20)][network.paramNumID[0][i]];
-        amin4 = network.aparam[(amin+27)][network.paramNumID[0][i]];
-        amin5 = network.aparam[(amin+34)][network.paramNumID[0][i]];
-        amin6 = network.aparam[(amin+41)][network.paramNumID[0][i]];
-        amax0 = network.aparam[(amax-1)][network.paramNumID[0][i]];
-        amax1 = network.aparam[(amax+6)][network.paramNumID[0][i]];
-        amax2 = network.aparam[(amax+13)][network.paramNumID[0][i]];
-        amax3 = network.aparam[(amax+20)][network.paramNumID[0][i]];
-        amax4 = network.aparam[(amax+27)][network.paramNumID[0][i]];
-        amax5 = network.aparam[(amax+34)][network.paramNumID[0][i]];
-        amax6 = network.aparam[(amax+41)][network.paramNumID[0][i]];
-
-        zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
-        zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
-
-        rateparam1 = zfac1*zpolyhigh + zfac*zpolylow;
-
-        if(displayPhotodata) {
-          printf("FOR RATEPARAM1\namin0: %e\n", amin0);
-          printf("amin1: %e\n", amin1);
-          printf("amin2: %e\n", amin2);
-          printf("amin3: %e\n", amin3);
-          printf("amin4: %e\n", amin4);
-          printf("amin5: %e\n", amin5);
-          printf("amin6: %e\n", amin6);
-          printf("amax0: %e\n", amax0);
-          printf("amax1: %e\n", amax1);
-          printf("amax2: %e\n", amax2);
-          printf("amax3: %e\n", amax3);
-          printf("amax4: %e\n", amax4);
-          printf("amax5: %e\n", amax5);
-          printf("amax6: %e\n", amax6);
-          printf("zpolylow: %e\n", zpolylow);
-          printf("zpolyhigh: %e\n", zpolyhigh);
-        }
-      }
-      
-      if(network.paramNumID[1][i] >= 0) {
-      //calculate rateparam2
-        amin0 = network.aparam[(amin-1)][network.paramNumID[1][i]];
-        amin1 = network.aparam[(amin+6)][network.paramNumID[1][i]];
-        amin2 = network.aparam[(amin+13)][network.paramNumID[1][i]];
-        amin3 = network.aparam[(amin+20)][network.paramNumID[1][i]];
-        amin4 = network.aparam[(amin+27)][network.paramNumID[1][i]];
-        amin5 = network.aparam[(amin+34)][network.paramNumID[1][i]];
-        amin6 = network.aparam[(amin+41)][network.paramNumID[1][i]];
-        amax0 = network.aparam[(amax-1)][network.paramNumID[1][i]];
-        amax1 = network.aparam[(amax+6)][network.paramNumID[1][i]];
-        amax2 = network.aparam[(amax+13)][network.paramNumID[1][i]];
-        amax3 = network.aparam[(amax+20)][network.paramNumID[1][i]];
-        amax4 = network.aparam[(amax+27)][network.paramNumID[1][i]];
-        amax5 = network.aparam[(amax+34)][network.paramNumID[1][i]];
-        amax6 = network.aparam[(amax+41)][network.paramNumID[1][i]];
-
-        zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
-        zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
-
-        rateparam2 = zfac1*zpolyhigh + zfac*zpolylow;
-        
-        if(displayPhotodata) {
-          printf("\nFOR RATEPARAM2\namin0: %e\n", amin0);
-          printf("amin1: %e\n", amin1);
-          printf("amin2: %e\n", amin2);
-          printf("amin3: %e\n", amin3);
-          printf("amin4: %e\n", amin4);
-          printf("amin5: %e\n", amin5);
-          printf("amin6: %e\n", amin6);
-          printf("amax0: %e\n", amax0);
-          printf("amax1: %e\n", amax1);
-          printf("amax2: %e\n", amax2);
-          printf("amax3: %e\n", amax3);
-          printf("amax4: %e\n", amax4);
-          printf("amax5: %e\n", amax5);
-          printf("amax6: %e\n", amax6);
-          printf("zpolylow: %e\n", zpolylow);
-          printf("zpolyhigh: %e\n\n", zpolyhigh);
-        }
-      }
-
-      //bring it all together, calculate Rate using multipliers, rateparam1 and 2
-      if(zenith >= 0 && zenith <= 1.57079632679) {
-        Rate[i] = network.paramMult[0][i]*rateparam1 + network.paramMult[1][i]*rateparam2;
-      } else {
-        Rate[i] = 0.0;
-      }
 
 
       /***** FOR GRAPHING CONSTANT PHOTOLYTIC REACTION RATES VS TEMP (independent of temp... this is just for reference) IN GNUPLOT *****/
+/*
       //to graph reactions that contain any but only of these species
       //int isInReac = 1;
       //to graph reactions that contain any of these species
@@ -395,20 +284,7 @@ const bool plotRadicals = 0;
         } else if (isReactant == 0 && isProduct == 1) {
           printf(" title 'J[%d]' w linespoints lt rgb 'purple', \\\n",i);
         }
-
-      /***** END FOR GRAPHING REACTION RATES VS TEMP IN GNUPLOT *****/
-
-      if(displayPhotodata) {
-        printf("altitude: %f\n", alt);
-        printf("cz: %f\n", cz);
-        printf("zfac: %e\n", zfac);
-        printf("zfac1: %e\n", zfac1);
-        printf("multiplier1: %e\n", network.paramMult[0][i]);
-        printf("multiplier2: %e\n", network.paramMult[1][i]);
-        printf("Photolytic Rate[%d] = %e\n", i, Rate[i]);
-        printf("\n");
-      }
-
+*/
     } else if(reacType[i] == 0) {
       //then this is a regular chemical reaction (not M-type or Photolytic)
       fern_real A = network.P[0][i];
@@ -642,7 +518,7 @@ const bool plotRadicals = 0;
 	   code as well as the Java version.
 	*/
 	
-	t = 1.0e-20;
+  t = 1.0e-20;
 	dt = integrationData.dt_init;
 	timesteps = 1;
 	
@@ -669,7 +545,6 @@ const bool plotRadicals = 0;
 	{ //continued from above. CHECK WITH DR GUIDRY
 		//X[i] = massNum[i] * Y[i];
     X[i] = Y[i]/totalY;
-//    printf("totalY: %f,Y[i]: %f, X[%d}: %e\n", totalY, Y[i],i, X[i]);
 	}
 	
 	sumXLast = NDreduceSum(X, numberSpecies);
@@ -681,6 +556,19 @@ const bool plotRadicals = 0;
   fern_real Yppb = 0.0;
 	while (t < integrationData.t_max)
 	{
+  //calculate zenith angle for new timestamp 
+  td = (t+tstart)/(24*3600); 
+  zenith = SolarZenithAngle(td, latitude, longitude);
+  printf("zenith: %f, dt: %e\n", zenith, dt);
+
+  //recalculate photolytic rates for new zenith angle
+	for (int i = 0; i < network.reactions; i++) {
+    if(reacType[i] == 2) {
+      calculatePhotolyticRates(i, zenith, alt, network.paramNumID, network.aparam, network.paramMult, Rate);
+    }
+  }    
+
+
       //START PLOT INFO//
       //TODO: Update to latest partial equilibrium code from fernPartialEq code.
 
@@ -1187,6 +1075,261 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	}
 }
 
+fern_real SolarZenithAngle(fern_real td, fern_real latitude, fern_real longitude) {
+
+  fern_real pi = 2.0*acos(0.0);
+  fern_real twopi = 2.0*pi;
+  fern_real deg2rad = pi/180.0;
+  fern_real mnlong;
+  fern_real mnanom;
+  fern_real eclong;
+  fern_real oblqec;
+  fern_real num;
+  fern_real den;
+  fern_real ra;
+  fern_real gmst;
+  fern_real lmst;
+  fern_real latrad;
+  fern_real elc;
+  fern_real refrac;
+  fern_real soldia;
+  fern_real el;
+  fern_real dec;
+  fern_real ha;  
+  fern_real zen;
+
+  // force mean longitude between 0 and 360 degs
+  mnlong = 280.460+.9856474*td;
+  mnlong = fmod(mnlong,360);
+  if (mnlong < 0) {
+    mnlong = mnlong+360;
+  }
+
+  // mean anomaly in radians between 0 and 2*pi
+  mnanom = 357.528+.9856003*td;
+  mnanom = fmod(mnanom,360);
+  if(mnanom < 0) {
+    mnanom=mnanom+360; 
+  }
+  mnanom=mnanom*deg2rad;
+
+  // compute the ecliptic longitude and obliquity of ecliptic in radians
+  eclong = mnlong+1.915*sin(mnanom)+.020*sin(2*mnanom);
+  eclong = fmod(eclong,360);
+  if (eclong < 0) {
+    eclong = eclong+360;
+  }
+  oblqec = 23.439-.0000004*td;
+  eclong = eclong*deg2rad;
+  oblqec = oblqec*deg2rad;
+
+  // calculate right ascension and declination
+  num = cos(oblqec)*sin(eclong);
+  den = cos(eclong);
+  ra = atan(num/den);
+
+  // force ra between 0 and 2*pi
+  if (den < 0) {
+    ra = ra + pi;
+  } else if (num < 0) {
+    ra = ra + twopi;
+  }
+
+  // dec in radians
+  dec = asin(sin(oblqec)*sin(eclong));
+
+  // calculate Greenwich mean sidereal time in hours
+  // Substitute the approximate gmst formula from the U. S. Naval Observatory web site
+  // http://www.usno.navy.mil/USNO/astronomical-applications/astronomical-information-center/approx-sider-time
+  gmst = 18.697374558 + 24.06570982441908 * td;
+
+  gmst = fmod(gmst,24);
+  if (gmst < 0) {
+    gmst = gmst + 24;
+  }
+
+  // calculate local mean sidereal time in radians
+  lmst = gmst+longitude/15;
+  lmst = fmod(lmst,24);
+  if (lmst < 0) {
+    lmst = lmst + 24;
+  }
+  lmst = lmst*15*deg2rad;
+
+  // calculate hour angle in radians between -pi and pi
+  ha = lmst-ra;
+  if (ha < -pi) {
+    ha = ha + twopi;
+  }
+  if (ha > pi) {
+    ha = ha - twopi;
+  }
+
+  // change latitude to radians
+  latrad = latitude*deg2rad;
+
+  // calculate elevation
+
+  el = asin(sin(dec)*sin(latrad)+cos(dec)*cos(latrad)*cos(ha));
+
+  // claculate refraction correction for US stan. atmosphere
+  // need to have el in degs before calculating correction
+
+  el = el/deg2rad;
+
+  // note that 3.51823 = 1013.25mb/288K
+  if(el >=19.225) {
+    refrac = .00452*3.51823/tan(el*deg2rad);
+  } else if (el > -.766 && el < 19.225) {
+    refrac = 3.51823*(.1594+.0196*el+.00002*pow(el, 2))/(1+.505*el+.0845*pow(el, 2)); 
+  } else if (el <= -.766) {
+    refrac = 0.0;
+  }
+
+  el = el+refrac;
+
+  zen = 90.0 - el;
+
+  return zen;
+}
+
+void calculatePhotolyticRates(int i, fern_real zenith, fern_real alt, int **paramNumID, fern_real **aparam, fern_real **paramMult, fern_real *Rate) {
+  fern_real cz = cos(zenith);//cosine of zenith angle
+  //calculate powers of cz
+  fern_real cz2 = cz*cz;
+  fern_real cz3 = cz2*cz;
+  fern_real cz4 = cz3*cz;
+  fern_real cz5 = cz4*cz;
+  fern_real cz6 = cz5*cz;
+  fern_real zalpha = 1.0;
+  int amin = 0;
+  int amax = 0;
+
+  if(alt >= 12000) {
+    zalpha = 1.0;
+    amax = 7; 
+    amin = 7; 
+  } else if (alt < 12000 && alt >= 10000) {
+    zalpha = (12000 - alt)/2000;
+    amax = 7; 
+    amin = 6; 
+  } else if (alt < 10000 && alt >= 8000) {
+    zalpha = (10000 - alt)/2000;
+    amax = 6; 
+    amin = 5; 
+  } else if (alt < 8000 && alt >= 6000) {
+    zalpha = (8000 - alt)/2000;
+    amax = 5; 
+    amin = 4; 
+  } else if (alt < 6000 && alt >= 4000) {
+    zalpha = (6000 - alt)/2000;
+    amax = 4; 
+    amin = 3; 
+  } else if (alt < 4000 && alt >= 2000) {
+    zalpha = (4000 - alt)/2000;
+    amax = 3; 
+    amin = 2; 
+  } else if (alt < 2000) {
+    zalpha = (2000 - alt)/2000;
+    amax = 2; 
+    amin = 1; 
+  }
+
+  //calculate interpolation parameters
+  fern_real zfac = zalpha;
+  fern_real zfac1 = 1.0 - zalpha;
+
+  fern_real zpolyhigh = 0;
+  fern_real zpolylow = 0;
+  fern_real rateparam1 = 0;
+  fern_real rateparam2 = 0;
+  fern_real amin0 = 0;
+  fern_real amin1 = 0;
+  fern_real amin2 = 0;
+  fern_real amin3 = 0;
+  fern_real amin4 = 0;
+  fern_real amin5 = 0;
+  fern_real amin6 = 0;
+  fern_real amax0 = 0;
+  fern_real amax1 = 0;
+  fern_real amax2 = 0;
+  fern_real amax3 = 0;
+  fern_real amax4 = 0;
+  fern_real amax5 = 0;
+  fern_real amax6 = 0;
+      /*******************************************************************************
+        From Rick's Fortran Code
+        CalcJPhoto -  calculates photolysis frequencies (1/s) for a given
+        altitude and cosine(zenith angle).
+        Photolysis frequencies were generated from TUV 5.0
+        (Madronich, S. and S. Flocke, Theoretical estimation of 
+        biologically effective UV radiation at the Earth's surface, 
+        in Solar Ultraviolet Radiation - Modeling, Measurements and 
+        Effects (Zerefos, C., ed.). NATO ASI Series Vol. I52, 
+        Springer-Verlag, Berlin, 1997.) as a function of altitude 
+        above sea level and zenith angle.  For each photolysis reaction 
+        polynomial fits were created as a function of cosine(zenith 
+        angle) at seven altitudes.  At a given altitude, the 
+        photolysis frequency for each reaction is determined 
+        by interpolation between bounding altitudes. Frequencies are
+        valid from 0 to 12 km above mean sea level.
+      *******************************************************************************/
+
+      //begin interpolation
+      //calculate rateparam1 (eg in fjmacra+fjmacrb, fjmacra is param1, often rateparam2 will be 0)
+      if(paramNumID[0][i] >= 0) {
+        amin0 = aparam[(amin-1)][paramNumID[0][i]];
+        amin1 = aparam[(amin+6)][paramNumID[0][i]];
+        amin2 = aparam[(amin+13)][paramNumID[0][i]];
+        amin3 = aparam[(amin+20)][paramNumID[0][i]];
+        amin4 = aparam[(amin+27)][paramNumID[0][i]];
+        amin5 = aparam[(amin+34)][paramNumID[0][i]];
+        amin6 = aparam[(amin+41)][paramNumID[0][i]];
+        amax0 = aparam[(amax-1)][paramNumID[0][i]];
+        amax1 = aparam[(amax+6)][paramNumID[0][i]];
+        amax2 = aparam[(amax+13)][paramNumID[0][i]];
+        amax3 = aparam[(amax+20)][paramNumID[0][i]];
+        amax4 = aparam[(amax+27)][paramNumID[0][i]];
+        amax5 = aparam[(amax+34)][paramNumID[0][i]];
+        amax6 = aparam[(amax+41)][paramNumID[0][i]];
+
+        zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
+        zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
+
+        rateparam1 = zfac1*zpolyhigh + zfac*zpolylow;
+      }
+      
+      if(paramNumID[1][i] >= 0) {
+      //calculate rateparam2
+        amin0 = aparam[(amin-1)][paramNumID[1][i]];
+        amin1 = aparam[(amin+6)][paramNumID[1][i]];
+        amin2 = aparam[(amin+13)][paramNumID[1][i]];
+        amin3 = aparam[(amin+20)][paramNumID[1][i]];
+        amin4 = aparam[(amin+27)][paramNumID[1][i]];
+        amin5 = aparam[(amin+34)][paramNumID[1][i]];
+        amin6 = aparam[(amin+41)][paramNumID[1][i]];
+        amax0 = aparam[(amax-1)][paramNumID[1][i]];
+        amax1 = aparam[(amax+6)][paramNumID[1][i]];
+        amax2 = aparam[(amax+13)][paramNumID[1][i]];
+        amax3 = aparam[(amax+20)][paramNumID[1][i]];
+        amax4 = aparam[(amax+27)][paramNumID[1][i]];
+        amax5 = aparam[(amax+34)][paramNumID[1][i]];
+        amax6 = aparam[(amax+41)][paramNumID[1][i]];
+
+        zpolylow = amin0 + amin1*cz + amin2*cz2 + amin3*cz3 + amin4*cz4 + amin5*cz5 + amin6*cz6;
+        zpolyhigh = amax0 + amax1*cz + amax2*cz2 + amax3*cz3 + amax4*cz4 + amax5*cz5 + amax6*cz6;
+
+        rateparam2 = zfac1*zpolyhigh + zfac*zpolylow;
+        
+      }
+
+      //bring it all together, calculate Rate using multipliers, rateparam1 and 2
+      if(zenith >= 0 && zenith <= 1.57079632679) {
+        Rate[i] = paramMult[0][i]*rateparam1 + paramMult[1][i]*rateparam2;
+      } else {
+        Rate[i] = 0.0;
+      }
+}
 
 /* Updates populations based on the trial timestep */
 

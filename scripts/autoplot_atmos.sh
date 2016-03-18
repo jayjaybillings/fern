@@ -9,7 +9,6 @@ OUTPUTFILE='../output/fernOutput.dat'
 
 #Format GNUplot file if arguments have been specified
 GNUtitleLine=$(awk '/set title/{ print NR; exit }' $GNUfile)
-printf "%s\n" "$GNUtitleLine"
 GNUscaleLine=$(awk '/logscale/{ print NR; exit }' $GNUfile)
 GNUformatxyLine=$(awk '/format xy/{ print NR; exit }' $GNUfile)
 GNUformatyLine=$(awk '/format y "/{ print NR; exit }' $GNUfile)
@@ -99,7 +98,6 @@ if [[ "$@" =~ "range" ]]
   yrangemax=$(echo $Oldyrange | cut -f2 -d:)
   yrangemax=$(echo $yrangemax | cut -f1 -d])
 
-echo $xrangemax
   #get x-range from user
   check="N"
   re='^-?[0-9]+([.][0-9]+)?([*][0-9]+)?([/\^/][0-9]+)?$'

@@ -35,8 +35,8 @@ int main(int argc, char const *argv[])
     integrationData.zenith = 0.0; //0.0 indicates sun is overhead, pi/2 indicates sundown
     integrationData.alt = 2000; //up to 12000m
 		integrationData.t_init = 1.0e-20;
-		integrationData.t_max = 1.00e3;
-		integrationData.dt_init = 1e-25;
+		integrationData.t_max = 1.00e6;
+		integrationData.dt_init = 3600;
 		integrationData.rho = 1.0;
 
 		// Launch the integrator

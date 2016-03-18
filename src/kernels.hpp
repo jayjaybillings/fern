@@ -15,6 +15,8 @@ void integrateNetwork(
 );
 
 
+fern_real SolarZenithAngle(fern_real td, fern_real latitude, fern_real longitude);
+void calculatePhotolyticRates(int i, fern_real zenith, fern_real alt, int **paramNumID, fern_real **aparam, fern_real **paramMult, fern_real *Rate);
 bool checkAsy(fern_real, fern_real, fern_real);
 fern_real asymptoticUpdate(fern_real, fern_real, fern_real, fern_real);
 fern_real eulerUpdate(fern_real, fern_real, fern_real, fern_real);
