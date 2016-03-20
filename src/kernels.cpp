@@ -63,16 +63,22 @@ void integrateNetwork(
 	const bool plotOutput = 1;
 	const bool pEquilOn = 1;
   const bool trackPE = 1;
-
-  if(pEquilOn == 1) {
-    massTol = 1;
+  const bool whichNetwork = 0; // 0 for 150-isotope, 1 for alpha-network
+  if(pEquilOn == 1 && whichNetwork == 0) {
+    //Best params for 150-isotope, best runtime with great accuracy, 2.1sec
+    massTol = 1e-6;
     fluxFrac = .01;
+  } else if (pEquilOn == 1 && whichNetwork == 1) {
+    //best params for alpha-network, and what Guidry uses in Java, best runtime 0.8sec. 
+    massTol = 1;
+    fluxFrac = .2;
   } else {
+    //Pure Asymptotic
     massTol = 1e-7;
     fluxFrac = .01;
   }
 
-	const int numIntervals = 400;
+	const int numIntervals = 100;
 	int plotStartTime = -16;
 	fern_real intervalLogt;
   fern_real nextOutput;
@@ -103,7 +109,16 @@ void integrateNetwork(
 
   fern_real mostDevious = 0;
   int mostDeviousIndex;
-  int pEquilLogtime = -9; //log10(time) to start considering partial Equilibrium 
+
+  int pEquilLogtime = -11; //log10(time) to start considering partial Equilibrium,
+  //***** I think this is unnecessary, probably delete ******// 
+  if (whichNetwork == 0) { 
+    //param for 150-isotope
+    pEquilLogtime = -11; 
+  } else {
+    //param for alpha-network
+    pEquilLogtime = -11;
+  }
 
 	/* Assign globals pointers. */
 	
@@ -322,7 +337,7 @@ void integrateNetwork(
 
     //Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value 
     //if plotOut == 0 to check for PE regardless of whether I'm plotting...
-    if(log10(t) >= -9 && (pEquilOn == 1 || trackPE == 1)) {
+    if(log10(t) >= pEquilLogtime && (pEquilOn == 1 || trackPE == 1)) {
 	    partialEquil(Y, numberReactions, RGclassByRG, network.reactant, network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG, RGParent, numRG, .01, eq, &mostDevious, &mostDeviousIndex);
     }
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
@@ -458,9 +473,11 @@ void integrateNetwork(
 		dtFlux = fluxFrac / maxFlux;
 		dtFloor = floorFac * t;
 		if (dtFlux > dtFloor) dtFlux = dtFloor;
-			
+
 		dt = dtFlux;
-    if(pEquilOn == 1 && (maxFluxLast/maxFlux)<1) {
+
+			
+    if(pEquilOn == 1 && (maxFluxLast/maxFlux)<1 && log10(t) > pEquilLogtime) {
 //      printf("maxFluxLast(%e)/maxFlux(%e): %e\n",maxFluxLast, maxFlux, maxFluxLast/maxFlux);
       if((maxFlux/maxFluxLast)<100) {
         dt *= .01;
@@ -483,6 +500,32 @@ void integrateNetwork(
       }
 		updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
     } 
+
+    //another tweak to timestepper that I originally added in Summer 2015. 
+    //This is the final piece that makes a fast and accurate calculation, 
+    //along with maxFlux/maxFluxLast and mostDevious work above.
+
+    if(pEquilOn == 1 && log10(t) > pEquilLogtime) {
+
+      if(whichNetwork == 0) {
+        dt = fluxFrac/maxFlux; //this helps the 150-isotope network, but breaks the alpha network.
+      }
+
+      if(dt < deltaTimeRestart) {
+        dt = 1.1*fluxFrac/maxFlux;
+      }
+      if(log10(t) < pEquilLogtime) {
+        if(dt > .008*t) {
+          dt *= .002;
+        }
+      }
+      if(log10(t) > pEquilLogtime) {
+        if(dt > .002*t) {
+          dt *= .0009;
+        }
+      }
+      updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
+    }
 
 
 
