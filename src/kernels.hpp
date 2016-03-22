@@ -21,7 +21,7 @@ fern_real eulerUpdate(fern_real, fern_real, fern_real, fern_real);
 
 void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 	unsigned short *MapFsign, unsigned short totalFsign);
-inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum, fern_real *FplusSumBefore, fern_real *FminusSumBefore,
+inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	fern_real *Y, fern_real *Yzero, unsigned short numberSpecies, fern_real dt);
 
 fern_real NDreduceSum(fern_real *a, unsigned short length);
