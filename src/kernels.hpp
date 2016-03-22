@@ -24,6 +24,7 @@ void populateF(fern_real *Fsign, fern_real *FsignFac, fern_real *Flux,
 inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	fern_real *Y, fern_real *Yzero, unsigned short numberSpecies, fern_real dt);
 
+fern_real *renormalize(fern_real *x, int n, fern_real sumX);
 fern_real NDreduceSum(fern_real *a, unsigned short length);
 fern_real reduceMax(fern_real *a, unsigned short length);
 //EVENTUALLY INSERT PE function

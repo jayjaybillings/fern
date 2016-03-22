@@ -414,8 +414,7 @@ void integrateNetwork(
 				Fdiff[i] = fabs(FplusSum[i] - FminusSum[i]);
 			#endif
 		}
-		
-		
+
 		/* Call tree algorithm to find max of array Fdiff. */
     maxFluxLast = maxFlux;
 		maxFlux = reduceMax(Fdiff, numberSpecies);
@@ -472,7 +471,7 @@ void integrateNetwork(
       }
 
       if(dt < deltaTimeRestart) {
-        dt = 1.1*fluxFrac/maxFlux;
+        dt = deltaTimeRestart;
       }
       if(log10(t) < pEquilLogtime) {
         if(dt > .008*t) {
@@ -487,15 +486,6 @@ void integrateNetwork(
       updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 
-
-
-		//if (pEquilOn == 1 && deltaTimeRestart > dtFlux && deltaTimeRestart < .01*t && log10(t) < -7) dt = deltaTimeRestart;
-		//if (pEquilOn == 0 && deltaTimeRestart > dtFlux) dt = deltaTimeRestart;
-//    if(pEquilOn == 1 && log10(t) > -8 && fluxFrac > 1e-6) fluxFrac = fluxFrac*.93;
-    //if(pEquilOn == 1 && log10(t) > -8 && fluxFrac > 1e-6) dt=.00001*t;
-//    if(pEquilOn == 1 && log10(t) > -3.5) fluxFrac = .2;
-		
-		
 		/* Compute sum of mass fractions sumX for all species. */
 		
 		for (int i = 0; i < numberSpecies; i++)
@@ -505,17 +495,13 @@ void integrateNetwork(
 		}
 		
 		sumX = NDreduceSum(X, numberSpecies);
-    if(pEquilOn == 1) {
-    //  sumX = sumXLast = 1;
-    }	
-		
+	
 		/*
 		   Now modify timestep if necessary to ensure that particle number is conserved to
 		   specified tolerance (but not too high a tolerance). Using updated populations
 		   based on the trial timestep computed above, test for conservation of particle
 		   number and modify trial timestep accordingly.
 		*/
-    //	sumX = sumXLast = 1;	
 		#ifdef FERN_SINGLE
 			fern_real test1 = fabsf(sumXLast - 1.0);
 			fern_real test2 = fabsf(sumX - 1.0);
@@ -567,7 +553,6 @@ void integrateNetwork(
       #else
         dt = powf(10, plotStartTime) - t;
       #endif
-//		  updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
     }
 
     if(plotOutput == 1 && log10(t+dt) > nextOutput) {
@@ -576,7 +561,6 @@ void integrateNetwork(
       #else
         dt = powf(10, nextOutput) - t;
       #endif
-//		  updatePopulations(FplusSum, FminusSum, FplusSumBefore, FminusSumBefore, Y, Yzero, numberSpecies, dt);
     }
 
 		/*
@@ -613,7 +597,6 @@ void integrateNetwork(
 		
 		sumX = NDreduceSum(X, numberSpecies);
 		
-		
 		/* Increment the integration time and set the new timestep. */
 			
 		t += dt;
@@ -622,15 +605,21 @@ void integrateNetwork(
 		sumXLast = sumX;
     if(pEquilOn == 1 && log10(t) > -9) {
     //renormalize mass fraction so sumX is 1 for partial equilibrium
-      for (int i = 0; i < numberSpecies; i++) {
-        X[i] = X[i]*(1/sumX);
-      }
-
+      renormalize(X, numberSpecies, sumX);
       sumX = NDreduceSum(X, numberSpecies);
     }
 	}
+  /**** PLOT ****/
 	if(plotOutput == 1)
 		printf("EO\n");//EndOutput
+  /**** PLOTEND ****/
+}
+
+fern_real *renormalize(fern_real *x, int n, fern_real sumX) {
+  for (int i = 0; i < n; i++) {
+    x[i] = x[i]*(1 / sumX);
+  }
+  return x;
 }
 
 
