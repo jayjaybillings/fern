@@ -324,7 +324,7 @@ void integrateNetwork(
 
     //Check if RGs are in equilibrium. If so, give update each reaction's equilibrium value 
     //if plotOut == 0 to check for PE regardless of whether I'm plotting...
-    if(log10(t) >= pEquilLogtime && (pEquilOn == 1 || trackPE == 1)) {
+    if(pEquilOn == 1 || trackPE == 1) {
 	    partialEquil(Y, numberReactions, RGclassByRG, network.reactant, network.product, final_k, pEquilbyRG, pEquilbyReac, ReacRG, RGParent, numRG, .01, eq, &mostDevious, &mostDeviousIndex);
     }
 		/* Set Yzero[] to the values of Y[] updated in previous timestep. */
@@ -434,21 +434,16 @@ void integrateNetwork(
 		if (dtFlux > dtFloor) dtFlux = dtFloor;
 
 		dt = dtFlux;
-
-			
-    if(pEquilOn == 1 && (maxFluxLast/maxFlux)<1 && log10(t) > pEquilLogtime) {
-//      printf("maxFluxLast(%e)/maxFlux(%e): %e\n",maxFluxLast, maxFlux, maxFluxLast/maxFlux);
-      if((maxFlux/maxFluxLast)<100) {
-        dt *= .01;
+      if(dt < deltaTimeRestart) {
+        dt = deltaTimeRestart;
       }
-      if((maxFlux/maxFluxLast)>100) {
-        dt *= .001;
-      }
-    }
 
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		fern_real maxFluxCheck;
+    fern_real maxFluxRatio = maxFluxLast/maxFlux;
+//printf("mfR: %e\n", maxFluxRatio);
 
-    if(pEquilOn == 1 && log10(t) > pEquilLogtime) {
+
+    if(pEquilOn == 1 && peCount > 0) {
       fern_real deviousMax = 0.5;
       fern_real deviousMin = 0.1;
 //      printf("thisDev: %e\n", mostDevious);
@@ -457,34 +452,32 @@ void integrateNetwork(
       } else if (mostDevious < deviousMin) {
         dt *= 1.03;
       }
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		  updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     } 
 
-    //another tweak to timestepper that I originally added in Summer 2015. 
-    //This is the final piece that makes a fast and accurate calculation, 
-    //along with maxFlux/maxFluxLast and mostDevious work above.
-
-    if(pEquilOn == 1 && log10(t) > pEquilLogtime) {
-
-      if(whichNetwork == 0) {
-        dt = fluxFrac/maxFlux; //this helps the 150-isotope network, but breaks the alpha network.
-      }
-
-      if(dt < deltaTimeRestart) {
-        dt = deltaTimeRestart;
-      }
-      if(log10(t) < pEquilLogtime) {
-        if(dt > .008*t) {
-          dt *= .002;
-        }
-      }
-      if(log10(t) > pEquilLogtime) {
-        if(dt > .002*t) {
-          dt *= .0009;
-        }
-      }
-      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+    if(peCount > .3*numRG) { //gives most accurate result in 8 sec
+//    if(maxFluxRatio < .9) { //gives fastest result
+      maxFluxCheck = fmin((maxFluxRatio), .001);	
+    } else {
+      maxFluxCheck = fmin((maxFluxRatio), .01);	
     }
+
+    if(pEquilOn == 1 && peCount > 0 && dt > .001*t) {
+      dt *= maxFluxCheck;
+		  updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+    }
+
+    if(pEquilOn == 1 && (maxFluxRatio)<1 && peCount > 0 && whichNetwork == 1) {
+//      printf("maxFluxLast(%e)/maxFlux(%e): %e\n",maxFluxLast, maxFlux, maxFluxLast/maxFlux);
+      if((maxFluxRatio)>.01) {
+        dt *= .01;
+      }
+      if((maxFluxRatio)<.01) {
+        dt *= .001;
+      }
+		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+    }
+    
 
 		/* Compute sum of mass fractions sumX for all species. */
 		
