@@ -477,7 +477,7 @@ void integrateNetwork(
       }
 		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
-    
+  
 
 		/* Compute sum of mass fractions sumX for all species. */
 		
@@ -831,7 +831,7 @@ void partialEquil(fern_real *Y, unsigned short numberReactions, int *RGclassByRG
       // it can cause a reaction group to drop out of equilibrium.
 
       if (pEquilbyRG[i] == 1 && thisDevious > maxDevious) {
-        pEquilbyRG[i] == 0;
+        pEquilbyRG[i] = 0;
       }
 
 		}//end for each RG
