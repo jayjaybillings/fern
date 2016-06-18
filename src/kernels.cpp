@@ -17,6 +17,27 @@ void integrateNetwork(
 	   maneuvering with dynamic shared memory.
 	*/
 
+  //TEMP TODO
+  //scan in timestepping from MATLAB to use in FERN and see if the timestepping is to blame for the difference in abundances.
+ FILE *dtFile = fopen("6.16.16_dtFromMatlab_toTestFERN.rtf", "r");
+
+	if (!dtFile)
+	{
+		fprintf(stderr, "File Input Error: No readable file named\n");
+		exit(1);
+	}
+  fern_real MATLABdt[4152];
+		int status;
+  float doot;
+ int dtCounter = 0;
+	for (int n = 0; n < 4152; n++)
+	{
+    status = fscanf(dtFile, "%e", &doot);
+    MATLABdt[n] = doot;
+    printf("dt[%d]: %e\n", n, MATLABdt[n]);
+  }
+
+//exit(1);
 	/* Declare local pointers for Globals arrays. */
 
 	fern_real *Flux;
@@ -405,7 +426,7 @@ void integrateNetwork(
 		dt = dtFlux;
 		if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
 		
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+//		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		/* Compute sum of mass fractions sumX for all species. */
 		
@@ -454,7 +475,7 @@ void integrateNetwork(
 		#endif
 		
 		
-		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+//		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		
 		/*
@@ -476,7 +497,7 @@ void integrateNetwork(
       #else
         dt = powf(10, plotStartTime) - t;
       #endif
-      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+    //  updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 
     if(plotOutput == 1 && log10(t+dt) > nextOutput) {
@@ -485,7 +506,7 @@ void integrateNetwork(
       #else
         dt = powf(10, nextOutput) - t;
       #endif
-      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+  //    updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 
 		/*
@@ -494,6 +515,10 @@ void integrateNetwork(
 		   of the integration interval. In that case it will also recompute the Y[]
 		   corresponding to the adjusted time interval.
 		 */
+	dt = MATLABdt[dtCounter];	
+printf("dtinwhile: %e\n", dt);
+dtCounter++;
+updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		if (t + dt >= integrationData.t_max)
 		{
