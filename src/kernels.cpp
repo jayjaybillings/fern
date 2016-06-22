@@ -38,6 +38,7 @@ void integrateNetwork(
   }
 
 //exit(1);
+
 	/* Declare local pointers for Globals arrays. */
 
 	fern_real *Flux;
@@ -342,7 +343,7 @@ void integrateNetwork(
 	  		{
 		  	case 3:
 			  	/* 3-body; flux = rate x Y x Y x Y */
-				  Flux[i] *= Y[network.reactant[2][i]];
+				  Flux[i] *= Y[network.reactant[1][i]]*Y[network.reactant[2][i]];
 				
   			case 2:
 	  			/* 2-body; flux = rate x Y x Y */
@@ -382,6 +383,7 @@ void integrateNetwork(
 			for (int j = minny; j <= FplusMax[i]; j++)
 			{
   				FplusSum[i] += Fplus[j];
+printf("Reaction increasing species[%d]: %d\n", i, MapFplus[j]);
 			}
 
 			/* Serially sum section of F-. */
@@ -390,8 +392,18 @@ void integrateNetwork(
 			for (int j = minny; j <= FminusMax[i]; j++)
 			{
 				  FminusSum[i] += Fminus[j];
+printf("Reaction decreasing species[%d]: %d\n", i, MapFminus[j]);
 			}
 		}
+
+//Let's build the L matrix here, and see if it's the same...
+for(int i = 0; i < numRG; i++) {
+  printf("RG: %d kf: %e, kr: %e\n", i, final_k[0][i], final_k[1][i]);
+  for(int j = 0; j < numberSpecies; j++) {
+    printf("Y[%d] = %e\n", j, Y[j]);
+  }
+}
+
 		
 		/* Find the maximum value of |FplusSum-FminusSum| to use in setting timestep. */
 		
@@ -426,7 +438,7 @@ void integrateNetwork(
 		dt = dtFlux;
 		if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
 		
-//		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+	//	updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		/* Compute sum of mass fractions sumX for all species. */
 		
@@ -667,14 +679,12 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++)
 	{
-		if (checkAsy(FminusSum[i], Y[i], dt))
+/*		if (checkAsy(FminusSum[i], Y[i], dt))
 		{
 			Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
 		}
-		else
-		{
+		else*/
 			Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
-		}
 	}
 }
 

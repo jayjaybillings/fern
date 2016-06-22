@@ -520,6 +520,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 			if (reacMask[i + species * j] > 0)
 			{
 				FplusFac[tempCountPlus] = (fern_real)reacMask[i + species * j];
+//printf("FplusFac: %e\n", FplusFac[tempCountPlus]);
 				tempCountPlus++;
 			}
 			else if (reacMask[i + species * j] < 0)
@@ -529,6 +530,7 @@ void Network::parseFlux(int *numProducts, vec_4i *reactantZ, vec_4i *reactantN,
 			}
 		}
 	}
+//exit(1);
 	
 	
 	// Clean up dynamic memory
