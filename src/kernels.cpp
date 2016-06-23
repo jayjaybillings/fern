@@ -17,7 +17,7 @@ void integrateNetwork(
 	   maneuvering with dynamic shared memory.
 	*/
 
-  //TEMP TODO
+/*  //TEMP TODO
   //scan in timestepping from MATLAB to use in FERN and see if the timestepping is to blame for the difference in abundances.
  FILE *dtFile = fopen("6.16.16_dtFromMatlab_toTestFERN.rtf", "r");
 
@@ -38,7 +38,7 @@ void integrateNetwork(
   }
 
 //exit(1);
-
+*/
 	/* Declare local pointers for Globals arrays. */
 
 	fern_real *Flux;
@@ -343,7 +343,7 @@ void integrateNetwork(
 	  		{
 		  	case 3:
 			  	/* 3-body; flux = rate x Y x Y x Y */
-				  Flux[i] *= Y[network.reactant[1][i]]*Y[network.reactant[2][i]];
+				  Flux[i] *= Y[network.reactant[2][i]];
 				
   			case 2:
 	  			/* 2-body; flux = rate x Y x Y */
@@ -438,7 +438,7 @@ for(int i = 0; i < numRG; i++) {
 		dt = dtFlux;
 		if (deltaTimeRestart < dtFlux) dt = deltaTimeRestart;
 		
-	//	updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+  	updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		/* Compute sum of mass fractions sumX for all species. */
 		
@@ -487,7 +487,7 @@ for(int i = 0; i < numRG; i++) {
 		#endif
 		
 		
-//		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+		updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		
 		/*
@@ -509,7 +509,7 @@ for(int i = 0; i < numRG; i++) {
       #else
         dt = powf(10, plotStartTime) - t;
       #endif
-    //  updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 
     if(plotOutput == 1 && log10(t+dt) > nextOutput) {
@@ -518,7 +518,7 @@ for(int i = 0; i < numRG; i++) {
       #else
         dt = powf(10, nextOutput) - t;
       #endif
-  //    updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
+      updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
     }
 
 		/*
@@ -527,9 +527,9 @@ for(int i = 0; i < numRG; i++) {
 		   of the integration interval. In that case it will also recompute the Y[]
 		   corresponding to the adjusted time interval.
 		 */
-	dt = MATLABdt[dtCounter];	
+/*	dt = MATLABdt[dtCounter];	
 printf("dtinwhile: %e\n", dt);
-dtCounter++;
+dtCounter++;*/
 updatePopulations(FplusSum, FminusSum, Y, Yzero, numberSpecies, dt);
 		
 		if (t + dt >= integrationData.t_max)
@@ -679,11 +679,11 @@ inline void updatePopulations(fern_real *FplusSum, fern_real *FminusSum,
 	/* Parallel Update populations based on this trial timestep. */
 	for (int i = 0; i < numberSpecies; i++)
 	{
-/*		if (checkAsy(FminusSum[i], Y[i], dt))
+		if (checkAsy(FminusSum[i], Y[i], dt))
 		{
 			Y[i] = asymptoticUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
 		}
-		else*/
+		else
 			Y[i] = eulerUpdate(FplusSum[i], FminusSum[i], Yzero[i], dt);
 	}
 }
