@@ -1,13 +1,13 @@
 %load & parse network
-
+'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 t=1e-20;
 dt = .1*t;
 tmax=1e-5;
 T9 = 7;
 rho = 1e8;
-checkAsy = 0;
-networkFile = fopen('~/Desktop/Research/FERN/fernPartialEqCPU/data/CUDAnet_3.inp','r');
-reactionFile = fopen('~/Desktop/Research/FERN/fernPartialEqCPU/data/rateLibrary_3.data','r');
+checkAsy = 1;
+networkFile = fopen('~/Desktop/Research/FERN/fernPECPU2/data/CUDAnet_3.inp','r');
+reactionFile = fopen('~/Desktop/Research/FERN/fernPECPU2/data/rateLibrary_3.data','r');
 
 %parse Network File
 speciesID = 0;
@@ -40,6 +40,7 @@ while (~feof(reactionFile))
     
     %member of RG
     memberID(reacID) = str2double(reacHeader{reacID}{3});
+    isReverse(reacID) = str2double(reacHeader{reacID}{8});
     numReactants(reacID) = str2double(reacHeader{reacID}{5});
     numProducts(reacID) = str2double(reacHeader{reacID}{6});
     statFac(reacID) = str2double(reacHeader{reacID}{9});
@@ -153,8 +154,10 @@ numReactantsRGr
 %Number of Reactions that contribute to increasing/decreasing this species
 numFplus = zeros(1,numSpecies);
 numFminus = zeros(1,numSpecies);
-totalFplus = 0;
-totalFminus = 0;
+totalFplus = 1;
+totalFminus = 1;
+totalFplusRG = 0;
+totalFminusRG = 0;
 %Array holding the reactions responsible for increasing each isotope,
 %separated by numFplus(i) where i is this isotope. So if there are two
 %reactions that increase He4, FplusReacs(1) and FplusReacs(2) are for He4.
@@ -168,43 +171,81 @@ totalFminus = 0;
 %need, but don't know exact dimesions yet. Will resize after next section.
 tempFplusReacs = zeros(1,numSpecies*(numReactions/2));
 tempFminusReacs = zeros(1,numSpecies*(numReactions/2));
+tempFplusFac = zeros(1,numSpecies*(numReactions/2));
+tempFminusFac = zeros(1,numSpecies*(numReactions/2));
+tempLrowFplus = zeros(1, numSpecies*(numReactions/2));
+tempLcolFplus = zeros(1, numSpecies*(numReactions/2));
+tempLrowFminus = zeros(1, numSpecies*(numReactions/2));
+tempLcolFminus = zeros(1, numSpecies*(numReactions/2));
 
 %TODO Move some of the next part into the integration while loop
+
 for i = 1:numSpecies
+   startingFplusRG = totalFplusRG + 1;
+   startingFminusRG = totalFminusRG + 1;
    for j = 1:numReactions
+       isReactant = 0;
+       isProduct = 0;
+       noReactantRepeat = 0;
+       noProductRepeat = 0;
        for n = 1:numReactants(j)
-          if (i == reactantsMatrix(j,n))
+           %check to see if this species appears as a reactant. If so,
+           %count how many times it appears. ie for triple-?, he4 appears 3
+           %times, so tempFminusFac(1) should be 3. 
+          if (i == reactantsMatrix(j,n) && totalFminus<numel(tempFminusFac))
              %then this (j) is a reaction that depletes this isotope.
-             %starting point for next FminusReacs entry
-             totalFminus = totalFminus + 1;
+             isReactant = 1;
+             tempFminusFac(totalFminus) = tempFminusFac(totalFminus) + 1;
+          end
+       end
+       %If we've established that i is a reactant in j, add to the total
+       %number of reactions that deplete every isotope (totalFminus), and
+       %the total number of reactions that deplete this isotope
+       %(numFminus(i)). tempFminusReacs(totalFminus) is the growing list of
+       %reaction ids that we're mapping to the species. 
+       if isReactant == 1 && noReactantRepeat == 0
+             noReactantRepeat = 1;
+             %added noReactantRepeat above to avoid overadding adding to 
+             %totalFminus, etc if this species appears more than once as 
+             %a reactant.
              %keeping track of how many reactions deplete this isotope
              numFminus(i) = numFminus(i) + 1;
                
              %Set ID of reaction that is responsible for increasing this
              %isotope
              tempFminusReacs(totalFminus) = j;
-             %Once we've identified that this reaction depletes, break out
-             %of for to avoid overcounting if this species appears as more
-             %than one reactant in reaction. ie. he4+he4+he4 --> c12 
-             break;
-          end
+             %Also, This reaction's flux should be placed in L(i,i)
+             tempLrowFminus(totalFminus) = i;
+             tempLcolFminus(totalFminus) = i;
+             %starting point for next FminusReacs entry
+             totalFminus = totalFminus + 1;
        end
        for n = 1:numProducts(j)
-          if (i == productsMatrix(j,n))
-             %then this (j) is a reaction that increases this isotope.
-             %starting point for next FminusReacs entry
-             totalFplus = totalFplus + 1;
-             %keeping track of how many reactions deplete this isotope
-             numFplus(i) = numFplus(i) + 1;
-             %Set ID of reaction that is responsible for increasing this
-             %isotope
-             tempFplusReacs(totalFplus) = j;
-             %Once we've identified that this reaction increases, break out
-             %of for to avoid overcounting if this species appears as more
-             %than one product in reaction. ie. c12 --> he4+he4+he4
-             break;
+          %follows similar logic as previous loops/if statements:
+          if (i == productsMatrix(j,n) && totalFplus<numel(tempFplusFac))
+             %then this (j) is a reaction that increases this isotope. 
+             isProduct = 1;
+             tempFplusFac(totalFplus) = tempFplusFac(totalFplus) + 1;
           end
        end
+      if isProduct == 1 && noProductRepeat == 0
+         noProductRepeat = 1;
+         %added noProductRepeat above to avoid overadding adding to 
+         %totalFplus, etc if this species appears more than once as 
+         %a product.
+         %keeping track of how many reactions increase this isotope
+         numFplus(i) = numFplus(i) + 1;
+         %Set ID of reaction that is responsible for increasing this
+         %isotope
+         tempFplusReacs(totalFplus) = j;
+         %Also, this reaction's Flux should be placed in
+         %L(i,first-reactantID)
+         tempLrowFplus(totalFplus) = i;
+         tempLcolFplus(totalFplus) = reactantsMatrix(j,1);
+         %starting point for next FplusReacs entry
+         totalFplus = totalFplus + 1;
+
+      end
    end
 end
 
@@ -212,16 +253,28 @@ end
 
 FplusReacs = zeros(1, totalFplus);
 FminusReacs = zeros(1, totalFminus);
+FplusFac = zeros(1, totalFplus);
+FminusFac = zeros(1, totalFminus);
+LrowFplus = zeros(1, totalFplus);
+LcolFplus = zeros(1, totalFplus);
+LrowFminus = zeros(1, totalFminus);
+LcolFminus = zeros(1, totalFminus);
 
 for i = 1:totalFplus
-   FplusReacs(i) = tempFplusReacs(i); 
+   FplusReacs(i) = tempFplusReacs(i);
+   FplusFac(i) = tempFplusFac(i);
+   LrowFplus(i) = tempLrowFplus(i);
+   LcolFplus(i) = tempLcolFplus(i);
 end
 
 for i = 1:totalFminus
-   FminusReacs(i) = tempFminusReacs(i); 
+   FminusReacs(i) = tempFminusReacs(i);
+   FminusFac(i) = tempFminusFac(i);
+   LrowFminus(i) = tempLrowFminus(i);
+   LcolFminus(i) = tempLrowFminus(i);
 end
 
-clear tempFplusReacs tempFminusReacs
+clear tempFplusReacs tempFminusReacs tempFplusFac tempFminusFac
 
 %Okay, now that I've freed up that space... really just a formalism... but
 %still, it's cool. And now that I have arrays pointing isotopes to the
@@ -244,17 +297,16 @@ yplot3 = [];
 tplot = [];
 dtplot = [];
 
-FminusSum = zeros(1,numSpecies);
-FplusSum = zeros(1,numSpecies);
-L = zeros(numSpecies);
-%for building the matrix L. If reaction used
-%reacUsed = zeros(1, numReactions) TODO
-Flux = zeros(1,numReactions);
+
 setNextOut = 0;
 alldtcount = 1;
 alldt = [];
 while t < tmax
-    %Loop through all reactions and set up Flux arrays for this timestep
+    FminusSum = zeros(1,numSpecies);
+    FplusSum = zeros(1,numSpecies);
+    L = zeros(numSpecies);
+    Flux = zeros(1,numReactions);
+        %Loop through all reactions and set up Flux arrays for this timestep
     for i = 1:numReactions
         %Give Flux a value so its product with y won't be zero. 
         Flux(i) = Rate(i);
@@ -266,31 +318,33 @@ while t < tmax
         end
 %         sprintf('Yielding Flux(%d): %e', i, Flux(i))
         %check if Fluxes we just calculated are same as what's in L matrix:
-        if mod(i,2) == 0
-            %This is the second reaction in a reaction group. i is even
-            %TotalFlux holds all total Fplus and total Fminus for each RG
-            %For example, since reacs 1 and 2 are forward triple-?, their
-            %total Fplus is in TotalFlux(1). Similarly, since reacs 3 and 4
-            %are reverse triple-?, their total Fminus is TotalFlux(2). I'll
-            %parse into Fplus/Fminus by RG next, and compare with what I 
-            %have in the L-matrix.
-            TotalFlux(i/2) = Flux(i) + Flux(i-1);
-        end
+%         if mod(i,2) == 0
+%             %This is the second reaction in a reaction group. i is even
+%             %TotalFlux holds all total Fplus and total Fminus for each RG
+%             %For example, since reacs 1 and 2 are forward triple-?, their
+%             %total Fplus is in TotalFlux(1). Similarly, since reacs 3 and 4
+%             %are reverse triple-?, their total Fminus is TotalFlux(2). I'll
+%             %parse into Fplus/Fminus by RG next, and compare with what I 
+%             %have in the L-matrix.
+%             TotalFlux(i/2) = Flux(i) + Flux(i-1);
+%         end
     end
     
-    for i = 1:(numReactions/2)
-       if mod(i,2) == 0
-          %i is even. This is the second item for a specific reaction in 
-          %TotalFlux, which means it is the total flux for a reverse 
-          %reaction, Fminus(RGid). 
-          RGfFlux(i/2) = TotalFlux(i);
-       else
-           %i is odd. This is the first item for a specific reaction in
-           %Total Flux, which means it is the total flux for a forward
-           %reaction, Fplus(RGid).
-           RGrFlux((i/2)+.5) = TotalFlux(i);
-       end
-    end
+%     for i = 1:(numReactions/2)
+%        if mod(i,2) == 0
+%           %i is even. This is the second item for a specific reaction in 
+%           %TotalFlux, which means it is the total flux for a reverse 
+%           %reaction, Fminus(RGid). 
+%           RGrFlux(i/2) = TotalFlux(i)
+%        else
+%            %i is odd. This is the first item for a specific reaction in
+%            %Total Flux, which means it is the total flux for a forward
+%            %reaction, Fplus(RGid).
+%            RGfFlux((i/2)+.5) = TotalFlux(i);
+%        end
+%     end
+    
+%     sprintf('RGfFlux(1) should be: %e\nRGfFlux(2) should be: %e\nRGrFlux(1) should be: %e\nRGrFlux(2) should be: %e\n', kf(1)*y(1)*y(1)*y(1), kf(2)*y(1)*y(2), kr(1)*y(2), kr(2)*y(3)) 
     
 %     TotalFlux
 %     RGfFlux
@@ -300,181 +354,201 @@ while t < tmax
     
     %Loop through species and set up FluxSum arrays
     %A counter to keep track of the starting index in FplusReacs array that
-    %indicates set of reactions responsible for increasing this(i) species
+    %indicates set of reactions responsible for increasing this species(i)
     speciesFplusIndex = 1;
     speciesFminusIndex = 1;
-    for i = 1:numSpecies 
-        %populate FplusSum using reaction groups instead of Reacs (more
-        %like literature does it).
-        for j = 1:numRG
-            %check if this species is a reactant is in forward RG
-            %how many times does this reactant appear in this reaction?
-            %This will be multiplied to the total flux from this RG
-            %If it only appears once, speicesRepeat = 1. 
-            speciesForwardRepeat = 0;
-            speciesReverseRepeat = 0;
-            %^^^NOTE: ACTUALLY WE DON'T NEED THIS: If we loop through,
-            %every time the i = RGforwardReactantsMatrix(j,l), which is all
-            %three times for triple-? in regards to i = he4, the Flux will
-            %be added three times. So no need to multiply by 3.
-            for l = 1:numReactantsRGf(j)
-                 if i == RGforwardReactantsMatrix(j,l)
-                     speciesForwardRepeat = speciesForwardRepeat + 1;
-                 end
-            end
-            for l = 1:numReactantsRGr(j)
-                 if i == RGreverseReactantsMatrix(j,l)
-                     speciesReverseRepeat = speciesReverseRepeat + 1;
-                 end
-            end
-            if speciesForwardRepeat > 0
-                %then the species is being depleted by j.
-                FminusSum(i) = FminusSum(i) + speciesForwardRepeat*RGfFlux(j);
-            end
+    for i = 1:numSpecies
+        %populate FplusSum and Fplus Lrow for this species -- --
+        startingFplusIndex = speciesFplusIndex;
+        %subtract 1 to keep from spilling over into next species' reactions
+        endingFplusIndex = speciesFplusIndex+numFplus(i)-1;
+        for j = startingFplusIndex:endingFplusIndex
+            %Add to FplusSum for this species (i) with Flux(j) from this 
+            %reaction (j), AND, build Fplus portion of Lrow for this species.
             
-            if speciesReverseRepeat > 0
-                %then the species is being depleted by j.
-                FplusSum(i) = FplusSum(i) + speciesReverseRepeat*RGrFlux(j);
-            end
+            %These reactions, FplusReacs(j), increase species (i).
             
-            for l = 1:numReactantsRGr(j)
-                 if i == RGreverseReactantsMatrix(
-            %now do it for reverse reactions
+            FplusSum(i) = FplusSum(i) + FplusFac(j)*Flux(FplusReacs(j));
             
+            %Build Fplus portion of Lrow for species i, 
+            %all those NOT L(i,i)-- --
+            %Row is d(y_i)/dt, column 1 is flux/y_a, column
+            %2 is flux/y_b, etc. where flux is the flux contributes to
+            %fplus for (i), with the abundance for this column's species
+            %divided out so it can be multiplied by the vector y later...
+            %Remember, L is used just for its eigenvalues. The reactants for 
+            %Fplus are never species (i). so, L_1,1 will be built in the
+            %Fminus for loop coming up.
+
+            % of all of the reactants in this reaction(FplusReacs(j)) 
+            % increasing isotope (i), Let's just take the first one,
+            % reactantsMatrix(FplusReacs(j),1),
+            % divide out its abundance from the flux of this reaction
+            % FplusReacs(j), and add it to L(i,
+            % reactantsMatrix(FplusReacs(j),1)). We choose the first one,
+            % because the choice for which reactant to divide out is
+            % arbitrary. (Or so we think). The eigenvalues should be
+            % invariant under transformations, right? 
+            
+            %so, according to the above^^^, I don't need to do this:
+% % %             for m = 1:numReactants(FplusReacs(j))
+% % % %              'the reaction that increases species (i)'
+% % % %              FplusReacs(j)
+% % % %              'the reactantID within this reaction (not species ID)'
+% % % %              m
+% % % 
+% % %                %this speices(m) is a reactant in the reaction
+% % %                %FplusReacs(j), and contributes to increasing species(i).
+% % %                %Add its flux/y(m) to L(i,m).
+
+               %don't bother changing L(i,reactantsMatrix(FplusReacs(j),1)) 
+               %if the y vector component,
+               %species(reactantsMatrix(FplusReacs(j),1)),
+               %has zero abundance. It's contribution 
+               %will automatically be zero, as the Flux(FplusReacs(j)) 
+               %should be zero. (otherwise ends in a NaN in L)
+             if(y(reactantsMatrix(FplusReacs(j),1)) ~= 0)
+                 %sprintf('Inside Fplus Building L:\nj: %d\nSpecies: %d\nReaction increasing species: %d\nFplusFac: %d\nFlux from Reaction: %e\nFirst Reactant of Reaction: %d\nAbundance of reactant 1:%e\n', j, i, FplusReacs(j), FplusFac(j), Flux(FplusReacs(j)), reactantsMatrix(FplusReacs(j),1), y(reactantsMatrix(FplusReacs(j),1)))
+                 L(i,reactantsMatrix(FplusReacs(j),1)) = L(i,reactantsMatrix(FplusReacs(j),1)) + FplusFac(j)*(Flux(FplusReacs(j))/y(reactantsMatrix(FplusReacs(j),1)));
+             end
         end
-        
-        
-        
-        
-%         %populate FplusSum -- --
-%         startingFplusIndex = speciesFplusIndex;
-%         %subtract 1 to keep from spilling over into next species' reactions
-%         endingFplusIndex = speciesFplusIndex+numFplus(i)-1;
-%         for j = startingFplusIndex:endingFplusIndex
-%             %Add to FplusSum for this species (i) with Flux(j) from this 
-%             %reaction (j)
-%             %These reactions, FplusReacs(j), increase species (i).
-%             FplusSum(i) = FplusSum(i) + Flux(FplusReacs(j));
-%             
-%             %Build L matrix, all those NOT L(i,i)-- --
-%             %Row is d(y_i)/dt, column 1 is flux/y_a, column
-%             %2 is flux/y_b, etc. where flux is the flux contributes to
-%             %fplus for (i), with the abundance for this column's species
-%             %divided out so it can be multiplied by the vector y later...
-%             %This is just to find the eigenvalues of L. The reactants for 
-%             %Fplus are never species (i). so, L_1,1 will be built in the
-%             %Fminus for loop coming up.
-%             for k = 1:numSpecies
-% %                 'species k in L(i,k)'
-% %                 k
-%                 %All Fplus reactions do not have species i as a reactant.
-%                 %we will build L(i,i) in the Fminus loop below.
-%                 % loop through all reactants of the reaction FplusReacs(j)
-%                 for m = 1:numReactants(FplusReacs(j))
-% %                     'the reaction that increases species (i)'
-% %                     FplusReacs(j)
-% %                     'the reactantID within this reaction (not species ID)'
-% %                     m
-%                     %if the species(k) is a reactant in the reaction we're
-%                     %looking at, FplusReacs(j), and that reactant is not
-%                     %the same as species(i) (as that will be taken care of
-%                     %in Fminus loop below):
-%                     if ((k == reactantsMatrix(FplusReacs(j),m)) && (i ~= k))
-% %                         'species k is indeed a reactant, and is not species (i)'
-% %                         'this reactions flux'
-% %                         Flux(FplusReacs(j))
-% %                         (Flux(FplusReacs(j))/y(k))
-%                         %then this speices(k) is a reactant in this 
-%                         %reaction that contributes to increasing species
-%                         %(i). Add its flux/y(k) to L(i,k).
-%                         %don't bother changing L(i,k) if the y vector
-%                         %component, species(k), has zero abundance. It will
-%                         %automatically be zero, as the Flux(i) should be
-%                         %zero. (otherwise ends in a NaN in L)
-%                         if(y(k) ~= 0)
-%                             L(i,k) = L(i,k) + (Flux(FplusReacs(j))/y(k));
-%                         end
-%                     end
-%                 end
-%             end
-%             %end Bulid Fplus parts of L Matrix, all those not L(i,i)
-%         end
-% 
-%         %populate FminusSum -- --
-%         startingFminusIndex = speciesFminusIndex;
-%         %subtract 1 to keep from spilling over into next species' reactions
-%         endingFminusIndex = speciesFminusIndex+numFminus(i)-1;
-%         for j = startingFminusIndex:endingFminusIndex
-% %             Output for testing -- -- TODO Remove
-% %             'species'
-% %             i
-% %             'reaction'
-% %             FminusReacs(j)
-% %             'Flux from this reaction'
-% %             Flux(FminusReacs(j))
-%             %Add to FplusSum for this species (i) with Flux(j) from this 
-%             %reaction (j)
-%             %These reactions, FplusReacs(j), increase species (i).
-%             FminusSum(i) = FminusSum(i) + Flux(FminusReacs(j));
-%             
-%             
-%             %Build L(i,k) matrix where i == k -- --
-%             
-%             for k = 1:numSpecies
-% %                 'species k in L(i,k)'
-% %                 k
-%                 %All Fminus reactions have species i as a reactant.
-%                 %Here we build L(i,i). L(i,k) where i ~= k was built above.
-%                 % loop through all reactants of the reaction FminusReacs(j)
-%                 for m = 1:numReactants(FminusReacs(j))
-% %                     'the reaction that decreases species (i)'
-% %                     FminusReacs(j)
-% %                     'the reactantID within this reaction (not species ID)'
-% %                     m
-%                     %if the species(k) is a reactant in the reaction we're
-%                     %looking at, FminusReacs(j), and that reactant is
-%                     %INDEED the same as species(i):
-%                     if ((k == reactantsMatrix(FminusReacs(j),m)) && (i == k))
-% %                         'species k is indeed a reactant, and is INDEED species (i)'
-% %                         'this reactions flux'
-% %                         Flux(FminusReacs(j))
-% %                         (Flux(FminusReacs(j))/y(k))
-%                         %then this speices(k) is a reactant in this 
-%                         %reaction that contributes to depleting species
-%                         %(i). Add its flux/y(k) to L(i,k).
-%                         %don't bother changing L(i,k) if the y vector
-%                         %component, species(k), has zero abundance. It will
-%                         %automatically be zero, as the Flux(i) should be
-%                         %zero. (otherwise ends in a NaN in L)
-%                         if(y(k) ~= 0)
-%                             L(i,k) = L(i,k) + (Flux(FminusReacs(j))/y(k));
-%                         end
-%                     end
-%                 end
-%             end
-%             %end Bulid Fminus parts of L Matrix, all those INDEED L(i,i)
-%         end
-%         
-%         
-%         
-%         
-%         %Go to next species' reactions
-%         speciesFplusIndex = speciesFplusIndex + numFplus(i);
-%         speciesFminusIndex = speciesFminusIndex + numFminus(i);
+            %end Bulid Fplus parts of L Matrix, all those not L(i,i)
+
+
+        %populate FminusSum and Fminus Lrow for this species -- --
+        startingFminusIndex = speciesFminusIndex;
+        %subtract 1 to keep from spilling over into next species' reactions
+        endingFminusIndex = speciesFminusIndex+numFminus(i)-1;
+
+        for j = startingFminusIndex:endingFminusIndex
+
+            %Add to FminusSum for this species(i) with Flux(FminusReacs(j)) from this 
+            %reaction(FminusReacs(j))
+            %These reactions, FminusReacs(j), decrease species(i).
+            FminusSum(i) = FminusSum(i) + FminusFac(j)*Flux(FminusReacs(j));
+            
+%             sprintf('Species: %d\nFminusIndex: %d\nReaction: %d\nFminusFac: %d\nFlux from Reac: %e\nFminusSum: %e\n', i, j, FminusReacs(j), FminusFac(j), Flux(FminusReacs(j)), FminusSum(i))
+%             sprintf('FminusSum(1) should be: %e\n', -(((3*(Flux(1)+Flux(2)))+Flux(5)+Flux(6))))
+            %All Fminus reactions have species i as a reactant.
+            %Here we build L(i,i).
+            %this speices(i) is a reactant in this 
+            %reaction(FminusReacs(j)) that contributes to depleting species
+            %(i). Add its flux/y(i) to L(i,i).
+            
+            %don't bother changing L(i,i) if the y vector
+            %component, species(i), has zero abundance. It will
+            %automatically be zero, as the Flux(FminusReacs(j)) should be
+            %zero. (otherwise ends in a NaN in L)
+            if(y(i) ~= 0)
+                %sprintf('Inside Fminus Building L:\nSpecies: %d\nReaction: %d\nFminusFac: %d\nFlux from Reaction: %e\nAbundance of species:%e\n', i, FminusReacs(j), FminusFac(j), Flux(FminusReacs(j)), y(i))
+                L(i,i) = L(i,i) - FminusFac(j)*(Flux(FminusReacs(j))/y(i));
+            end
+            %end Bulid Fminus parts of L Matrix, all those INDEED L(i,i)
+        end
+
+        %Go to next species' reactions
+        speciesFplusIndex = speciesFplusIndex + numFplus(i);
+        speciesFminusIndex = speciesFminusIndex + numFminus(i);
     end
-%     'Programmed L'
-%     L
+    
+    %'Programmed L'
+    L
+    %FminusSum
+    %sprintf('L1,1 PROGRAMMED: %e \n', L(1,1))
+    t
+    %This reflects identically what is in the manual L. This is what we aim
+    %for, programatically. 
+    %sprintf('FULL RATES*ABUNDANCES:\nL(1,1) should be: %e\nL(1,2) should be: %e\nL(1,3) should be: %e\n', -3*Rate(1)*y(1)*y(1)-3*Rate(2)*y(1)*y(1)-Rate(5)*y(2)-Rate(6)*y(2), 3*Rate(3)+3*Rate(4), Rate(7)+Rate(8))
+    %This will confirm if Fluxes are being built correctly. So far they
+    %are. 
+    
+    %sprintf('Checking Flux against manual calculation:\nFlux(1): %e, Should be %e\nFlux(2):%e, Should be %e\nFlux(3): %e, Should be %e\nFlux(4): %e, Should be %e\nFlux(5): %e, Should be %e\nFlux(6): %e, Should be %e\nFlux(7): %e, Should be %e\nFlux(8): %e, Should be %e\n', Flux(1), Rate(1)*y(1)*y(1)*y(1), Flux(2), Rate(2)*y(1)*y(1)*y(1), Flux(3), Rate(3)*y(2), Flux(4), Rate(4)*y(2), Flux(5), Rate(5)*y(1)*y(2), Flux(6), Rate(6)*y(1)*y(2), Flux(7), Rate(7)*y(3), Flux(8), Rate(8)*y(3))
+    %sprintf('Checking Rates against kf/kr:\nkf(1): %e Should be: %e\nkr(1): %e Should be: %e\nkf(2): %e Should be: %e\nkr(2): %e Should be: %e\n', kf(1), Rate(1)+Rate(2), kr(1), Rate(3)+Rate(4), kf(2), Rate(5)+Rate(6), kr(2), Rate(7)+Rate(8))
+    %sprintf('WITH FLUXES:\nL(1,1) should be: %e\nL(1,2) should be: %e\nL(1,3) should be: %e\nL(2,1) should be: %e\nL(2,2) should be: %e\nL(2,3) should be: %e\nL(3,1) should be: %e\nL(3,2) should be: %e\nL(3,3) should be: %e\n', -(((3*(Flux(1)+Flux(2)))+Flux(5)+Flux(6))/y(1)), 3*(Flux(3)+Flux(4)/y(2)), ((Flux(7)+Flux(8))/y(3)), (Flux(1)+Flux(2)/y(1)), -((Flux(3)+Flux(4)+Flux(5)+Flux(6))/y(2)), (Flux(7)+Flux(8))/y(3), (Flux(5)+Flux(6))/y(1), 0, -(Flux(7)+Flux(8))/y(3))
+    %sprintf('L(1,1) is: %e\n', -3*kf(1)*y(1)*y(1)-kf(2)*y(2))
+    
+    
+    %REDO: This is getting too convoluted. Let's not do it from the
+    %perspective of RGs. Let's do it from individual reactions, which we've
+    %parsed before the while loop.
+    
+
+%     sprintf('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+%     for i = 1:numSpecies 
+%         %populate FplusSum using reaction groups instead of Reacs (more
+%         %like literature does it).
+%         for j = 1:numRG
+%             %check if this species is a reactant is in forward RG
+%             %how many times does this reactant appear in this reaction?
+%             %This will be multiplied to the total flux from this RG
+%             %If it only appears once, speicesRepeat = 1. 
+%             speciesForwardInstance = 0;
+%             speciesReverseInstance = 0;
+%             %^^^NOTE: ACTUALLY WE DON'T NEED THIS: If we loop through,
+%             %every time the i = RGforwardReactantsMatrix(j,l), which is all
+%             %three times for triple-? in regards to i = he4, the Flux will
+%             %be added three times. So no need to multiply by 3.
+%             j
+%             for l = 1:numReactantsRGf(j)
+%                 numReactantsRGf
+%                 RGforwardReactantsMatrix
+%                 j
+%                 l
+%                 'hodup'
+%                 RGforwardReactantsMatrix(j,l)
+%                  if i == RGforwardReactantsMatrix(j,l)
+%                      
+%                      speciesForwardInstance = speciesForwardInstance + 1;
+%                      sprintf('Instances of species(%d) in forward of RG(%d): %d', i, j, speciesForwardInstance)
+%                  end
+%             end
+%             for l = 1:numReactantsRGr(j)
+%                  if i == RGreverseReactantsMatrix(j,l)
+%                      speciesReverseInstance = speciesReverseInstance + 1;
+%                      sprintf('Instances of species(%d) in reverse of RG(%d): %d', i, j, speciesReverseInstance)
+%                  end
+%             end
+%             if speciesForwardInstance > 0
+%                 %then the species is being depleted by j forward,
+%                 FminusSum(i) = FminusSum(i) + speciesForwardInstance*RGfFlux(j)
+%                 %and created by j reverse
+%                 FplusSum(i) = FplusSum(i) + speciesForwardInstance*RGrFlux(j)
+%                 sprintf('For He4, it should be:\nFplusSum: %e\nFminusSum:%e\n', 3*kr(1)*y(2)+kr(2)*y(3), 3*kf(1)*y(1)*y(1)*y(1)+kf(2)*y(1)*y(2))  
+%             end
+%             
+%             if speciesReverseInstance > 0
+%                 %then the species is being increased by j forward,
+%                 FplusSum(i) = FplusSum(i) + speciesReverseInstance*RGfFlux(j);
+%                 %and depleted by j reverse
+%                 FminusSum(i) = FminusSum(i) + speciesReverseInstance*RGrFlux(j);
+%             end
+% %             for l = 1:numReactantsRGr(j)
+% %                  if i == RGreverseReactantsMatrix(
+% %             %now do it for reverse reactions
+%         end
+%         
+%         FplusSum
+%         FminusSum
+        
+        
+% 
 
     
-    %OLD Manually built L matrix -- --
+    %OLD Manually built L matrix FOR 3-isotope network-- --
+    %TODO: When I move up to 16 species alpha network, I'll need to try
+    %making the 16x16 manual matrix to make sure all is well here... Well I
+    %might not need to that because that would take forever, first of all,
+    %and second of all, as long as the results are correct from the 
+    %programmed L, it's all good!
     %populate flux matrix... it's a linearized matrix... so really "d/dt"
-    L=[-3*kf(1)*y(1)*y(1)-kf(2)*y(2), kr(1), kr(2);
-        3*kf(1)*y(1)*y(1), -kr(1)-kf(2)*y(1), kr(2);
-        kf(2)*y(2), 0, -kr(2)];
-    'Manual L';
-    L;
-
-    
+%     
+%     L=[-3*kf(1)*y(1)*y(1)-kf(2)*y(2), 3*kr(1), kr(2);
+%         kf(1)*y(1)*y(1), -kr(1)-kf(2)*y(1), kr(2);
+%         kf(2)*y(2), 0, -kr(2)];
+%     'Manual L'
+%     L
+   %sprintf('L1,1 MANUAL: %e \n', L(1,1))
+   
     %'eigenvalues'
     eigenL = eig(L);
 
@@ -495,6 +569,64 @@ while t < tmax
     if dt > .1*t
         dt = .1*t;
     end
+    
+    %checkAsy with current dt, and adjust L for column and row for species 
+    %that satisfy, and update dt by finding the eigen values again:
+    AsySatisfied = 0;
+    AsySpecies = zeros(1,numSpecies);
+    R = L;
+    for i = 1:numSpecies
+        %if ((FplusSum(i)/FminusSum(i)) > .999999 && (FplusSum(i)/FminusSum(i)) < 1.000001 && checkAsy == 1)
+        if (FminusSum(i) * dt / y(i) > 1.0)
+            AsySatisfied = 1;
+            AsySpecies(i) = 1;
+            %do Asymptotic Update
+            %This is exactly what's in FERN now... Change it such that
+            %we're modifying the L-matrix... removing corresponding row an
+            %column, corresponding to species (i).
+            %%%%UPDATE%%%%
+            %I've introduced an R matrix, which is the altered L matrix,
+            %since I need the original L matrix to properly calculate the
+            %dydt vector. NOTE: I *can* indeed remove L(i,j) if Asy is
+            %satisfied, as dydt(i) for species(i) should be zero anyway.
+            %y(i) = (y(i)+(FplusSum(i)*dt))/(1+FminusSum(i)*dt);
+            for j = 1:numSpecies
+                %L(i,j) = 0;
+                R(i,j) = 0;
+                R(j,i) = 0;
+            end
+        end
+        y(i)
+    end
+    
+    if (AsySatisfied == 1 && checkAsy == 1)
+       %find the new eigenvalues of modified L, and recalculate dt 
+       %'eigenvalues'
+        eigenR = eig(R);
+
+        %get largest eigenvalue
+        lambda = 0;
+        absEigR = abs(eigenR);
+        for i = 1:numSpecies
+            if gt(absEigR(i),abs(lambda))
+                lambda = eigenR(i);
+            end
+        end
+
+        %'largest eigenvalue'
+        lambda;
+    'OIAHFIAHFOIHAIFHOIAF'
+    L
+    R
+        %'delta t'
+        dt = abs(1/lambda)
+            
+
+        if dt > .1*t
+            dt = .1*t;
+        end
+    end
+    
     alldt(alldtcount) = dt;
     alldtcount = alldtcount + 1;
    
@@ -503,27 +635,27 @@ while t < tmax
     %the change in abundances for each species. Instead of doing 
     %Y + (FplusSum - FminusSum) * dt; 
     %as in FERN (line 656 in kernels), dydt is the final change.
+    %sprintf('y: %e %e %e\n', y)
+    %sprintf('compareFplusSum-FminusSum: %e %e %e\n', FplusSum-FminusSum)
+    %sprintf('FplusSum for He4 Should be: %e\nand FminusSum: %e\n', 3*kr(1)*y(2)+kr(2)*y(3), -3*kf(1)*y(1)*y(1)*y(1)-kf(2)*y(1)*y(2))
     dydt = L*transpose(y);
-    sprintf('%e\n', transpose(y));
+
+    %sprintf('dydt: %e %e %e\n', dydt)
     %!!! TURN THIS INTO FUNCTION !!!
     %Update populations
     for i = 1:numSpecies
-        %checkAsy     
-        if ((FminusSum(i)*dt/y(i)) > 1.0 && checkAsy == 1)
-            %do Asymptotic Update
-            %This is exactly what's in FERN now... Change it such that
-            %we're modifying the L-matrix... removing corresponding row an
-            %column, corresponding to species (i). 
-            y(i) = (y(i)+(FplusSum(i)*dt))/(1+FminusSum(i)*dt);
+        if AsySpecies(i) == 1
+            y(i) = (y(i) + FplusSum(i) * dt) / (1.0 + FminusSum(i) * dt / y(i))
         else
             %Update abundances, Euler Update
             %This is what's in FERN:
             %y(i)+((FplusSum(i)-FminusSum(i))*dt)
             %This is what we'll use by using the L-matrix, which is
             %essentially what is in FERN. Just that FplusSum and FminusSum
-            %are implicit in the components of L.
-            
-            y(i) = y(i)+dt*(dydt(i));
+            %are implicit in the components of L.  
+            dydt
+            dt
+            y(i) = y(i)+(dt*(dydt(i)))
         end
     end
                 %output 100 times during calculation
