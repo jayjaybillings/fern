@@ -1,34 +1,34 @@
 /**----------------------------------------------------------------------------
-Copyright (c) 2015-, The University of Tennessee
-All rights reserved.
+ Copyright (c) 2015-, The University of Tennessee
+ All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
 
-* Neither the name of fern nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
+ * Neither the name of fern nor the names of its
+ contributors may be used to endorse or promote products derived from
+ this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
------------------------------------------------------------------------------*/
+ Author(s): Jay Jay Billings, Ben Brock, Andrew Belt, Dan Shyles, Mike Guidry
+ -----------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory>
@@ -62,31 +62,40 @@ void loadParameters(Network & network, IntegrationData * data,
 
 	// Load the network parameters. The simple parameters can be loaded
 	// directly, but the file names are used in multiple places.
-	network.species = atoi(
-			iniReader.GetValue("network", "numSpecies", "0"));
+	network.species = atoi(iniReader.GetValue("network", "numSpecies", "0"));
 	network.reactions = atoi(
 			iniReader.GetValue("network", "numReactions", "0"));
 	network.numRG = atoi(
 			iniReader.GetValue("network", "numReactionGroups", "0"));
-	network.massTol = strtod(
-			iniReader.GetValue("network", "massTol", "0.0"), NULL);
-	network.fluxFrac = strtod(
-			iniReader.GetValue("network", "fluxFrac", "0.0"), NULL);
+	network.massTol = strtod(iniReader.GetValue("network", "massTol", "0.0"),
+	NULL);
+	network.fluxFrac = strtod(iniReader.GetValue("network", "fluxFrac", "0.0"),
+	NULL);
 	const char * networkFile = iniReader.GetValue("network", "networkFile",
 	NULL);
 	const char * rateFile = iniReader.GetValue("network", "rateFile", NULL);
 
 	// Load the solver parameters
-	data->T9 = strtod(iniReader.GetValue("initialConditions", "T9",
-			"0.0"), NULL);
-	data->t_init = strtod(iniReader.GetValue("initialConditions",
-			"startTime", "0.0"), NULL);
-	data->t_max = strtod(iniReader.GetValue("initialConditions",
-			"endTime", "0.0"), NULL);
-	data->dt_init = strtod(iniReader.GetValue("initialConditions",
-			"initialTimeStep", "0.0"), NULL);
-	data->rho = strtod(iniReader.GetValue("initialConditions",
-			"density", "0.0"), NULL);
+	data->T9 = strtod(iniReader.GetValue("initialConditions", "T9", "0.0"),
+	NULL);
+	data->t_init = strtod(
+			iniReader.GetValue("initialConditions", "startTime", "0.0"), NULL);
+	data->t_max = strtod(
+			iniReader.GetValue("initialConditions", "endTime", "0.0"), NULL);
+	data->dt_init = strtod(
+			iniReader.GetValue("initialConditions", "initialTimeStep", "0.0"),
+			NULL);
+	data->rho = strtod(
+			iniReader.GetValue("initialConditions", "density", "0.0"), NULL);
+
+	/*
+	 * Get the output file name. It needs to be copied so that it can be used
+	 * later, if it is provided.
+	 */
+	const char * popFileName = iniReader.GetValue("output", "popFile", NULL);
+	if (popFileName != NULL) {
+		data->popFile = strdup(popFileName);
+	}
 
 	// Configure the integrator
 	network.allocate();
@@ -119,12 +128,13 @@ int main(int argc, char const *argv[]) {
 	reacNetwork = std::make_shared<Network>();
 	loadParameters(*reacNetwork.get(), &integrationData, argv[1]);
 	// Launch the integrator
-	globals = std::make_shared<Globals>(*reacNetwork.get());
+	globals = std::make_shared < Globals > (*reacNetwork.get());
 	// Allocate the stepper
-	stepper = std::make_shared<DefaultStepper>(*globals.get(),
-			*reacNetwork.get(),integrationData.Y);
+	stepper = std::make_shared < DefaultStepper
+			> (*globals.get(), *reacNetwork.get(), integrationData.Y);
 	// Initialize the system
-	initialize(reacNetwork.get(), &integrationData, globals.get(), stepper.get());
+	initialize(reacNetwork.get(), &integrationData, globals.get(),
+			stepper.get());
 	// Solve the system
 	integrate();
 	// Dump the results

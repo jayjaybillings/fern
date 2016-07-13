@@ -1,4 +1,5 @@
 #include "Network.hpp"
+#include <stdlib.h>
 
 #ifndef IntegrationData_cuh
 #define IntegrationData_cuh
@@ -17,6 +18,9 @@ struct IntegrationData
 	
 	fern_real *Y;
 	
+	/// Output filename for printing populations. May be null if not required.
+	char * popFile;
+
 	
 	void loadAbundances(const char *filename);
 	

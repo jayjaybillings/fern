@@ -60,6 +60,9 @@ fern_real *Y;
 /** Global partial equilibrium variables **/
 static fern_real *final_k[2];
 
+/// Output file for population data.
+static FILE * popFile;
+
 /**
  * This function checks the status for the plotting
  */
@@ -362,6 +365,27 @@ void initialize(Network * networkInfo, IntegrationData * data,
 	// Configure the partial equilibrium groups
 	configurePartialEquilibriumGroups();
 
+	// See if the population output should be written to a file and open it.
+	if (data->popFile != NULL) {
+		popFile = fopen(data->popFile, "w");
+	}
+
+	return;
+}
+
+/**
+ * This function writes the current population, if specified to do so.
+ * @param fern_real t the time
+ * @param fern_real dt the time step
+ */
+inline void writePopulations(fern_real t, fern_real dt) {
+	if (popFile) {
+		fprintf(popFile,"%e, %e", t, dt);
+		for (int i = 0; i < numberSpecies; i++) {
+			fprintf(popFile,", %e", Y[i]);
+		}
+		fprintf(popFile,"\n");
+	}
 	return;
 }
 
@@ -436,11 +460,19 @@ void integrate() {
 		// Handle postprocessing and renormalization
 		computeSecondaryValues();
 		renormalizeSolution();
+		writePopulations(t, dt);
 
 		// Update the time and number of time steps
 		stepper->updateStep();
 		t = stepper->getStep();
 //		std::cout << (++counter) << ", " << t << ", " << dt << std::endl;
+	}
+
+	/**
+	 * Close the output file, if needed.
+	 */
+	if (popFile) {
+		fclose(popFile);
 	}
 
 	return;
