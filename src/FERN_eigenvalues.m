@@ -2,12 +2,13 @@
 '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 t=1e-20;
 dt = .1*t;
-tmax=1e-5;
+tmax=1e-3;
 T9 = 7;
 rho = 1e8;
 checkAsy = 1;
-networkFile = fopen('~/Desktop/Research/FERN/fernPECPU2/data/CUDAnet_3.inp','r');
-reactionFile = fopen('~/Desktop/Research/FERN/fernPECPU2/data/rateLibrary_3.data','r');
+pEquilOn = 1;
+networkFile = fopen('~/Desktop/Research/FERN/fernPECPU2/data/CUDAnet_150.inp','r');
+reactionFile = fopen('~/Desktop/Research/FERN/fernPECPU2/data/rateLibrary_150.data','r');
 
 %parse Network File
 speciesID = 0;
@@ -21,7 +22,7 @@ while (~feof(networkFile))
 end
 
 numSpecies = speciesID;
-y = zeros(1,numSpecies);
+y = zeros(1, numSpecies);
 for i = 1:numSpecies
     %get initial abundances
    y(i) = str2double(speciesHeader{i}{5});
@@ -31,7 +32,6 @@ end
 %calculate rates
 reacID = 0;
 rgID=0; %first rgID *does* start at 1. see line 50.
-
 %parese reacFile, get stuff for reactions -- --
 while (~feof(reactionFile))
     reacID = reacID+1;
@@ -40,7 +40,9 @@ while (~feof(reactionFile))
     
     %member of RG
     memberID(reacID) = str2double(reacHeader{reacID}{3});
+%     ReacLabel(reacID) = reacHeader{reacID}{1};
     isReverse(reacID) = str2double(reacHeader{reacID}{8});
+    reacClass(reacID) = str2double(reacHeader{reacID}{2});
     numReactants(reacID) = str2double(reacHeader{reacID}{5});
     numProducts(reacID) = str2double(reacHeader{reacID}{6});
     statFac(reacID) = str2double(reacHeader{reacID}{9});
@@ -60,31 +62,31 @@ fclose(reactionFile);
 %3) get reactants and products for each reaction
 Rate = zeros(1,numReactions);
 
+%initialize reacVector which holds which isotopes are increasing and
+%decreasing for each reaction. I will use this to build the Reaction Groups
+%rather than isReverse, because isReverse is unreliable. 
+reacVector = zeros(numReactions,numSpecies);
+
 %create global reactants matrix. A=(a,b): Holds all reactants (b) in each 
 %reaction (a). There are a maximum of 3 reactants (for 3-body reactions),
 %so size(A) = (numReactions, 3).
 %NOTE: He4 is SpeciesID = 1
-reactantsMatrix = zeros(numReactions, 3);
+reactantsMatrix = zeros(numReactions, 4);
 %repeat above for products
-productsMatrix = zeros(numReactions, 3);
+productsMatrix = zeros(numReactions, 4);
 
 %initiate array to point reactions to their reaction group
 RGbyReac = zeros(1,numReactions);
+tempRGclassbyRG = zeros(1,numReactions);
 'Rates';
+reacPlaced = zeros(1,numReactions);
+reacParent = zeros(1,numReactions);
+isRGmember = 0;
+RGmemberCounter = 0;
 for i = 1:numReactions
     
     %Update statistical factor to accommodate for multi-body reactions
     statFac(i) = statFac(i)*(rho.^(numReactants(i)-1));
-        
-    
-    %Don't need to save the params for global, so just overwrite during
-    %loop.
-    paramsArray = zeros(1,7);
-
-    for j = 1:7
-       %build array holding parameters to calculate rate for this reac.
-       paramsArray(1,j) = str2double(paramsStr{i}{j});
-    end
     
     %get reactants in this reaction (will contrib to Fminus for each
     %reactant)
@@ -95,60 +97,160 @@ for i = 1:numReactions
         %will imply an empty entry, ie. no more reactants. In fact, we're
         %using He4 is SpeciesID = 1. 
         reactantsMatrix(i,j) = str2double(reactants{1}{j})+1;
+        
+        %subtract reactants to reaction vector for this reaction
+        for x = 1:numSpecies
+            if x == reactantsMatrix(i,j)
+                reacVector(i,x) = reacVector(i,x) - 1; 
+            end
+        end
     end
-
     %get products in this reaction (will contrib to Fplus for each
     %product)
     for j = 1:numProducts(i)
         products = productsStr(i);
         productsMatrix(i,j) = str2double(products{1}{j})+1;
+        
+        %add products to reaction vector for this reaction
+        for x = 1:numSpecies
+            if x == productsMatrix(i,j)
+                reacVector(i,x) = reacVector(i,x) + 1; 
+            end
+        end
     end
+end
+for i = 1:numReactions
+    %Place Reactions into Reaction Groups:
+    
+    if(reacPlaced(i) == 0)
+       %If this reaction has not yet been placed, stop reaction loop for a
+       %second, then set up this RG, then continue loop.
+       %first make this reaction the parent of the RG.
+       RGmemberCounter = 0;
+       memberID(i) = RGmemberCounter;
+       rgID = rgID + 1;
+       RGparent(rgID) = i;
+       reacParent(i) = i;
+       tempRGclassbyRG(rgID) = reacClass(i);
+       RGbyReac(i) = rgID;
+       
+       sprintf('PARENT:\nReaction(%d), %s, has not yet been placed.\nIt is member(%d) of RG(%d)\nIt has RGclass(%d)\n', i, reacHeader{i}{1}, memberID(i), rgID, tempRGclassbyRG(rgID));
+       %now loop through all reactions again, and check if each reaction's
+       %reaction vector matches with the parent reaction. If so, add it to
+       %the RG.
+       
+       for x = 1:numReactions
+          for m = 1:numSpecies
+             if(abs(reacVector(i,m)) ~= abs(reacVector(x,m)) || i == x)
+                isRGmember = 0;
+                %if any species is determined not to have been used the
+                %same number of times in a reaction, it is not the same
+                %reaction. Break out of the species loop:
+                break;
+             else
+                %if a reaction vector component matches up, this might be a
+                %member of the reaction group of reaction i. Keep looping
+                %through all species to see if the reaction vectors match
+                %entirely.
+                isRGmember = 1;
+             end
+          end
+          
+          %if reaction x managed to show that all of its species
+          %depletion/generation match that of reaction i, then add it to
+          %the reaction group. 
+          if(isRGmember == 1)
+             for m = 1:numSpecies
+                %first, check if this is a reverse reaction. Update that
+                %which was read from the network file, as it is not to be
+                %trusted.
+                
+                if(reacVector(i,m) ~= reacVector(x,m) && abs(reacVector(i,m)) == abs(reacVector(x,m)))
+                   isReverse(x) = 1; 
+                end
+             end
+             
+             reacPlaced(x) = 1;
+             RGmemberCounter = RGmemberCounter + 1;
+             memberID(x) = RGmemberCounter;
+             reacParent(x) = i;
+             RGbyReac(x) = rgID;
+          end
+       end
+    end
+end
+numRG = rgID
+%print Reaction Group info
+for i = 1:numRG
+    sprintf('Reaction Group %d\nParent: reac(%d), %s', i, RGparent(i), reacHeader{RGparent(i)}{1});
+    for j = 1:numReactions
+        if RGparent(i) == reacParent(j)
+            sprintf('reac(%d), %s, member(%d)', j, reacHeader{j}{1}, memberID(j));
+        end
+    end
+end 
+for i = 1:numReactions  
+        
+    %Don't need to save the params for global, so just overwrite during
+    %loop.
+    paramsArray = zeros(1,7);
 
+    for j = 1:7
+       %build array holding parameters to calculate rate for this reac.
+       paramsArray(1,j) = str2double(paramsStr{i}{j});
+    end
+    
     %calculate rates -- -- 
 
     %calculate final rate for this reaction
     Rate(i) = statFac(i)*exp(paramsArray(1,1)+(paramsArray(1,2)/T9)+(paramsArray(1,3)/(T9^(1/3)))+paramsArray(1,4)*(T9^(1/3))+paramsArray(1,5)*T9+paramsArray(1,6)*(T9^(5/3))+paramsArray(1,7)*log(T9));
-
+    sprintf('Reaction(%d) Rate(%e)', i, Rate(i));
     %Set up reaction groups -- -- 
    
-    if(memberID(i) == 0)
-        %then, start new reaction group
-        %!!! reaction group IDs start at 1, not 0.
-        rgID = rgID + 1;
-    end
-    
-    %reactions 0 and 1 are forward reactions
-    %reactions 2 and 3 are reverse reactions
-    %sum 0 and 1 rates (kf), then sum 2 and 3 rates (kr). 
-    %NOTE: for this to work, we must make sure all reaction files are set
-    %up in this way... First two together, second two together, etc.
-    if(memberID(i) == 1)
-        kf(rgID) = (Rate(i-1) + Rate(i));
-        for q = 1:numReactants(i)
-            %make reactant matrix by RG for forward reactions
-            RGforwardReactantsMatrix(rgID, q) = reactantsMatrix(i, q);
-            %number Reactants for forward RG
-            numReactantsRGf(rgID) = numReactants(i);
-        end
-    elseif(memberID(i) == 3)
-        kr(rgID) = (Rate(i-1) + Rate(i));
-        for q = 1:numReactants(i)
-            %make reactant matrix by RG for forward reactions
-            RGreverseReactantsMatrix(rgID, q) = reactantsMatrix(i, q);
-            %number Reactants for forward RG
-            numReactantsRGr(rgID) = numReactants(i);
-        end
-    end
-    
-    %Array to point reactions to their reaction group
-    RGbyReac(i) = rgID;
+%     if(memberID(i) == 0)
+%         %then, start new reaction group
+%         %!!! reaction group IDs start at 1, not 0.
+%         rgID = rgID + 1;
+%         RGparent(rgID) = i;
+%         tempRGclassbyRG(rgID) = reacClass(i);
+%     end
 end
-numRG = rgID;
+kr = zeros(1,numRG);
+kf = zeros(1,numRG);
+for i = 1:numReactions
+ 
+    %logic to parse total reaction rates, check which reactions are forward
+    %and reverse
+    for j = 1:numRG
+        if RGbyReac(i) == j
+            sprintf('then reaction %d, %s, is in RG %d,', i, reacHeader{i}{1}, j);
+            %sort its rate into forward or
+            %reverse for this RG.
+            if isReverse(i) == 0
+                
+                %Add its rate to kf(j)
+                kf(j) = kf(j) + Rate(i);
+                sprintf('reac(%d) is a forward reaction. Add Rate(%e) to kf(%d): %e', i, Rate(i), j, kf(j))
+            else
+               
+                %this is a reverse reaction. Add its rate to kr(j)
+                kr(j) = kr(j) + Rate(i);
+                sprintf('reac(%d) is a reverse reaction. Add Rate(%e) to kr(%d): %e,', i, Rate(i), j, kr(j))
+            end
+        end
+    end
+end
 
-RGforwardReactantsMatrix
-RGreverseReactantsMatrix
-numReactantsRGf
-numReactantsRGr
+RGclassbyRG = zeros(1,numRG);
+
+for i = 1:numRG
+    RGclassbyRG(i) = tempRGclassbyRG(i); 
+   
+    sprintf('(%d) kf: %e, kr: %e\n',i,kf(i),kr(i))
+
+end
+
+clear tempRGclassbyRG;
 
 
 %Number of Reactions that contribute to increasing/decreasing this species
@@ -301,22 +403,233 @@ dtplot = [];
 setNextOut = 0;
 alldtcount = 1;
 alldt = [];
+
+
+
+%%%%%% Variables for Partial Equilibrium %%%%%%%
+
+y_a=0;
+y_b=0;
+y_c=0;
+y_d=0;
+y_e=0;
+c1=0;
+c2=0;
+c3=0;
+c4=0;
+a=0;
+b=0;
+c=0;
+alpha=0;
+beta=0;
+gamma=0;
+q=0;
+y_eq_a=0;
+y_eq_b=0;
+y_eq_c=0;
+y_eq_d=0;
+y_eq_e=0;
+PE_val_a=0;
+PE_val_b=0;
+PE_val_c=0;
+PE_val_d=0;
+PE_val_e=0;
+members=0;
+pEquilbyRG = zeros(1,numRG);
+pEquilFac = zeros(1,numReactions);
+tolerance = 0.001;
+dydt = zeros(numSpecies,1);
+ydotLast = zeros(numSpecies,1);
+ydoubledot = zeros(numSpecies,1);
+ydoubledotLast = zeros(numSpecies,1);
+
+tempyplot = zeros(numSpecies, 100000);
 while t < tmax
     FminusSum = zeros(1,numSpecies);
     FplusSum = zeros(1,numSpecies);
     L = zeros(numSpecies);
     Flux = zeros(1,numReactions);
+    %preserve last dt to make buffer so dt doesn't change so drastically:
+    dtLast = dt;
+    
+    %%%%%%%       PARTIAL EQUILIBRIUM        %%%%%%%
+    %Copied directly from FERN, from my work last summer
+    %TODO Put this into function
+    
+    %final partial equilibrium loop for calculating equilibrium
+    pEquilbyRG;
+    for i = 1:numRG
+        pEquilbyRG(i) = 0;
+        %reset RG reactant and product populations
+        y_a = 0;
+        y_b = 0;
+        y_c = 0;
+        y_d = 0;
+        y_e = 0;
+        %Get current population for each reactant and product of this RG
+        if RGclassbyRG(i) == 1 
+          y_a = y(reactantsMatrix(RGparent(i),1));
+          y_b = y(productsMatrix(RGparent(i),1));
+          %set specific constraints and coefficients for RGclass 1
+          c1 = y_a+y_b;
+          a = 0;
+          b = -kf(i);
+          c = kr(i);
+          q = 0;
+
+          %theoretical equilibrium population of given species
+          y_eq_a = -c/b;
+          y_eq_b = c1-y_eq_a;
+
+          %is each reactant and product in equilibrium?
+          PE_val_a = abs(y_a-y_eq_a)/abs(y_eq_a);
+          PE_val_b = abs(y_b-y_eq_b)/abs(y_eq_b);
+          if (PE_val_a < tolerance && PE_val_b < tolerance) 
+            pEquilbyRG(i)  = 1;
+          end
+        elseif RGclassbyRG(i) == 2
+            if (reactantsMatrix(RGparent(i),2) > 0)
+                y_a = y(reactantsMatrix(RGparent(i),1));
+                y_b = y(reactantsMatrix(RGparent(i),2));
+                y_c = y(productsMatrix(RGparent(i),1));
+            else
+                y_a = y(productsMatrix(RGparent(i),1));
+                y_b = y(productsMatrix(RGparent(i),2));
+                y_c = y(reactantsMatrix(RGparent(i),1));
+            end
+          c1 = y_b-y_a;
+          c2 = y_b+y_c;
+          a = -kf(i);
+          b = -(c1*kf(i)+kr(i));
+          c = kr(i)*(c2-c1);
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a+c1;
+          y_eq_c = c2-y_eq_b;
+          PE_val_a = abs(y_a-y_eq_a)/abs(y_eq_a);
+          PE_val_b = abs(y_b-y_eq_b)/abs(y_eq_b);
+          PE_val_c = abs(y_c-y_eq_c)/abs(y_eq_c);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance) 
+            pEquilbyRG(i) = 1;
+          end
+        elseif RGclassbyRG(i) == 3
+          y_a = y(reactantsMatrix(RGparent(i),1));
+          y_b = y(reactantsMatrix(RGparent(i),2));
+          y_c = y(reactantsMatrix(RGparent(i),3));
+          y_d = y(productsMatrix(RGparent(i),1));
+          c1 = y_a-y_b;
+          c2 = y_a-y_c;
+          c3 = ((y_a+y_b+y_c)/3)+y_d;
+          a = kf(i)*(c1+c2)-kf(i)*y_a;
+          b = -((kf(i)*c1*c2)+kr(i));
+          c = kr(i)*(c3+(c1/3)+(c2/3));
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a-c1;
+          y_eq_c = y_eq_a-c2;
+          y_eq_d = c3-y_eq_a+((1/3)*(c1+c2));
+          PE_val_a = abs(y_a-y_eq_a)/abs(y_eq_a);
+          PE_val_b = abs(y_b-y_eq_b)/abs(y_eq_b);
+          PE_val_c = abs(y_c-y_eq_c)/abs(y_eq_c);
+          PE_val_d = abs(y_d-y_eq_d)/abs(y_eq_d);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) 
+            pEquilbyRG(i) = 1;
+          end
+        elseif RGclassbyRG(i) == 4
+          y_a = y(reactantsMatrix(RGparent(i),1));
+          y_b = y(reactantsMatrix(RGparent(i),2));
+          y_c = y(productsMatrix(RGparent(i),1));
+          y_d = y(productsMatrix(RGparent(i),2));
+          c1 = y_a-y_b;
+          c2 = y_a+y_c;
+          c3 = y_a+y_d;
+          a = kr(i)-kf(i);
+          b = -(kr(i)*(c2+c3))+(kf(i)*c1);
+          c = kr(i)*c2*c3;
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a-c1;
+          y_eq_c = c2-y_eq_a;
+          y_eq_d = c3-y_eq_a;
+          PE_val_a = abs(y_a-y_eq_a)/abs(y_eq_a);
+          PE_val_b = abs(y_b-y_eq_b)/abs(y_eq_b);
+          PE_val_c = abs(y_c-y_eq_c)/abs(y_eq_c);
+          PE_val_d = abs(y_d-y_eq_d)/abs(y_eq_d);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance) 
+            pEquilbyRG(i) = 1;
+          end
+        elseif RGclassbyRG(i) == 5
+          if(productsMatrix(RGparent(i), 3) > 0)
+            y_a = y(reactantsMatrix(RGparent(i),1));
+            y_b = y(reactantsMatrix(RGparent(i),2));
+            y_c = y(productsMatrix(RGparent(i),1));
+            y_d = y(productsMatrix(RGparent(i),2));
+            y_e = y(productsMatrix(RGparent(i),3));
+          else
+            y_a = y(productsMatrix(RGparent(i),1));
+            y_b = y(productsMatrix(RGparent(i),2));
+            y_c = y(reactantsMatrix(RGparent(i),1));
+            y_d = y(reactantsMatrix(RGparent(i),2));
+            y_e = y(reactantsMatrix(RGparent(i),3));
+          end
+%           i
+%           RGclassbyRG(i)
+%           RGparent(i)
+%           productsMatrix(RGparent(i),3)
+%           %RGbyReac(40)
+%           reacHeader{RGparent(i)}{1}
+%          
+          c1 = y_a+((y_c+y_d+y_e)/3);
+          c2 = y_a-y_b;
+          c3 = y_c-y_d;
+          c4 = y_c-y_e;
+          a = (((3*c1)-y_a)*kr(i))-kf(i);
+          alpha = c1+((c3+c4)/3);
+          beta = c1-(2*c3/3)+(c4/3);
+          gamma = c1+(c3/3)-(2*c4/3);
+          b = (c2*kf(i))-(((alpha*beta)+(alpha*gamma)+(beta*gamma))*kr(i));
+          c = kr(i)*alpha*beta*gamma;
+          q = (4*a*c)-(b*b);
+          y_eq_a = ((-.5/a)*(b+sqrt(-q)));
+          y_eq_b = y_eq_a-c2;
+          y_eq_c = alpha-y_eq_a;
+          y_eq_d = beta-y_eq_a;
+          y_eq_e = gamma-y_eq_a;
+          PE_val_a = abs(y_a-y_eq_a)/abs(y_eq_a);
+          PE_val_b = abs(y_b-y_eq_b)/abs(y_eq_b);
+          PE_val_c = abs(y_c-y_eq_c)/abs(y_eq_c);
+          PE_val_d = abs(y_d-y_eq_d)/abs(y_eq_d);
+          PE_val_e = abs(y_e-y_eq_e)/abs(y_eq_e);
+          if(PE_val_a < tolerance && PE_val_b < tolerance && PE_val_c < tolerance && PE_val_d < tolerance && PE_val_e < tolerance) 
+            pEquilbyRG(i) = 1;
+          end
+        end
+    end
+    %%%%%%%        END PARTIAL EQUILIBRIUM      %%%%%%%
+    
+    
         %Loop through all reactions and set up Flux arrays for this timestep
     for i = 1:numReactions
+        
+        %%% set up partial equilibrium factor to remove flux elements from
+        %%% L matrix if a reaction is in partial equilibrium.
+        if pEquilOn == 1
+            if pEquilbyRG(RGbyReac(i)) == 1
+                pEquilFac(i) = 0;
+            elseif pEquilbyRG(RGbyReac(i)) == 0
+                pEquilFac(i) = 1;
+            end
+        end
+        
         %Give Flux a value so its product with y won't be zero. 
         Flux(i) = Rate(i);
         %go through all reactants that allow this reaction to occur
-%         sprintf('reaction(%d) has these reactants:', i)
+%          sprintf('reaction(%d) has these reactants:', i)
         for j = 1:numReactants(i)
             Flux(i) = Flux(i)*y(reactantsMatrix(i,j));
-%             sprintf('reactant(%d) has y(%d): %e', j, reactantsMatrix(i,j), y(reactantsMatrix(i,j)))
+%              sprintf('reactant(%d) has y(%d): %e', j, reactantsMatrix(i,j), y(reactantsMatrix(i,j)))
         end
-%         sprintf('Yielding Flux(%d): %e', i, Flux(i))
+%          sprintf('Yielding Flux(%d): %e', i, Flux(i))
         %check if Fluxes we just calculated are same as what's in L matrix:
 %         if mod(i,2) == 0
 %             %This is the second reaction in a reaction group. i is even
@@ -409,7 +722,11 @@ while t < tmax
                %should be zero. (otherwise ends in a NaN in L)
              if(y(reactantsMatrix(FplusReacs(j),1)) ~= 0)
                  %sprintf('Inside Fplus Building L:\nj: %d\nSpecies: %d\nReaction increasing species: %d\nFplusFac: %d\nFlux from Reaction: %e\nFirst Reactant of Reaction: %d\nAbundance of reactant 1:%e\n', j, i, FplusReacs(j), FplusFac(j), Flux(FplusReacs(j)), reactantsMatrix(FplusReacs(j),1), y(reactantsMatrix(FplusReacs(j),1)))
-                 L(i,reactantsMatrix(FplusReacs(j),1)) = L(i,reactantsMatrix(FplusReacs(j),1)) + FplusFac(j)*(Flux(FplusReacs(j))/y(reactantsMatrix(FplusReacs(j),1)));
+                 if (pEquilOn == 1)
+                    L(i,reactantsMatrix(FplusReacs(j),1)) = L(i,reactantsMatrix(FplusReacs(j),1)) + pEquilFac(FplusReacs(j))*FplusFac(j)*(Flux(FplusReacs(j))/y(reactantsMatrix(FplusReacs(j),1)));
+                 else
+                    L(i,reactantsMatrix(FplusReacs(j),1)) = L(i,reactantsMatrix(FplusReacs(j),1)) + FplusFac(j)*(Flux(FplusReacs(j))/y(reactantsMatrix(FplusReacs(j),1)));
+                 end
              end
         end
             %end Bulid Fplus parts of L Matrix, all those not L(i,i)
@@ -441,7 +758,15 @@ while t < tmax
             %zero. (otherwise ends in a NaN in L)
             if(y(i) ~= 0)
                 %sprintf('Inside Fminus Building L:\nSpecies: %d\nReaction: %d\nFminusFac: %d\nFlux from Reaction: %e\nAbundance of species:%e\n', i, FminusReacs(j), FminusFac(j), Flux(FminusReacs(j)), y(i))
-                L(i,i) = L(i,i) - FminusFac(j)*(Flux(FminusReacs(j))/y(i));
+                if(pEquilOn == 1)
+                    %multiply by a factor corresponding to the 
+                    %partialEquilibrium state for this reaction. 
+                    %If a reaction is in partial equilibrium, its 
+                    %flux will be multiplied by 0 to remove it from L.
+                    L(i,i) = L(i,i) - pEquilFac(FminusReacs(j))*FminusFac(j)*(Flux(FminusReacs(j))/y(i));
+                else
+                    L(i,i) = L(i,i) - FminusFac(j)*(Flux(FminusReacs(j))/y(i));
+                end
             end
             %end Bulid Fminus parts of L Matrix, all those INDEED L(i,i)
         end
@@ -452,10 +777,10 @@ while t < tmax
     end
     
     %'Programmed L'
-    L
+    L;
     %FminusSum
     %sprintf('L1,1 PROGRAMMED: %e \n', L(1,1))
-    t
+    
     %This reflects identically what is in the manual L. This is what we aim
     %for, programatically. 
     %sprintf('FULL RATES*ABUNDANCES:\nL(1,1) should be: %e\nL(1,2) should be: %e\nL(1,3) should be: %e\n', -3*Rate(1)*y(1)*y(1)-3*Rate(2)*y(1)*y(1)-Rate(5)*y(2)-Rate(6)*y(2), 3*Rate(3)+3*Rate(4), Rate(7)+Rate(8))
@@ -466,72 +791,6 @@ while t < tmax
     %sprintf('Checking Rates against kf/kr:\nkf(1): %e Should be: %e\nkr(1): %e Should be: %e\nkf(2): %e Should be: %e\nkr(2): %e Should be: %e\n', kf(1), Rate(1)+Rate(2), kr(1), Rate(3)+Rate(4), kf(2), Rate(5)+Rate(6), kr(2), Rate(7)+Rate(8))
     %sprintf('WITH FLUXES:\nL(1,1) should be: %e\nL(1,2) should be: %e\nL(1,3) should be: %e\nL(2,1) should be: %e\nL(2,2) should be: %e\nL(2,3) should be: %e\nL(3,1) should be: %e\nL(3,2) should be: %e\nL(3,3) should be: %e\n', -(((3*(Flux(1)+Flux(2)))+Flux(5)+Flux(6))/y(1)), 3*(Flux(3)+Flux(4)/y(2)), ((Flux(7)+Flux(8))/y(3)), (Flux(1)+Flux(2)/y(1)), -((Flux(3)+Flux(4)+Flux(5)+Flux(6))/y(2)), (Flux(7)+Flux(8))/y(3), (Flux(5)+Flux(6))/y(1), 0, -(Flux(7)+Flux(8))/y(3))
     %sprintf('L(1,1) is: %e\n', -3*kf(1)*y(1)*y(1)-kf(2)*y(2))
-    
-    
-    %REDO: This is getting too convoluted. Let's not do it from the
-    %perspective of RGs. Let's do it from individual reactions, which we've
-    %parsed before the while loop.
-    
-
-%     sprintf('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-%     for i = 1:numSpecies 
-%         %populate FplusSum using reaction groups instead of Reacs (more
-%         %like literature does it).
-%         for j = 1:numRG
-%             %check if this species is a reactant is in forward RG
-%             %how many times does this reactant appear in this reaction?
-%             %This will be multiplied to the total flux from this RG
-%             %If it only appears once, speicesRepeat = 1. 
-%             speciesForwardInstance = 0;
-%             speciesReverseInstance = 0;
-%             %^^^NOTE: ACTUALLY WE DON'T NEED THIS: If we loop through,
-%             %every time the i = RGforwardReactantsMatrix(j,l), which is all
-%             %three times for triple-? in regards to i = he4, the Flux will
-%             %be added three times. So no need to multiply by 3.
-%             j
-%             for l = 1:numReactantsRGf(j)
-%                 numReactantsRGf
-%                 RGforwardReactantsMatrix
-%                 j
-%                 l
-%                 'hodup'
-%                 RGforwardReactantsMatrix(j,l)
-%                  if i == RGforwardReactantsMatrix(j,l)
-%                      
-%                      speciesForwardInstance = speciesForwardInstance + 1;
-%                      sprintf('Instances of species(%d) in forward of RG(%d): %d', i, j, speciesForwardInstance)
-%                  end
-%             end
-%             for l = 1:numReactantsRGr(j)
-%                  if i == RGreverseReactantsMatrix(j,l)
-%                      speciesReverseInstance = speciesReverseInstance + 1;
-%                      sprintf('Instances of species(%d) in reverse of RG(%d): %d', i, j, speciesReverseInstance)
-%                  end
-%             end
-%             if speciesForwardInstance > 0
-%                 %then the species is being depleted by j forward,
-%                 FminusSum(i) = FminusSum(i) + speciesForwardInstance*RGfFlux(j)
-%                 %and created by j reverse
-%                 FplusSum(i) = FplusSum(i) + speciesForwardInstance*RGrFlux(j)
-%                 sprintf('For He4, it should be:\nFplusSum: %e\nFminusSum:%e\n', 3*kr(1)*y(2)+kr(2)*y(3), 3*kf(1)*y(1)*y(1)*y(1)+kf(2)*y(1)*y(2))  
-%             end
-%             
-%             if speciesReverseInstance > 0
-%                 %then the species is being increased by j forward,
-%                 FplusSum(i) = FplusSum(i) + speciesReverseInstance*RGfFlux(j);
-%                 %and depleted by j reverse
-%                 FminusSum(i) = FminusSum(i) + speciesReverseInstance*RGrFlux(j);
-%             end
-% %             for l = 1:numReactantsRGr(j)
-% %                  if i == RGreverseReactantsMatrix(
-% %             %now do it for reverse reactions
-%         end
-%         
-%         FplusSum
-%         FminusSum
-        
-        
-% 
 
     
     %OLD Manually built L matrix FOR 3-isotope network-- --
@@ -561,14 +820,23 @@ while t < tmax
         end
     end
 
-    %'largest eigenvalue'
-    lambda;
+%     'largest eigenvalue'
+%     lambda
     
     %'delta t'
+    %changed to 2/lambda because that is the explicit theoretical maximum.
     dt = abs(1/lambda);
-    if dt > .1*t
-        dt = .1*t;
+    if dt > .01*t
+        dt = .01*t;
     end
+%     if dt > .1*t && t < 1e-13
+%         dt = .1*t;
+%     elseif dt > .01*t && t > 1e-13
+%         dt = .01*t;
+%     end
+    
+    
+    %%%%%%%     ASYMPTOTIC APPROXIMATION      %%%%%%%
     
     %checkAsy with current dt, and adjust L for column and row for species 
     %that satisfy, and update dt by finding the eigen values again:
@@ -577,26 +845,31 @@ while t < tmax
     R = L;
     for i = 1:numSpecies
         %if ((FplusSum(i)/FminusSum(i)) > .999999 && (FplusSum(i)/FminusSum(i)) < 1.000001 && checkAsy == 1)
-        if (FminusSum(i) * dt / y(i) > 1.0)
+        if ((FplusSum(i)/FminusSum(i) > 0.99) && (FplusSum(i)/FminusSum(i) < 1.01) && checkAsy == 1) %This seems to work better!
+%             if(FminusSum(i) * dt / y(i) > 1.0) //From FERN
+            %If any isotopes pass the above, switch on that Asymptotic was
+            %satisfied at least once. Thus we'll proceed to the next if
+            %statement.
             AsySatisfied = 1;
             AsySpecies(i) = 1;
             %do Asymptotic Update
             %This is exactly what's in FERN now... Change it such that
             %we're modifying the L-matrix... removing corresponding row an
             %column, corresponding to species (i).
+            %y(i) = (y(i)+(FplusSum(i)*dt))/(1+FminusSum(i)*dt);
+            
             %%%%UPDATE%%%%
             %I've introduced an R matrix, which is the altered L matrix,
             %since I need the original L matrix to properly calculate the
             %dydt vector. NOTE: I *can* indeed remove L(i,j) if Asy is
             %satisfied, as dydt(i) for species(i) should be zero anyway.
-            %y(i) = (y(i)+(FplusSum(i)*dt))/(1+FminusSum(i)*dt);
+            
             for j = 1:numSpecies
                 %L(i,j) = 0;
                 R(i,j) = 0;
                 R(j,i) = 0;
             end
         end
-        y(i)
     end
     
     if (AsySatisfied == 1 && checkAsy == 1)
@@ -615,16 +888,18 @@ while t < tmax
 
         %'largest eigenvalue'
         lambda;
-    'OIAHFIAHFOIHAIFHOIAF'
-    L
-    R
         %'delta t'
-        dt = abs(1/lambda)
+        dt = abs(1/lambda);
             
-
-        if dt > .1*t
-            dt = .1*t;
+        if dt > .01*t
+            dt = .01*t;
         end
+% 
+%         if dt > .1*t && t < 1e-13
+%             dt = .1*t;
+%         elseif dt > .01*t && t > 1e-13
+%             dt = .01*t;
+%         end
     end
     
     alldt(alldtcount) = dt;
@@ -638,14 +913,111 @@ while t < tmax
     %sprintf('y: %e %e %e\n', y)
     %sprintf('compareFplusSum-FminusSum: %e %e %e\n', FplusSum-FminusSum)
     %sprintf('FplusSum for He4 Should be: %e\nand FminusSum: %e\n', 3*kr(1)*y(2)+kr(2)*y(3), -3*kf(1)*y(1)*y(1)*y(1)-kf(2)*y(1)*y(2))
+    
+    %Check the jerk of the abundance curve... If it's larger than some
+    %tolerance, reduce dt.
+    
+    ydotLast = dydt;
     dydt = L*transpose(y);
+    
+    ydoubledotLast = ydoubledot;
+    ydoubledot = (dydt - ydotLast)/dt;
+    
+    ytripledot = (ydoubledot - ydoubledotLast)/dt;
+%     check1 = 0;
+    check2 = 0;
+    maxytripledot = 0;
+    for i = 1:numel(ytripledot)
+        if i == 1
+           maxytripledot = ytripledot(i);
+        elseif ytripledot(i)>maxytripledot
+            maxytripledot = ytripledot(i);
+        end
+        
+%         if abs(ytripledot(i)) > 1 && abs(ytripledot(i)) < 1e5 && t > 1e-16
+%             sprintf('t: %e, y(%d): %e\n', t, i, ytripledot(i))
+%             check1 = 1;
+%         end
+
+    end
+    
+    if maxytripledot > 1e30 && t > 1e-16
+        %sprintf('t: %e, y(%d): %e\n', t, i, ytripledot(i))
+        check2 = 1;
+    end
+    
+%     if check1 == 1
+%        dt = .9*dt; 
+%     end
+% 
+%     if check2 == 1
+%         dt = .9*dt;
+%        %dt = 1/(log10(maxytripledot))*dt 
+%     end
+    
+    %pushes timestep, losing a little accuracy
+%     if (abs(dt-dtLast)/dtLast) > 10     
+%         if dt > dtLast
+%            dt = dtLast/0.01; 
+%         elseif dt < dtLast
+%            dt = dtLast;
+%         end
+%     end
+
+%   constrains change in timestep to specified amount, preserves accuracy
+% 
+%     if (abs(dt-dtLast)/dtLast) > 100
+%         if dt > dtLast
+%            dt = dtLast/0.01;
+%         elseif dt < dtLast
+%            dt = dtLast/100;
+%         end
+%     end
+%     
+    
+
+    
+%     if ((dt-dtLast)/dtLast) > .05
+%            dt = dtLast/0.95; 
+%     end
+%     
+%         %ensures that dt doesn't change by more than 5% between timesteps
+%     if (dt-dtLast/dtLast) < (-0.05)
+%        dt = dtLast/1.05;
+%     end
+
+    R;
+    L;
+    pEquilbyRG;
+    dt;
+    dtLast;
+    %for output. list RGs in eq
+    numeq = 1;
+    ineq = [];
+    numAsy = 0;
+    for a = 1:numRG
+        if pEquilbyRG(a) == 1
+            ineq(numeq) = a;
+            numeq = numeq + 1;
+        end
+    end
+    if numel(ineq) > 0
+        sprintf('%d ', ineq);
+    end
+    
+    %check number species asymptotic
+    for a = 1:numSpecies
+        if AsySpecies(a) == 1
+            numAsy = numAsy + 1;
+        end
+    end
 
     %sprintf('dydt: %e %e %e\n', dydt)
     %!!! TURN THIS INTO FUNCTION !!!
     %Update populations
     for i = 1:numSpecies
         if AsySpecies(i) == 1
-            y(i) = (y(i) + FplusSum(i) * dt) / (1.0 + FminusSum(i) * dt / y(i))
+            y(i) = (y(i) + FplusSum(i) * dt) / (1.0 + FminusSum(i) * dt / y(i));
         else
             %Update abundances, Euler Update
             %This is what's in FERN:
@@ -653,10 +1025,11 @@ while t < tmax
             %This is what we'll use by using the L-matrix, which is
             %essentially what is in FERN. Just that FplusSum and FminusSum
             %are implicit in the components of L.  
-            dydt
-            dt
-            y(i) = y(i)+(dt*(dydt(i)))
+            dydt;
+            dt;
+            y(i) = y(i)+(dt*(dydt(i)));
         end
+        tempyplot(i,numTimesteps) = y(i);
     end
                 %output 100 times during calculation
             if(log10(t) > -16)
@@ -670,28 +1043,81 @@ while t < tmax
                 if(log10(t) >= nextOutput)
                    OutCount = OutCount + 1;
                    %print abundances
-%                    sprintf('Output: %d/100\n abundances: \n He4: %e\n C12: %e\n O16: %e\n time: %f', OutCount, y, log10(t))
-% %                    sprintf('kf: %e %e %e\nkr: %e %e %e \n', kf, kr)
-%                    sprintf('Flux: \n %e\n %e\n %e\n %e\n %e\n %e\n %e\n %e\n', Flux)
+                    sprintf('Output: %d/100\ntime: %e, dt: %e\n', OutCount, t, dt)
+                    sprintf('abundances: \n')
+                    sprintf('%e\n', y)
+                    sprintf('kf: %e \n', kf)
+                    sprintf('kr: %e \n', kr)
+                    sprintf('Flux:')
+                    sprintf('%e\n', Flux)
+                    sprintf('FplusSum, FminusSum')
+                    sprintf('%e, %e\n',FplusSum, FminusSum)
+                    sprintf('FracRGPE: %d/%d\nFracAsy: %d/%d, dt: %e\n, t: %e\nOutput: %d/100\n',numeq-1,numRG,numAsy,numSpecies, dt, t, OutCount)
+
                    %print time
                     nextOutput = nextOutput + intervalLogt;
-                end
-                
+                end 
             end
-    yplot1(numTimesteps) = y(1);
-    yplot2(numTimesteps) = y(2);
-    yplot3(numTimesteps) = y(3);
+            
+%             if numAsy > 0
+%                 
+%                 'GOT SOME ASSY'
+%                 
+%                     sprintf('Output: %d/100\ntime: %e, dt: %e\n', OutCount, t, dt)
+%                     sprintf('abundances: \n')
+%                     sprintf('%e\n', y)
+%                     sprintf('kf: %e %e %e\nkr: %e %e %e \n', kf, kr)
+%                     sprintf('Flux:')
+%                     sprintf('%e\n', Flux)
+%                     sprintf('FplusSum, FminusSum')
+%                     sprintf('%e, %e\n',FplusSum, FminusSum)
+%                     sprintf('FracRGPE: %d/%d\nFracAsy: %d/%d',numeq-1,numRG,numAsy,numSpecies)
+%                 
+% %                 return
+%             end
+    
+
+    %plot time & timestepping
     tplot(numTimesteps) = t;
     dtplot(numTimesteps) = dt;
+    
     t=t+dt;
+    dt;
     %number of timesteps
     numTimesteps = numTimesteps + 1;
 end
+min_y = 0;
+yplot = zeros(numSpecies, numTimesteps-1);
+for i = 1:numSpecies
+    for j = 1:numTimesteps-1
+        yplot(i,j) = tempyplot(i,j);
+        %get minimum y for lowest limit on plot
+        if yplot(i,j) < min_y
+           min_y = yplot(i,j); 
+        end
+    end
+end
+
+clear tempyplot
+
 sprintf('%e\n', alldt);
 %plot abundances
-loglog(tplot,yplot1,tplot, yplot2,tplot, yplot3, tplot, dtplot)
-legend('He', 'C', 'O', 't')
-axis([1e-16,1e-5,1e-9,5e-1])
+% N = 1:numSpecies+1;
+lh = loglog(tplot,yplot,tplot,dtplot);
+%make t v. dt line fat
+set(lh(numSpecies+1),'LineWidth',2);
+lh
+%legendCell = cellstr(num2str(N', '%-d'));
+%legend(legendCell,'Location','NorthEastOutside')
+% if numel(y) == 3
+%     loglog(tplot,yplot1,tplot, yplot2,tplot, yplot3, tplot, dtplot)
+%     legend('He', 'C', 'O', 't')
+% elseif numel(y) >= 16
+%     loglog(tplot, yplot1, tplot, yplot2, tplot, yplot3, tplot, yplot4, tplot, yplot5, tplot, yplot6, tplot, yplot7, tplot, yplot8, tplot, yplot9, tplot, yplot10, tplot, yplot11, tplot, yplot12, tplot, yplot13, tplot, yplot14, tplot, yplot15, tplot, yplot16, tplot, dtplot)
+%     legend('He', 'C', 'O', 'Ne', 'Mg', 'Si', 'S', 'Ar', 'Ca', 'Ti', 'Cr', 'Fe', 'Ni', 'Zn', 'Ge', 'Se', 't')
+% end
+
+axis([1e-16,tmax,1e-15,5e-1])
 
 %plot time vs timestep
 %loglog(tplot,dtplot)
