@@ -2,14 +2,48 @@
 '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 t=1e-20;
 dt = .1*t;
-tmax=1e-3;
+tmax=1e-8;
 T9 = 7;
 rho = 1e8;
 checkAsy = 1;
 pEquilOn = 1;
-networkFile = fopen('fern\data\CUDAnet_3.inp','r');
-reactionFile = fopen('fern\data\rateLibrary_3.data','r');
+plotJavaCompare = 1;
+networkFile = fopen('fern\data\CUDAnet_150.inp','r');
+reactionFile = fopen('fern\data\rateLibrary_150.data','r');
+if (plotJavaCompare == 1) 
+    javaOutFile = fopen('fern\data\Y_150.out');
+    C = textscan(javaOutFile, '%s','Delimiter','');
+    fclose(javaOutFile);    
 
+    %make each line in parse Y.out file components in an array.
+    C = C{:};
+    for i = 1:length(C)
+        if(strcmp(C{i},'Plot_Times:'))
+            javaPlotTimes = textscan(C{i+1},'%f','Delimiter',' ');
+        end
+        if(strcmp(C{i},'Abundances_Y(Z,N,time):'))
+            javaStartAbundances = i
+        end
+        if(findstr(C{i},'JavaAsy'))
+            javaEndAbundances = i
+        end
+    end
+    counter = 1;
+    for i = javaStartAbundances+1:javaEndAbundances-1
+        if(mod(counter,2) == 0)
+            holder = textscan(C{i},'%f','Delimiter',' ');
+            for j = 1:length(holder{1})
+                javaAbundances(counter/2,j) = holder{1}(j);
+            end
+        else
+            holder = textscan(C{i},'%d','Delimiter',' ');
+            for j = 1:length(holder{1})
+                javaIsotope((counter/2)+.5,j) = holder{1}(j);
+            end
+        end
+        counter = counter + 1;
+    end
+end
 %parse Network File
 speciesID = 0;
 
@@ -1088,11 +1122,23 @@ while t < tmax
 end
 min_y = 0;
 yplot = zeros(numSpecies, numTimesteps-1);
+javaYPlot = zeros(numSpecies, length(javaPlotTimes{1}));
+javaTPlot = zeros(1, length(javaPlotTimes{1}));
 for i = 1:numSpecies
+    counter = 1;
     for j = 1:numTimesteps-1
-        yplot(i,j) = tempyplot(i,j);
-        %get minimum y for lowest limit on plot
-        if yplot(i,j) < min_y
+        if(plotJavaCompare == 1 && ((tplot(j)/javaPlotTimes{1}(counter)) < 1.01 && (tplot(j)/javaPlotTimes{1}(counter)) > .99) && counter < length(javaPlotTimes{1}))
+            tplot(j);
+            javaPlotTimes{1}(counter);
+            javaYPlot(i,counter) = tempyplot(i,j);
+            javaYPlot(i,counter);
+            tempyplot(i,j);
+            javaTPlot(counter) = javaPlotTimes{1}(counter);
+            counter = counter + 1;
+        else
+            yplot(i,j) = tempyplot(i,j);
+        end
+        if yplot(i,j) < min_y %get minimum y for lowest limit on plot
            min_y = yplot(i,j); 
         end
     end
@@ -1103,9 +1149,14 @@ clear tempyplot
 sprintf('%e\n', alldt);
 %plot abundances
 % N = 1:numSpecies+1;
-lh = loglog(tplot,yplot,tplot,dtplot);
-%make t v. dt line fat
-set(lh(numSpecies+1),'LineWidth',2);
+if(plotJavaCompare == 1)
+    %sprintf('Len: javaTplot: %d, javaYPlot: %d, javaAbundances: %d',length(javaTPlot), length(javaYPlot), length(javaAbundances))
+    lh = loglog(javaTPlot,javaYPlot,'-',javaTPlot,javaAbundances,'--');
+else
+    lh = loglog(tplot,yplot,tplot,dtplot);
+    set(lh(numSpecies+1),'LineWidth',2);
+end
+%make t v. dt line fat'
 lh
 %legendCell = cellstr(num2str(N', '%-d'));
 %legend(legendCell,'Location','NorthEastOutside')
