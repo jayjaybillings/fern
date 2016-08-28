@@ -17,28 +17,28 @@ void integrateNetwork(
 	   maneuvering with dynamic shared memory.
 	*/
 
-/*  //TEMP TODO
-  //scan in timestepping from MATLAB to use in FERN and see if the timestepping is to blame for the difference in abundances.
- FILE *dtFile = fopen("6.16.16_dtFromMatlab_toTestFERN.rtf", "r");
+	/*  //TEMP TODO
+	  //scan in timestepping from MATLAB to use in FERN and see if the timestepping is to blame for the difference in abundances.
+	 FILE *dtFile = fopen("6.16.16_dtFromMatlab_toTestFERN.rtf", "r");
 
 	if (!dtFile)
 	{
 		fprintf(stderr, "File Input Error: No readable file named\n");
 		exit(1);
 	}
-  fern_real MATLABdt[4152];
+	  fern_real MATLABdt[4152];
 		int status;
-  float doot;
- int dtCounter = 0;
+	  float doot;
+	 int dtCounter = 0;
 	for (int n = 0; n < 4152; n++)
 	{
-    status = fscanf(dtFile, "%e", &doot);
-    MATLABdt[n] = doot;
-    printf("dt[%d]: %e\n", n, MATLABdt[n]);
-  }
+	    status = fscanf(dtFile, "%e", &doot);
+	    MATLABdt[n] = doot;
+	    printf("dt[%d]: %e\n", n, MATLABdt[n]);
+	  }
 
-//exit(1);
-*/
+	//exit(1);
+	*/
 	/* Declare local pointers for Globals arrays. */
 
 	fern_real *Flux;
