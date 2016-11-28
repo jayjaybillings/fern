@@ -4,7 +4,7 @@
 
 **NOTE** - This code was written primarily by students. It is of poor quality and
 should not be used for anything more than basic research. An effort is underway to
-rewrite it as part of (Fire)[https://github.com/jayjaybillings/fire].
+rewrite it as part of [Fire](https://github.com/jayjaybillings/fire).
 
 ## Prerequisites
 You will need git and cmake to build FERN.
